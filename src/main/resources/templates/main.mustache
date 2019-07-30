@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+    {{> partial_meta }}
+    {{> partial_css }}
+
+    <title>VH7</title>
+</head>
+<body>
+    <div id="app">
+        <div class="section-hero hero bg-gray">
+            <div class="container hero-body grid-lg">
+                <h1 style="font-size: 1.6rem;">VH7</h1>
+                <h2 style="font-size: .9rem;">A free and open source <u>URL shortening</u>, <u>file sharing</u> and <u>pastebin</u> service.</h2>
+            </div>
+        </div>
+
+        <div class="section" v-if="!result.show">
+            <div class="container grid-lg">
+                <ul class="tab tab-block">
+                    <li class="tab-item" :class="{'active': tab == 'shorten'}">
+                        <a href="#" v-on:click="tab = 'shorten'"><i class="icon icon-link"></i> Shorten</a>
+                    </li>
+                    <li class="tab-item" :class="{'active': tab == 'upload'}">
+                        <a href="#" v-on:click="tab = 'upload'"><i class="icon icon-upload"></i> Upload</a>
+                    </li>
+                    <li class="tab-item" :class="{'active': tab == 'paste'}">
+                        <a href="#" v-on:click="tab = 'paste'"><i class="icon icon-resize-horiz"></i> Paste</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div style="height: 1em;"></div>
+
+            <div class="container grid-lg" v-if="tab == 'shorten'">
+                <h2>Shorten</h2>
+                <p>Shorten a URL for easy sharing.</p>
+                <div class="toast toast-error" v-if="result.error">
+                    <button class="btn btn-clear float-right" v-on:click="result.error = false"></button>
+                    <% result.error %>
+                </div>
+                <form class="form-horizontal" @submit="doShorten" autocomplete="off">
+                    <div class="form-group">
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="shorten-url">Long URL</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input class="form-input" type="url" id="shorten-url" placeholder="Long URL" v-model="shorten.url" autocomplete="false">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-9 col-sm-12 col-ml-auto">
+                            <button type="submit" class="btn"><i class="icon icon-check"></i> Shorten</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="container grid-lg" v-if="tab == 'upload'">
+                <h2>Upload</h2>
+                <p>Upload a file for easy sharing.</p>
+                <div class="toast toast-error" v-if="result.error">
+                    <button class="btn btn-clear float-right" v-on:click="result.error = false"></button>
+                    <% result.error %>
+                </div>
+                {{!<form class="form-horizontal" autocomplete="off">
+                    <div class="form-group">
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="upload-file">File</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input class="form-input" type="file" id="upload-file" v-model="upload.file" autocomplete="false">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-9 col-sm-12 col-ml-auto">
+                            <button type="submit" class="btn"><i class="icon icon-check"></i> Upload</button>
+                        </div>
+                    </div>
+                </form>}}
+                <p><i>Coming soon!</i></p>
+            </div>
+
+            <div class="container grid-lg" v-if="tab == 'paste'">
+                <h2>Paste</h2>
+                <p>Paste code for easy sharing.</p>
+                <div class="toast toast-error" v-if="result.error">
+                    <button class="btn btn-clear float-right" v-on:click="result.error = false"></button>
+                    <% result.error %>
+                </div>
+                {{!<form class="form-horizontal" autocomplete="off">
+                    <div class="form-group">
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="paste-code">Code</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <textarea class="form-input" id="paste-code" rows="6" v-model="paste.code" autocomplete="false"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-9 col-sm-12 col-ml-auto">
+                            <button type="submit" class="btn"><i class="icon icon-check"></i> Upload</button>
+                        </div>
+                    </div>
+                </form>}}
+                <p><i>Coming soon!</i></p>
+            </div>
+        </div>
+
+        <div class="section" v-if="result.show">
+            <div class="container grid-lg">
+                <h2>Complete!</h2>
+                <p>
+                    Your shortened URL is
+                    <a href="#" v-on:click="copyLink()" class="tooltip" data-tooltip="Copy">
+                        <code><% result.link %></code>
+                    </a>!
+                </p>
+                <button class="btn" v-on:click="reset()">Another one</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="container grid-lg">
+                <div class="columns">
+                    <div class="column col-4">
+                        <div class="card text-center">
+                            <div class="card-header">
+                                <div class="card-title h5">Open Source</div>
+                            </div>
+                            <div class="card-body">
+                                All VH7's source code is available on <a href="https://github.com/jake-walker/vh7">GitHub</a> for
+                                the community to view the code and contribute.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column col-4">
+                        <div class="card text-center">
+                            <div class="card-header">
+                                <div class="card-title h5">API</div>
+                            </div>
+                            <div class="card-body">
+                                VH7 has an easy to use API which can be used easily in your own applications.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column col-4">
+                        <div class="card text-center">
+                            <div class="card-header">
+                                <div class="card-title h5">Super Short Links</div>
+                            </div>
+                            <div class="card-body">
+                                VH7 has much shorter links compared to larger URL shorteners.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section bg-dark">
+            <div class="container grid-lg">
+                <h6>VH7</h6>
+                <p>
+                    <a href="https://github.com/jake-walker/vh7">Source</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    {{> partial_js }}
+    <script>
+        VueClipboard.config.autoSetContainer = true;
+        Vue.use(VueClipboard);
+
+        var app = new Vue({
+            el: "#app",
+            data: {
+                domain: "http://localhost:8080/",
+                apiBase: "/api/v1",
+                tab: "shorten",
+                shorten: {
+                    url: ""
+                },
+                upload: {
+                    file: ""
+                },
+                paste: {
+                    code: ""
+                },
+                result: {
+                    show: false,
+                    error: false,
+                    link: ""
+                }
+            },
+            methods: {
+                requestErrorHandler: function(error) {
+                    console.error(error);
+                    if (error.response) {
+                        if (error.response.data.errors) {
+                            var errors = [];
+                            error.response.data.errors.forEach((error) => {
+                                errors.push(error.defaultMessage);
+                            });
+                            this.result.error = "Error: " + errors.join(" and ");
+                        } else if (error.response.data.message) {
+                            this.result.error = "Error: " + error.response.data.message;
+                        } else {
+                            this.result.error = error;
+                        }
+                    } else {
+                        this.result.error = error;
+                    }
+                },
+                doShorten: function(e) {
+                    axios.post(this.apiBase + "/shortlink/", {
+                        longUrl: this.shorten.url
+                    }).then((response) => {
+                        this.result.show = true;
+                        console.log(response);
+                        this.result.link = this.domain + response.data.shortLink;
+                    }).catch(this.requestErrorHandler);
+                    e.preventDefault();
+                },
+                reset: function() {
+                    this.result.show = false;
+                    this.result.error = false;
+                    this.result.link = "";
+
+                    this.shorten.url = "";
+                    this.upload.file = "";
+                    this.paste.code = "";
+                },
+                copyLink: function() {
+                    this.$copyText(this.result.link);
+                }
+            },
+            delimiters: ["<%", "%>"]
+        });
+    </script>
+</body>
+</html>

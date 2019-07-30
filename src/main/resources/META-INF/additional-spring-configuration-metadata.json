@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "vh7.short-url-salt",
+      "type": "java.lang.String",
+      "description": "Salt for converting database IDs to Short URLs and vice-versa. Anything random works as long as it does not change."
+    }
+  ]
+}

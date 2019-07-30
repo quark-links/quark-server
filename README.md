@@ -32,6 +32,13 @@ docker run --detach \
            --name vh7 \
            --publish 8080:8080 \
            --restart always \
+           -e SPRING_PROFILES_ACTIVE="production" \
+           -e VH7_MYSQL_HOST="127.0.0.1" \
+           -e VH7_MYSQL_PORT="3306" \
+           -e VH7_MYSQL_DATABASE="vh7" \
+           -e VH7_MYSQL_USERNAME="vh7-user" \
+           -e VH7_MYSQL_PASSWORD="password" \
+           -e VH7_SHORTURL_SALT="gh5489ghu47wo" \
            jake-walker/vh7:latest
 ```
 
@@ -53,7 +60,19 @@ _Additional help on Dockerfile generation is available [here](https://github.com
 _This command requires Java JDK 8 or later and Apache Maven._
 
 ```shell script
+# Build Application
 mvn clean package
+
+# Setup Environment
+export SPRING_PROFILES_ACTIVE="production"
+export VH7_MYSQL_HOST="127.0.0.1"
+export VH7_MYSQL_PORT="3306"
+export VH7_MYSQL_DATABASE="vh7"
+export VH7_MYSQL_USERNAME="vh7-user"
+export VH7_MYSQL_PASSWORD="password"
+export VH7_SHORTURL_SALT="gh5489ghu47wo"
+
+# Run VH7
 java -jar ./target/vh7-1.x.x.jar
 ```
 
