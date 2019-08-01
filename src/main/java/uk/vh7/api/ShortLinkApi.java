@@ -21,7 +21,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uk.vh7.common.IDConverter;
+import uk.vh7.common.IdConverter;
 import uk.vh7.common.Properties;
 import uk.vh7.dto.ShortLinkDto;
 import uk.vh7.exception.ShortLinkNotFoundException;
@@ -34,13 +34,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
 
-import static uk.vh7.common.RequestIP.getRequestIP;
+import static uk.vh7.common.RequestIp.getRequestIP;
 
 @RestController
 @RequestMapping("/api/v1/shortlink")
-public class ShortLinkAPI {
+public class ShortLinkApi {
     @Autowired
-    IDConverter idConverter;
+    IdConverter idConverter;
 
     @Autowired
     Properties properties;
@@ -48,7 +48,7 @@ public class ShortLinkAPI {
     private final ShortLinkService shortLinkService;
     private ModelMapper modelMapper;
 
-    public ShortLinkAPI(ShortLinkService shortLinkService) {
+    public ShortLinkApi(ShortLinkService shortLinkService) {
         this.shortLinkService = shortLinkService;
         this.modelMapper = new ModelMapper();
     }

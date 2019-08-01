@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-public class IDConverter {
+public class IdConverter {
     private static String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
 
     @Value("${vh7.short-url-salt}")

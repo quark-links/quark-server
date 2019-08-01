@@ -19,7 +19,7 @@ package uk.vh7.common;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class RequestIP {
+public class RequestIp {
     public static String getRequestIP(HttpServletRequest request) {
         String output;
         output = request.getHeader("X-FORWARDED-FOR");

@@ -20,7 +20,7 @@ package uk.vh7.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
-import uk.vh7.common.IDConverter;
+import uk.vh7.common.IdConverter;
 import uk.vh7.model.ShortLink;
 import uk.vh7.repository.ShortLinkRepository;
 
@@ -29,7 +29,7 @@ import java.util.Optional;
 @Service
 public class ShortLinkService {
     @Autowired
-    IDConverter idConverter;
+    IdConverter idConverter;
 
     private final ShortLinkRepository shortLinkRepository;
 

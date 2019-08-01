@@ -17,19 +17,12 @@
 
 package uk.vh7;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-// TODO: Create Tests!
-
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class VH7ApplicationTests {
-
-    @Test
-    public void contextLoads() {
+@SpringBootApplication
+public class Vh7Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Vh7Application.class, args);
     }
-
 }
