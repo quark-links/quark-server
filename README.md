@@ -11,6 +11,11 @@
 		<a href="https://vh7.uk/">Website</a>
 	</strong>
 </p>
+<p align="center">
+	<a href="https://dev.azure.com/jakewalker/VH7/_build?definitionId=3"><img
+        alt="Azure DevOps Build Status"
+    	src="https://img.shields.io/azure-devops/build/jakewalker/c9dce4e0-e2bd-4041-bb56-2dc7e4d98c37/3/master?style=flat-square"></a>
+</p>
 
 ## Overview
 
@@ -39,7 +44,7 @@ docker run --detach \
            -e VH7_MYSQL_USERNAME="vh7-user" \
            -e VH7_MYSQL_PASSWORD="password" \
            -e VH7_SHORTURL_SALT="gh5489ghu47wo" \
-           jake-walker/vh7:latest
+           jakewalker/vh7:latest
 ```
 
 #### Build Docker Image Manually
@@ -47,10 +52,11 @@ docker run --detach \
 _This command requires Java JDK 8 or later and Apache Maven._
 
 ```shell script
-mvn clean package dockerfile:build
+mvn clean package
+docker build -t jakewalker/vh7 .
 ```
 
-The built Docker image is saved as `jake-walker/vh7:1.x.x`. You can then use the same command above to run the newly built
+The built Docker image is saved as `jakewalker/vh7`. You can then use the same command above to run the newly built
 Docker image.
 
 _Additional help on Dockerfile generation is available [here](https://github.com/spotify/dockerfile-maven)._
