@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.URL;
-import uk.vh7.common.IDConverter;
+import uk.vh7.common.Identifiable;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,7 +16,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-public class ShortLink implements Serializable {
+public class ShortLink implements Serializable, Identifiable {
     @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,12 +63,6 @@ public class ShortLink implements Serializable {
     @JsonProperty("updatedAt")
     public Date getUpdatedAt() {
         return updatedAt;
-    }
-
-    @JsonProperty("shortLink")
-    public String getShortLink() {
-        IDConverter idConverter = new IDConverter();
-        return idConverter.idToAlphaId(id);
     }
 
     @JsonIgnore

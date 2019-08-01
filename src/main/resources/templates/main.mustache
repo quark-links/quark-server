@@ -176,7 +176,6 @@
         var app = new Vue({
             el: "#app",
             data: {
-                domain: "http://localhost:8080/",
                 apiBase: "/api/v1",
                 tab: "shorten",
                 shorten: {
@@ -219,7 +218,7 @@
                     }).then((response) => {
                         this.result.show = true;
                         console.log(response);
-                        this.result.link = this.domain + response.data.shortLink;
+                        this.result.link = response.data.shortLink;
                     }).catch(this.requestErrorHandler);
                     e.preventDefault();
                 },

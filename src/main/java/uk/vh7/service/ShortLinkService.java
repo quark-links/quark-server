@@ -1,5 +1,6 @@
 package uk.vh7.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import uk.vh7.common.IDConverter;
@@ -10,6 +11,9 @@ import java.util.Optional;
 
 @Service
 public class ShortLinkService {
+    @Autowired
+    IDConverter idConverter;
+
     private final ShortLinkRepository shortLinkRepository;
 
     public ShortLinkService(ShortLinkRepository shortLinkRepository) {
@@ -31,7 +35,6 @@ public class ShortLinkService {
     }
 
     public Optional<ShortLink> findByAlphaId(String alphaId) {
-        IDConverter idConverter = new IDConverter();
         Optional<Long> id = idConverter.alphaIdToId(alphaId);
         if (!id.isPresent()) { return Optional.empty(); }
         return findById(id.get());

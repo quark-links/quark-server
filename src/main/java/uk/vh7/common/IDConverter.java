@@ -2,28 +2,32 @@ package uk.vh7.common;
 
 import org.hashids.Hashids;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+@Component
 public class IDConverter {
-
-    private Hashids hashids;
+    private static String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
 
     @Value("${vh7.short-url-salt}")
-    private String salt;
+    String salt;
 
-    public IDConverter() {
-        String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
-        hashids = new Hashids(salt, 0, characters);
+    public Hashids getHashids() {
+        return new Hashids(salt, 0, characters);
     }
 
     public String idToAlphaId(long id) {
-        return hashids.encode(id);
+        return getHashids().encode(id);
     }
 
     public Optional<Long> alphaIdToId(String shortLink) {
-        long[] ids = hashids.decode(shortLink);
-        if (ids.length <= 0) { return Optional.empty(); }
+        long[] ids = getHashids().decode(shortLink);
+        if (ids.length != 1) { return Optional.empty(); }
         return Optional.of(ids[0]);
+    }
+
+    public String getShortLink(Identifiable entity) {
+        return idToAlphaId(entity.getId());
     }
 }

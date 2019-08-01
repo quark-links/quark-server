@@ -4,6 +4,11 @@
       "name": "vh7.short-url-salt",
       "type": "java.lang.String",
       "description": "Salt for converting database IDs to Short URLs and vice-versa. Anything random works as long as it does not change."
+    },
+    {
+      "name": "vh7.url",
+      "type": "java.lang.String",
+      "description": "The URL where VH7 is running including final slash (http://localhost:8080/ for development, https://vh7.uk/ for the official instance)."
     }
   ]
 }
