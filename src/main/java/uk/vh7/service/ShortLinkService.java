@@ -17,6 +17,7 @@
 
 package uk.vh7.service;
 
+import io.mola.galimatias.GalimatiasParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,8 @@ import uk.vh7.model.ShortLink;
 import uk.vh7.repository.ShortLinkRepository;
 
 import java.util.Optional;
+
+import static uk.vh7.common.UrlFormatter.formatMachineUrl;
 
 @Service
 public class ShortLinkService {
@@ -41,7 +44,12 @@ public class ShortLinkService {
         return shortLinkRepository.findById(id);
     }
 
-    public ShortLink save(ShortLink shortLink) {
+    public ShortLink save(ShortLink shortLink) throws GalimatiasParseException {
+        // Normalize URL
+        String normalizedUrl = shortLink.getLongUrl();
+        normalizedUrl = formatMachineUrl(normalizedUrl);
+        shortLink.setLongUrl(normalizedUrl);
+
         // Check for duplicates
         ShortLink shortLink1 = new ShortLink();
         shortLink1.setLongUrl(shortLink.getLongUrl());

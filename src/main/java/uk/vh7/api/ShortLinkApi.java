@@ -17,6 +17,7 @@
 
 package uk.vh7.api;
 
+import io.mola.galimatias.GalimatiasParseException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +55,7 @@ public class ShortLinkApi {
     }
 
     @PostMapping
-    public ResponseEntity create(@Valid @RequestBody ShortLink shortLink, HttpServletRequest request) throws URISyntaxException {
+    public ResponseEntity create(@Valid @RequestBody ShortLink shortLink, HttpServletRequest request) throws URISyntaxException, GalimatiasParseException {
         shortLink.setCreatorIp(getRequestIP(request));
         return ResponseEntity.ok(convertToDto(shortLinkService.save(shortLink)));
     }
