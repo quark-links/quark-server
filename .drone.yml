@@ -1,0 +1,16 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+  - name: lint
+    image: python:3.8-alpine
+    commands:
+      - pip install --upgrade pip pipenv
+      - pipenv install --dev
+      - pipenv run flake8
