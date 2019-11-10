@@ -16,7 +16,7 @@ class UrlSchema(ma.ModelSchema):
     class Meta:
         fields = ("url", "short_link")
         model = Url
-    
+
     short_link = ma.Nested(ShortLinkSchema)
 
 

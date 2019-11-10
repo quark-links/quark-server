@@ -1,11 +1,13 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 from hashids import Hashids
+import os
 
 db = SQLAlchemy()
-hashids = Hashids(min_length=0, alphabet=("abcdefghijklmnopqrstuvwxyzABCDEFGHI"
-                                          "JKLMNOPQRSTUVWXYZ0123456789"),
-                  salt="YeCqDt4fStm8DffjXQunuvcU3fFGBK9t")
+hashids = Hashids(min_length=0,
+                  alphabet=("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV"
+                            "WXYZ0123456789"),
+                  salt=os.getenv("VH7_SALT", "keyboardcat"))
 
 
 class ShortLink(db.Model):
