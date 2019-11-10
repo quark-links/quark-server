@@ -4,18 +4,19 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+flake8 = "*"
 
 [packages]
 flask = "*"
 sqlalchemy = "*"
 flask-sqlalchemy = "*"
 flask-marshmallow = "*"
-marshmallow-sqlalchemy = "*"
-mysqlclient = "*"
 flask-cors = "*"
 hashids = "*"
-marshmallow = "*"
 url-normalize = "*"
+webargs = "*"
+marshmallow = "*"
+marshmallow-sqlalchemy = "*"
 
 [requires]
 python_version = "3.7"

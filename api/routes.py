@@ -1,31 +1,97 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, current_app, jsonify
 from url_normalize import url_normalize
+from webargs.flaskparser import use_args
+from api.request_schema import url_args, paste_args, upload_args
+from api.response_schema import url_schema, paste_schema, upload_schema
+import uuid
+import os
+import hashlib
 
-from db import db, ShortLink, LongUrl
-from api.request_schema import CreateShortLinkSchema, CreateUploadSchema
-from api.response_schema import ma, shortlink_schema, shortlinks_schema, longurl_schema, longurls_schema
+from db import db, ShortLink, Url, Paste, Upload
 
 api = Blueprint("api", __name__, url_prefix="/api")
 
-ma.init_app(api)
+
+def _get_ip():
+    return request.environ.get("HTTP_X_REAL_IP", request.remote_addr)
 
 
 @api.route("/shorten", methods=["POST"])
-def shorten():
-    errors = CreateShortLinkSchema().validate(request.form)
-    if errors:
-        return str(errors)
+@use_args(url_args)
+def shorten(args):
+    req_url = url_normalize(args["url"])
 
-    url = url_normalize(request.form["url"])
-
-    duplicate_longurl = LongUrl.query.filter_by(url=url).first()
-    if duplicate_longurl is not None:
-        print("Using existing")
-        return shortlink_schema.jsonify(duplicate_longurl.shortlink)
+    duplicate = Url.query.filter_by(url=req_url).first()
+    if duplicate is not None:
+        return url_schema.jsonify(duplicate)
     else:
-        print("Creating new")
-        shortlink = ShortLink(request.remote_addr, url)
-        db.session.add(shortlink)
+        url = Url(req_url)
+        short_link = ShortLink(_get_ip())
+        short_link.url = url
+
+        db.session.add(url)
+        db.session.add(short_link)
         db.session.commit()
 
-        return shortlink_schema.jsonify(shortlink)
+        return url_schema.jsonify(url)
+
+
+@api.route("/paste", methods=["POST"])
+@use_args(paste_args)
+def paste(args):
+    req_code = args["code"].strip()
+    req_hash = hashlib.sha256(req_code.encode("utf8")).hexdigest()
+    req_lang = args["language"]
+
+    duplicate = Paste.query.filter_by(hash=req_hash).first()
+    if duplicate is not None:
+        return paste_schema.jsonify(duplicate)
+    else:
+        paste = Paste(req_code, req_lang, req_hash)
+        short_link = ShortLink(_get_ip())
+        short_link.paste = paste
+
+        db.session.add(paste)
+        db.session.add(short_link)
+        db.session.commit()
+
+        return paste_schema.jsonify(paste)
+
+
+@api.route("/upload", methods=["POST"])
+@use_args(upload_args)
+def upload(args):
+    filename = str(uuid.uuid4())
+    req_file = args["file"]
+    req_filename = req_file.filename
+    req_mimetype = req_file.mimetype
+    req_hash = hashlib.sha256(req_file.read()).hexdigest()
+
+    duplicate = Upload.query.filter_by(hash=req_hash).first()
+    if duplicate is not None:
+        return upload_schema.jsonify(duplicate)
+    else:
+        upload = Upload(req_filename, req_mimetype, filename, req_hash)
+        short_link = ShortLink(_get_ip())
+        short_link.upload = upload
+
+        args["file"].save(os.path.join(current_app.config["UPLOAD_FOLDER"],
+                                       filename))
+
+        db.session.add(upload)
+        db.session.add(short_link)
+        db.session.commit()
+
+        return upload_schema.jsonify(upload)
+
+
+@api.errorhandler(422)
+@api.errorhandler(400)
+def handle_error(err):
+    headers = err.data.get("headers", None)
+    messages = err.data.get("messages", ["Invalid request."])
+
+    if headers:
+        return jsonify({"errors": messages}), err.code, headers
+    else:
+        return jsonify({"errors": messages}), err.code

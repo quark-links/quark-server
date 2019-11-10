@@ -1,25 +1,46 @@
 from flask_marshmallow import Marshmallow
-from db import ShortLink, LongUrl
+from db import ShortLink, Url, Paste, Upload
 
 ma = Marshmallow()
 
 
-class LongUrlSchema(ma.ModelSchema):
-    class Meta:
-        fields = ("url",)
-        model = LongUrl
-
-
 class ShortLinkSchema(ma.ModelSchema):
     class Meta:
-        fields = ("created", "updated", "longurl", "shortlink")
+        fields = ("created", "updated", "link")
         model = ShortLink
 
-    longurl = ma.Nested(LongUrlSchema)
-    shortlink = ma.Function(lambda obj: obj.url())
+    link = ma.Function(lambda x: x.link())
 
 
-shortlink_schema = ShortLinkSchema()
-shortlinks_schema = ShortLinkSchema(many=True)
-longurl_schema = LongUrlSchema()
-longurls_schema = LongUrlSchema(many=True)
+class UrlSchema(ma.ModelSchema):
+    class Meta:
+        fields = ("url", "short_link")
+        model = Url
+    
+    short_link = ma.Nested(ShortLinkSchema)
+
+
+class PasteSchema(ma.ModelSchema):
+    class Meta:
+        fields = ("language", "code", "short_link")
+        model = Paste
+
+    short_link = ma.Nested(ShortLinkSchema)
+
+
+class UploadSchema(ma.ModelSchema):
+    class Meta:
+        fields = ("mimetype", "original_filename", "short_link")
+        model = Upload
+
+    short_link = ma.Nested(ShortLinkSchema)
+
+
+short_link_schema = ShortLinkSchema()
+short_links_schema = ShortLinkSchema(many=True)
+url_schema = UrlSchema()
+urls_schema = UrlSchema(many=True)
+paste_schema = PasteSchema()
+pastes_schema = PasteSchema(many=True)
+upload_schema = UploadSchema()
+uploads_schema = UploadSchema(many=True)
