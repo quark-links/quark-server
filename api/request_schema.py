@@ -1,6 +1,6 @@
 from webargs import fields
 
-_valid_languages = ["python", "js"]
+_valid_languages = ["plain"]
 
 
 url_args = {
@@ -14,5 +14,5 @@ paste_args = {
 }
 
 upload_args = {
-    "file": fields.Field(required=True, location="files")
+    "file": fields.Field(location="files", required=True)
 }

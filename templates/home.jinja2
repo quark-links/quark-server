@@ -1,0 +1,155 @@
+{% extends "base.jinja2" %}
+
+{% block title %}VH7 Beta{% endblock %}
+
+{% block content %}
+<section class="hero is-primary is-medium is-bold">
+    <div class="hero-head">
+        {% include "nav.jinja2" %}
+    </div>
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">
+                VH7 <span class="tag is-warning">Beta</span>
+            </h1>
+            <h2 class="subtitle">
+                A free and open source <u>URL shortening</u>, <u>file sharing</u> and <u>pastebin</u> service.
+            </h2>
+        </div>
+    </div>
+    <!--<div class="hero-foot">
+        <nav class="tabs is-boxed is-fullwidth">
+            <div class="container">
+                <ul>
+                    <li class="is-active">
+                        <a>Shorten</a>
+                    </li>
+                    <li>
+                        <a>Paste</a>
+                    </li>
+                    <li>
+                        <a>Upload</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>-->
+</section>
+
+<section id="shorten-section" class="section">
+    <div class="container">
+        <h1 class="title">Shorten</h1>
+
+        <form method="post" action="/api/shorten">
+            <div class="field">
+                <label class="label">URL</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="url" name="url">
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-link"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button type="submit" class="button is-primary">Shorten</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<section id="paste-section" class="section">
+    <div class="container">
+        <h1 class="title">Paste</h1>
+
+        <div class="notification is-warning">
+            <b>VH7 is currently in beta!</b> At the moment we only support plain
+            text code pastes, this means that your code will not be syntax
+            highlighted now or after the beta.
+        </div>
+
+        <form method="post" action="/api/paste">
+            <div class="field">
+                <label class="label">Code</label>
+                <div class="control">
+                    <textarea class="textarea" name="code"></textarea>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Language</label>
+                <div class="control has-icons-left">
+                    <div class="select">
+                        <select name="language">
+                            <option value="plain">Plain Text</option>
+                        </select>
+                    </div>
+                    <div class="icon is-small is-left">
+                        <i class="fas fa-code"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button type="submit" class="button is-primary">Paste</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<section id="upload-section" class="section">
+    <div class="container">
+        <h1 class="title">Upload</h1>
+
+        <div class="notification is-warning">
+            <b>VH7 is currently in beta!</b> Although file uploads are supported
+            at the moment, we can't guarentee that the files will be stored after
+            the beta.
+        </div>
+
+        <form method="post" action="/api/upload" enctype="multipart/form-data">
+            <div class="field">
+                <label class="label">File</label>
+                <div class="control">
+                    <div id="upload-file" class="file has-name">
+                        <label class="file-label">
+                            <input class="file-input" type="file" name="file">
+                            <span class="file-cta">
+                                <span class="file-icon">
+                                    <i class="fas fa-upload"></i>
+                                </span>
+                                <span class="file-label">
+                                    Choose a file…
+                                </span>
+                            </span>
+                            <span class="file-name">
+                                No file uploaded
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button type="submit" class="button is-primary">Upload</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block footer %}
+    {{ super() }}
+
+    <script>
+        const fileInput = document.querySelector('#upload-file input[type=file]');
+        fileInput.onchange = () => {
+            if (fileInput.files.length > 0) {
+            const fileName = document.querySelector('#upload-file .file-name');
+            fileName.textContent = fileInput.files[0].name;
+            }
+        }
+    </script>
+{% endblock %}

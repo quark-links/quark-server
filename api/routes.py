@@ -66,6 +66,10 @@ def upload(args):
     req_filename = req_file.filename
     req_mimetype = req_file.mimetype
     req_hash = hashlib.sha256(req_file.read()).hexdigest()
+    # file_size = req_file.tell()
+
+    # Reset the file to the beginning (otherwise the saved file is empty)
+    req_file.seek(0)
 
     duplicate = Upload.query.filter_by(hash=req_hash).first()
     if duplicate is not None:
@@ -75,8 +79,8 @@ def upload(args):
         short_link = ShortLink(_get_ip())
         short_link.upload = upload
 
-        args["file"].save(os.path.join(current_app.config["UPLOAD_FOLDER"],
-                                       filename))
+        req_file.save(os.path.join(current_app.config["UPLOAD_FOLDER"],
+                                   filename))
 
         db.session.add(upload)
         db.session.add(short_link)
