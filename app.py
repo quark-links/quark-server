@@ -45,6 +45,7 @@ def index():
 
 @app.route("/<id>")
 def goto(id):
+    """Route for managing redirects from a short link."""
     try:
         id = hashids.decode(id)[0]
     except IndexError:
