@@ -1,3 +1,5 @@
+"""A file containing all of the Flask routes for the API."""
+
 from flask import Blueprint, request, current_app, jsonify
 from url_normalize import url_normalize
 from webargs.flaskparser import use_args
@@ -19,6 +21,7 @@ def _get_ip():
 @api.route("/shorten", methods=["POST"])
 @use_args(url_args)
 def shorten(args):
+    """A flask route for shortening URLs."""
     req_url = url_normalize(args["url"])
 
     duplicate = Url.query.filter_by(url=req_url).first()
@@ -39,7 +42,9 @@ def shorten(args):
 @api.route("/paste", methods=["POST"])
 @use_args(paste_args)
 def paste(args):
+    """A flask route for creating pastes."""
     req_code = args["code"].strip()
+    # Calculate a hash of the text
     req_hash = hashlib.sha256(req_code.encode("utf8")).hexdigest()
     req_lang = args["language"]
 
@@ -61,12 +66,14 @@ def paste(args):
 @api.route("/upload", methods=["POST"])
 @use_args(upload_args)
 def upload(args):
+    """A flask route for uploading files."""
+    # Create a filename for the uploaded file
     filename = str(uuid.uuid4())
     req_file = args["file"]
     req_filename = req_file.filename
     req_mimetype = req_file.mimetype
+    # Calculate a hash of the uploaded file
     req_hash = hashlib.sha256(req_file.read()).hexdigest()
-    # file_size = req_file.tell()
 
     # Reset the file to the beginning (otherwise the saved file is empty)
     req_file.seek(0)
@@ -92,6 +99,7 @@ def upload(args):
 @api.errorhandler(422)
 @api.errorhandler(400)
 def handle_error(err):
+    """A flask error handler for creating pretty JSON error responses."""
     headers = err.data.get("headers", None)
     messages = err.data.get("messages", ["Invalid request."])
 

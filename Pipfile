@@ -17,6 +17,9 @@ url-normalize = "*"
 webargs = "*"
 marshmallow = "*"
 marshmallow-sqlalchemy = "*"
+flake8-print = "*"
+flake8-eradicate = "*"
+flake8-docstrings = "*"
 
 [requires]
 python_version = "3.7"

@@ -1,16 +1,27 @@
+"""A file for containing all of the database specific code for VH7.
+
+This file contains SQLAlchemy models for each of the different things that are
+stored in the database.
+"""
+
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 from hashids import Hashids
-import os
+import config
 
 db = SQLAlchemy()
+# Create a new hashids instance for converting database IDs to short links
 hashids = Hashids(min_length=0,
-                  alphabet=("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV"
-                            "WXYZ0123456789"),
-                  salt=os.getenv("VH7_SALT", "keyboardcat"))
+                  alphabet=config.HASHIDS_ALPHABET,
+                  salt=config.HASHIDS_SALT)
 
 
 class ShortLink(db.Model):
+    """SQLAlchemy model for short links.
+
+    This is for storing a short link and pointing it to either a URL, paste or
+    upload. It also stores some metadata about the time and who created it.
+    """
     __tablename__ = "shortlink"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -26,13 +37,29 @@ class ShortLink(db.Model):
                              back_populates="short_link")
 
     def __init__(self, creator_ip):
+        """Create a new short link object.
+
+        Args:
+            creator_ip (str): The IP of the user who created the short link.
+        """
         self.creator_ip = creator_ip
 
     def link(self):
+        """Get the short link.
+
+        The output of this should be added to the end of the instance URL.
+
+        Returns:
+            str: The short link with a slash at the beginning.
+        """
         return "/" + hashids.encode(self.id)
 
 
 class Url(db.Model):
+    """SQLAlchemy model for URLs.
+
+    This is for storing a specific URL which is then pointed to a short link.
+    """
     __tablename__ = "url"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -41,10 +68,20 @@ class Url(db.Model):
     url = db.Column(db.String(2048), nullable=False)
 
     def __init__(self, url):
+        """Create a new URL object.
+
+        Args:
+            url (str): The URL.
+        """
         self.url = url
 
 
 class Paste(db.Model):
+    """SQLAlchemy model for pastes.
+
+    This is for storing a paste (i.e. a chunk of text) which is then pointed
+    to a short link.
+    """
     __tablename__ = "paste"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -55,12 +92,26 @@ class Paste(db.Model):
     hash = db.Column(db.String(64), nullable=False)
 
     def __init__(self, code, language, hash):
+        """Create a new paste object.
+
+        Args:
+            code (str): The chunk of text to be stored.
+            language (str): The programming language that the paste is written
+                in.
+            hash (str): A SHA256 hash of the `code`.
+        """
         self.code = code
         self.language = language
         self.hash = hash
 
 
 class Upload(db.Model):
+    """SQLAlchemy model for uploads.
+
+    This is for storing metadata about uploaded files which is then pointed to
+    a short link. This doesn't actually store the file but stores where it is
+    saved along with the file's mimetype.
+    """
     __tablename__ = "upload"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -72,6 +123,15 @@ class Upload(db.Model):
     hash = db.Column(db.String(64), nullable=False)
 
     def __init__(self, original_filename, mimetype, filename, hash):
+        """Create a new upload object.
+
+        Args:
+            original_filename (str): The original filename of the uploaded
+                file.
+            mimetype (str): The MIME type of the uploaded file.
+            filename (str): The filename of the uploaded file on the server.
+            hash (str): A SHA256 hash of the uploaded file.
+        """
         self.original_filename = original_filename
         self.mimetype = mimetype
         self.filename = filename

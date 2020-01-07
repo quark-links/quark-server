@@ -1,3 +1,8 @@
+"""A file containing the request schemas.
+
+This file contains webargs schema for each of the API requests.
+"""
+
 from webargs import fields
 
 _valid_languages = ["plain"]
