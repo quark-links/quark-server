@@ -25,3 +25,50 @@ for yourself.
 accept community contributions, just open a pull request!_
 - **Multi-purpose.** Unlike other mainstream URL shorteners, VH7 also provides file sharing and a pastebin also with short
 links.
+
+## Getting Started
+
+**VH7 isn't ready for a production setup yet, so these instructions are for setting VH7 up in a development environment.**
+
+### Prerequisites
+
+- [Python 3.7](https://www.python.org/downloads/) (or any other version of Python 3)
+- [Pipenv](https://github.com/pypa/pipenv) (for managing dependencies and a virtual environment)
+
+### Installation
+
+Clone the repository
+
+```
+git clone https://github.com/jake-walker/vh7
+```
+
+Install the dependencies
+
+```
+pipenv install
+```
+
+Then finally, run
+
+```
+pipenv run python app.py
+```
+
+Open a browser to <https://localhost:5000/>.
+
+## Running Tests
+
+### Code Style
+
+Code Style is checked by [flake8](http://flake8.pycqa.org/en/latest/). Simply run `flake8` inside the virtual environment to run the checks.
+
+## Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+Please run tests and flake8 before committing.
+
+## License
+
+This project is licensed under the GNU General Public License v3.0 - see the <LICENSE.md> file for details.
