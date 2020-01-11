@@ -27,3 +27,7 @@ HASHIDS_ALPHABET = ("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234"
 # The salt that short links are generated from. Do not change after initial
 # run!
 HASHIDS_SALT = os.getenv("VH7_SALT", "keyboardcat")
+
+# The maximum file size that the server will accept before aborting the
+# request.
+MAX_CONTENT_LENGTH = 512 * 1024 * 1024  # 512mb limit
