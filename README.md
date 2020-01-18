@@ -49,6 +49,12 @@ Install the dependencies
 pipenv install
 ```
 
+Then setup the database with the latest schema
+
+```
+pipenv run flask db upgrade
+```
+
 Then finally, run
 
 ```

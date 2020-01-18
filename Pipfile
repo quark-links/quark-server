@@ -21,6 +21,7 @@ webargs = "*"
 marshmallow = "*"
 marshmallow-sqlalchemy = "*"
 timeloop = "*"
+flask-migrate = "*"
 
 [requires]
 python_version = "3.7"

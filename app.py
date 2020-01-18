@@ -5,6 +5,7 @@ database.
 """
 
 from flask import Flask, render_template, redirect, send_file
+from flask_migrate import Migrate
 from db import db, hashids, ShortLink
 from flask_cors import CORS
 from api.routes import api
@@ -23,10 +24,8 @@ CORS(app)
 # Setup the SQLAlchemy database
 db.init_app(app)
 db.app = app
-# Create all of the tables in the database
-db.create_all()
-# Save changes
-db.session.commit()
+
+migrate = Migrate(app, db)
 
 # Create the upload folder if it doesn't exist
 try:
