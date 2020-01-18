@@ -45,7 +45,7 @@ class UploadSchema(ma.ModelSchema):
     """Marshmallow schema for upload objects."""
     class Meta:
         """Metadata about the schema."""
-        fields = ("mimetype", "original_filename", "short_link")
+        fields = ("mimetype", "original_filename", "short_link", "expires")
         model = Upload
 
     short_link = ma.Nested(ShortLinkSchema)

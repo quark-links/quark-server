@@ -5,6 +5,8 @@ verify_ssl = true
 
 [dev-packages]
 flake8 = "*"
+flake8-eradicate = "*"
+flake8-docstrings = "*"
 
 [packages]
 flask = "*"
@@ -17,9 +19,7 @@ url-normalize = "*"
 webargs = "*"
 marshmallow = "*"
 marshmallow-sqlalchemy = "*"
-flake8-print = "*"
-flake8-eradicate = "*"
-flake8-docstrings = "*"
+timeloop = "*"
 
 [requires]
 python_version = "3.7"

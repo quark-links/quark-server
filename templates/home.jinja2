@@ -49,8 +49,9 @@
 
             <div class="notification is-success" v-if="result">
                 <button class="delete" v-on:click="result = null"></button>
-                Shortened to:<br>
-                <span style="font-size: 1.5em;"><code><% result %></code></span>
+                <p>Shortened to:<br>
+                <span class="is-size-4"><code><% shortlink %></code></span></p>
+                <p v-if="result.expires" class="is-italic is-size-7">This file will last until <% result.expires | moment("HH:mm ddd Do MMM YYYY") %>.</p>
             </div>
         </div>
     </section>
@@ -127,6 +128,11 @@
                 the beta.
             </div>
 
+            <div class="notification is-info">
+                Uploaded files will last between {{ config["UPLOAD_MIN_AGE"] }} to {{ config["UPLOAD_MAX_AGE"] }} days depending on their size.
+                The maximum size for uploads is {{ config["UPLOAD_MAX_SIZE"] }} Mb.
+            </div>
+
             <form @submit.prevent="handleUpload">
                 <div class="field">
                     <label class="label">File</label>
@@ -166,9 +172,11 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdn.statically.io/gh/vuelidate/vuelidate/5de65cdd/dist/vuelidate.min.js"></script>
     <script src="https://cdn.statically.io/gh/vuelidate/vuelidate/5de65cdd/dist/validators.min.js"></script>
+    <script src="https://cdn.statically.io/gh/brockpetrie/vue-moment/0f81113a/dist/vue-moment.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
         Vue.use(window.vuelidate.default);
+        Vue.use(window.vueMoment.default);
 
         var app = new Vue({
             el: '#app',
@@ -191,6 +199,13 @@
             computed: {
                 disableSubmit() {
                     return this.uploadProgress < 100;
+                },
+                shortlink() {
+                    if (!this.result) {
+                        return null;
+                    }
+
+                    return window.location.origin + this.result.short_link.link;
                 }
             },
             methods: {
@@ -199,14 +214,17 @@
                     this.pasteForm.code = "";
                     this.pasteForm.language = "plain";
                     this.uploadForm.file = null;
+
+                    if (this.$refs.file) {
+                        this.$refs.file.value = "";
+                    }
                 },
                 handleResponse(response) {
                     if (response.status != 200) {
                         this.handleError("Status code is not 200!");
                     }
 
-                    var shortlink = window.location.origin + response.data.short_link.link;
-                    this.result = shortlink;
+                    this.result = response.data;
 
                     this.clearForms();
                 },
@@ -245,7 +263,9 @@
                     }).then(this.handleResponse).catch(this.handleError);
                 },
                 handleFileUpload() {
-                    this.uploadForm.file = this.$refs.file.files[0];
+                    if (this.$refs.file.files.length > 0) {
+                        this.uploadForm.file = this.$refs.file.files[0];
+                    }
                 },
                 onUploadProgress(progressEvent) {
                     this.uploadProgress = (progressEvent.loaded / progressEvent.total) * 100;

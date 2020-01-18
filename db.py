@@ -8,6 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 from hashids import Hashids
 import config
+import datetime
 
 db = SQLAlchemy()
 # Create a new hashids instance for converting database IDs to short links
@@ -119,10 +120,11 @@ class Upload(db.Model):
     short_link = db.relationship("ShortLink", back_populates="upload")
     mimetype = db.Column(db.String(100), nullable=False)
     original_filename = db.Column(db.String(400), nullable=False)
-    filename = db.Column(db.String(400), nullable=False)
+    filename = db.Column(db.String(400), nullable=True)
     hash = db.Column(db.String(64), nullable=False)
+    expires = db.Column(db.DateTime(timezone=True), nullable=False)
 
-    def __init__(self, original_filename, mimetype, filename, hash):
+    def __init__(self, original_filename, mimetype, filename, hash, retention):
         """Create a new upload object.
 
         Args:
@@ -131,8 +133,13 @@ class Upload(db.Model):
             mimetype (str): The MIME type of the uploaded file.
             filename (str): The filename of the uploaded file on the server.
             hash (str): A SHA256 hash of the uploaded file.
+            retention (int): The number of days until the file expires.
         """
         self.original_filename = original_filename
         self.mimetype = mimetype
         self.filename = filename
         self.hash = hash
+        self.set_retention(retention)
+
+    def set_retention(self, days):
+        self.expires = datetime.datetime.now() + datetime.timedelta(days=days)

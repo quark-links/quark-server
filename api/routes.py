@@ -8,6 +8,7 @@ from api.response_schema import url_schema, paste_schema, upload_schema
 import uuid
 import os
 import hashlib
+import utils.retention as retention
 
 from db import db, ShortLink, Url, Paste, Upload
 
@@ -78,11 +79,35 @@ def upload(args):
     # Reset the file to the beginning (otherwise the saved file is empty)
     req_file.seek(0)
 
+    # Calculate file size of uploaded file in Mb
+    file_size = os.fstat(req_file.fileno()).st_size / 1e+6
+
     duplicate = Upload.query.filter_by(hash=req_hash).first()
+    # If the uploaded file already exists
     if duplicate is not None:
+        # If the uploaded file has expired
+        if duplicate.filename is None:
+            ret = retention.calculate(file_size)
+
+            if ret < 0:
+                raise Exception("The uploaded file was over the maximum size!")
+
+            duplicate.filename = filename
+            duplicate.set_retention(ret)
+
+            req_file.save(os.path.join(current_app.config["UPLOAD_FOLDER"],
+                                       filename))
+
+            db.session.commit()
+
         return upload_schema.jsonify(duplicate)
     else:
-        upload = Upload(req_filename, req_mimetype, filename, req_hash)
+        ret = retention.calculate(file_size)
+
+        if ret < 0:
+            raise Exception("The uploaded file was over the maximum size!")
+
+        upload = Upload(req_filename, req_mimetype, filename, req_hash, ret)
         short_link = ShortLink(_get_ip())
         short_link.upload = upload
 

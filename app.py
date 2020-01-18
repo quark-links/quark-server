@@ -10,6 +10,7 @@ from flask_cors import CORS
 from api.routes import api
 import os
 import config
+import cleanup
 
 # Create a new Flask server
 app = Flask(__name__)
@@ -72,6 +73,8 @@ def goto(id):
     else:
         raise Exception("Short Link isn't pointed to any other type!")
 
+
+cleanup.start()
 
 if __name__ == '__main__':
     app.run()
