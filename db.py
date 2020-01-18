@@ -142,4 +142,9 @@ class Upload(db.Model):
         self.set_retention(retention)
 
     def set_retention(self, days):
+        """Set the expiry date to now plus the specified number of days.
+
+        Args:
+            days (int): The number of days that the file should be kept for.
+        """
         self.expires = datetime.datetime.now() + datetime.timedelta(days=days)

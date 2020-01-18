@@ -20,5 +20,6 @@ def calculate(file_size):
     if file_size > max_size or file_size < 0:
         return -1
 
-    result = min_age + (-max_age + min_age) * math.pow((file_size / max_size - 1), 3)
+    result = (min_age + (-max_age + min_age) *
+              math.pow((file_size / max_size - 1), 3))
     return math.floor(result)

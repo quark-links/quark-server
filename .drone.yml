@@ -14,3 +14,4 @@ steps:
       - pip install --upgrade pip pipenv
       - pipenv install --dev
       - pipenv run flake8
+      - pipenv run pytest -svv
