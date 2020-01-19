@@ -9,6 +9,7 @@ import uuid
 import os
 import hashlib
 import utils.retention as retention
+from api.exceptions import ApiException, FileTooLargeException
 
 from db import db, ShortLink, Url, Paste, Upload
 
@@ -90,7 +91,7 @@ def upload(args):
             ret = retention.calculate(file_size)
 
             if ret < 0:
-                raise Exception("The uploaded file was over the maximum size!")
+                raise FileTooLargeException()
 
             duplicate.filename = filename
             duplicate.set_retention(ret)
@@ -105,7 +106,7 @@ def upload(args):
         ret = retention.calculate(file_size)
 
         if ret < 0:
-            raise Exception("The uploaded file was over the maximum size!")
+            raise FileTooLargeException()
 
         upload = Upload(req_filename, req_mimetype, filename, req_hash, ret)
         short_link = ShortLink(_get_ip())
@@ -119,6 +120,15 @@ def upload(args):
         db.session.commit()
 
         return upload_schema.jsonify(upload)
+
+
+@api.errorhandler(ApiException)
+def handle_api_error(err):
+    """A flask error handler for creatinng pretty JSON error responses.
+
+    This handler handles custom API exceptions.
+    """
+    return jsonify({"errors": [err.message]}), err.code
 
 
 @api.errorhandler(422)
