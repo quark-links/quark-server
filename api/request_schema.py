@@ -13,7 +13,8 @@ url_args = {
 }
 
 paste_args = {
-    "code": fields.Str(required=True),
+    "code": fields.Str(required=True,
+                       validate=lambda c: bool(c.strip())),
     "language": fields.Str(required=True,
                            validate=lambda l: l in _valid_languages)
 }

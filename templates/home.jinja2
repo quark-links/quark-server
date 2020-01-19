@@ -56,6 +56,15 @@
         </div>
     </section>
 
+    <section id="error-section" class="section" v-if="error">
+        <div class="container">
+            <div class="notification is-danger">
+                <button class="delete" v-on:click="error = null"></button>
+                <span v-html="error"></span>
+            </div>
+        </div>
+    </section>
+
     <section id="shorten-section" class="section" v-if="tab == 'shorten'">
         <div class="container">
             <h1 class="title">Shorten</h1>
@@ -194,7 +203,8 @@
                     file: null
                 },
                 uploadProgress: 100,
-                result: null
+                result: null,
+                error: null
             },
             computed: {
                 disableSubmit() {
@@ -229,8 +239,41 @@
                     this.clearForms();
                 },
                 handleError(error) {
-                    console.error(error);
-                    alert("There was a problem whilst performing that action. Please check the console for more details and open an issue at https://github.com/jake-walker/vh7");
+                    if (error.response) {
+                        // Error after sending (from server)
+                        let e = error.response.data;
+                        if (typeof e != "object" || e === null) {
+                            console.log("The server's error is not in JSON format.");
+                            this.error = "An unknown error occurred whilst performing the action. Please check the console for more details.";
+                            console.error(error.response.data);
+                            return;
+                        }
+
+                        if (e.errors) {
+                            var errorList = null;
+                            if (Array.isArray(e.errors)) {
+                                errorList = e.errors;
+                            } else {
+                                // Flatten error object's values into a single array
+                                errorList = [].concat.apply([], Object.values(e.errors));
+                            }
+
+                            this.error = "The following errors have occurred whilst perfoming the action:<ul><li>" + errorList.join("</li><li>") + "</li></ul>";
+                        } else {
+                            console.log("The server's is not in an expected JSON format.");
+                            this.error = "An unknown error occurred whilst performing the action. Please check the console for more details.";
+                            console.error(error.response.data);
+                            return;
+                        }
+                    } else if (error.request) {
+                        // Error before sending
+                        this.error = "An unknown error occurred whilst performing the action. Please check the console for more details.";
+                        console.log(error.request);
+                    } else {
+                        // Unknown
+                        this.error = "An unknown error occurred whilst performing the action. Please check the console for more details.";
+                        console.log(error.message);
+                    }
                 },
                 handleShorten() {
                     console.log("Shortening URL " + this.shortenForm.url + "...");
