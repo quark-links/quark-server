@@ -184,21 +184,6 @@
     <script src="https://cdn.statically.io/gh/brockpetrie/vue-moment/0f81113a/dist/vue-moment.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-            if ($navbarBurgers.length > 0) {
-                $navbarBurgers.forEach( el => {
-                    el.addEventListener('click', () => {
-                        const target = el.dataset.target;
-                        const $target = document.getElementById(target);
-                        el.classList.toggle('is-active');
-                        $target.classList.toggle('is-active');
-                    });
-                });
-            }
-        });
-    </script>
-    <script>
         Vue.use(window.vuelidate.default);
         Vue.use(window.vueMoment.default);
 

@@ -1,0 +1,21 @@
+{% extends "base.jinja2" %}
+
+{% block title %}Download - VH7 Beta{% endblock %}
+
+{% block content %}
+    {% include "nav.jinja2" %}
+
+    <section class="section">
+        <div class="container">
+            <h1 class="is-size-2">{{ upload.original_filename|e }}</h1>
+            <div class="content">
+                <ul>
+                    <li><b>SHA256:</b> <code>{{ upload.hash }}</code></li>
+                    <li><b>Expires:</b> {{ upload.expires.strftime("%H:%m %d/%m/%Y") }}</li>
+                    <li><b>File Type:</b> {{ upload.mimetype|e }}</li>
+                </ul>
+            </div>
+            <a class="button is-primary" href="?dl=1">Download</a>
+        </div>
+    </section>
+{% endblock %}
