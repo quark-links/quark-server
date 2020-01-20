@@ -59,7 +59,7 @@ def goto(id):
         # Redirect user to the URL
         return redirect(shortlink.url.url, 301)
     elif shortlink.paste is not None:
-        return shortlink.paste.code
+        return render_template("paste.jinja2", paste=shortlink.paste)
     elif shortlink.upload is not None:
         if request.args.get("dl") is not None:
             # Get the path of the upload by joining the filename with the

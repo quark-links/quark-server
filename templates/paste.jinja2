@@ -1,0 +1,15 @@
+{% extends "base.jinja2" %}
+
+{% block title %}Paste - VH7 Beta{% endblock %}
+
+{% block content %}
+    {% include "nav.jinja2" %}
+
+    <section class="section">
+        <div class="container">
+            <h1 class="is-size-2">Paste</h1>
+            <p><b>Language:</b> {{ paste.language|e }}</p>
+            <pre style="background: #eee;"><code>{{ paste.code|e }}</code></pre>
+        </div>
+    </section>
+{% endblock %}
