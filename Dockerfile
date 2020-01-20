@@ -5,6 +5,8 @@ WORKDIR /app
 
 RUN chmod 777 /app/entrypoint.sh
 
+RUN apk add --no-cache mariadb-dev g++
+
 RUN pip install --upgrade pip pipenv
 RUN pipenv install --system
 RUN mkdir -p /uploads
@@ -19,8 +21,6 @@ ENV VH7_UPLOAD_MAX_SIZE "256"
 VOLUME /uploads
 
 EXPOSE 8000
-
-RUN ls -la
 
 ENTRYPOINT ["sh", "/app/entrypoint.sh"]
 CMD ["gunicorn", "-b", "0.0.0.0:8000", "app:app"]

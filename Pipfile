@@ -23,6 +23,7 @@ marshmallow-sqlalchemy = "*"
 timeloop = "*"
 flask-migrate = "*"
 gunicorn = "*"
+mysqlclient = "*"
 
 [requires]
 python_version = "3.7"
