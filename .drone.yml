@@ -8,10 +8,21 @@ platform:
   arch: amd64
 
 steps:
-  - name: lint
+  - name: test
     image: python:3.7-alpine
     commands:
       - pip install --upgrade pip pipenv
       - pipenv install --dev
       - pipenv run flake8
       - pipenv run pytest -svv
+  - name: release-docker
+    image: plugins/docker
+    settings:
+      username: jakewalker
+      password:
+        from_secret: docker_password
+      repo: jakewalker/vh7
+      auto_tag: true
+      when:
+        event:
+          - tag

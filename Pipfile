@@ -22,6 +22,7 @@ marshmallow = "*"
 marshmallow-sqlalchemy = "*"
 timeloop = "*"
 flask-migrate = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.7"

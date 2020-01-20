@@ -30,11 +30,11 @@ HASHIDS_ALPHABET = ("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234"
 HASHIDS_SALT = os.getenv("VH7_SALT", "keyboardcat")
 
 # The minimum age that an uploaded file is stored for in days.
-UPLOAD_MIN_AGE = 30
+UPLOAD_MIN_AGE = int(os.getenv("VH7_UPLOAD_MIN_AGE", 30))
 # The maximum age that an uploaded file is stored for in days.
-UPLOAD_MAX_AGE = 90
+UPLOAD_MAX_AGE = int(os.getenv("VH7_UPLOAD_MAX_AGE", 90))
 # The maximum size that uploaded files are allowed to be in Mb.
-UPLOAD_MAX_SIZE = 256
+UPLOAD_MAX_SIZE = int(os.getenv("VH7_UPLOAD_MAX_SIZE", 256))
 
 # The maximum file size that the server will accept before aborting the
 # request.
