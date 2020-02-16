@@ -16,6 +16,19 @@
                     <li><b>File Type:</b> {{ upload.mimetype|e }}</li>
                 </ul>
             </div>
+
+            <article class="message is-danger">
+                <div class="message-header">
+                    <p>Danger</p>
+                </div>
+                <div class="message-body">
+                    Files uploaded to VH7 are <b>not checked</b> for viruses,
+                    spyware or other potentially unwanted programs. Please be
+                    cautious when downloading files from people that you don't
+                    know!
+                </div>
+            </article>
+
             <a class="button is-primary" href="?dl=1">Download</a>
         </div>
     </section>
