@@ -16,7 +16,26 @@
     <meta name="msapplication-config" content="/static/browserconfig.xml">
     <meta name="theme-color" content="#35dde8">
 
+    <!-- primary meta tags -->
     <title>{% block title %}{% endblock %}</title>
+    <meta name="title" content="VH7">
+    <meta name="description" content="A free and open source URL shortening, file sharing and pastebin service.">
+
+    <!-- open graph/facebook meta tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://vh7.uk/">
+    <meta property="og:title" content="VH7">
+    <meta property="og:description" content="A free and open source URL shortening, file sharing and pastebin service.">
+    <meta property="og:image" content="https://vh7.uk/static/meta.png">
+
+    <!-- twitter meta tags -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://vh7.uk/">
+    <meta property="twitter:title" content="VH7">
+    <meta property="twitter:description" content="A free and open source URL shortening, file sharing and pastebin service.">
+    <meta property="twitter:image" content="https://vh7.uk/static/meta.png">
+
+    <!-- css -->
     <link rel="stylesheet" href="/static/css/bulma.min.css">
     <link rel="stylesheet" href="/static/fa/css/all.min.css">
     {% endblock %}
