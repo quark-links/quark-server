@@ -1,5 +1,7 @@
 FROM python:3.7-alpine
 
+LABEL com.centurylinklabs.watchtower.enable="true"
+
 ADD . /app
 WORKDIR /app
 
