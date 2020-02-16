@@ -1,5 +1,5 @@
 <h1 align="center">
-	VH7
+	<img src="static/img/logo.png" style="height: 4em;" alt="VH7 Logo">
 </h1>
 
 <h3 align="center">
