@@ -1,39 +1,25 @@
 <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand">
-    <a class="navbar-item" href="/">VH7 &nbsp; <span class="tag is-warning">Beta</span></a>
+    <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+            <img src="/static/img/logo white.png" alt="VH7 Logo">
+        </a>
 
-    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>
-
-  <div id="navbar" class="navbar-menu">
-    <div class="navbar-start">
-      <a class="navbar-item" href="/">
-        Home
-      </a>
-
-      <a class="navbar-item" href="https://github.com/jake-walker/vh7/wiki/API" target="_blank">
-        Documentation
-      </a>
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
     </div>
-</div>
-</nav>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-        if ($navbarBurgers.length > 0) {
-            $navbarBurgers.forEach( el => {
-                el.addEventListener('click', () => {
-                    const target = el.dataset.target;
-                    const $target = document.getElementById(target);
-                    el.classList.toggle('is-active');
-                    $target.classList.toggle('is-active');
-                });
-            });
-        }
-    });
-</script>
+    <div id="navbar" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item" href="/">
+                Home
+            </a>
+
+            <a class="navbar-item" href="https://github.com/jake-walker/vh7/wiki/API" target="_blank">
+                Documentation
+            </a>
+        </div>
+    </div>
+</nav>
