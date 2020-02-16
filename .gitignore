@@ -107,3 +107,7 @@ venv.bak/
 .idea/
 db.sqlite
 uploads/
+
+vh7-bulma/
+
+static/css/bulma.css.map

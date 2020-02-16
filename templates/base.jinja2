@@ -44,7 +44,7 @@
     <meta property="twitter:image" content="https://vh7.uk/static/meta.png">
 
     <!-- css -->
-    <link rel="stylesheet" href="/static/css/bulma.min.css">
+    <link rel="stylesheet" href="/static/css/bulma.css">
     <link rel="stylesheet" href="/static/fa/css/all.min.css">
     {% endblock %}
   </head>
@@ -53,6 +53,21 @@
 
     {% block footer %}
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+            if ($navbarBurgers.length > 0) {
+                $navbarBurgers.forEach( el => {
+                    el.addEventListener('click', () => {
+                        const target = el.dataset.target;
+                        const $target = document.getElementById(target);
+                        el.classList.toggle('is-active');
+                        $target.classList.toggle('is-active');
+                    });
+                });
+            }
+        });
+    </script>
     {% endblock %}
   </body>
 </html>
