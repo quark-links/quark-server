@@ -92,12 +92,6 @@
         <div class="container">
             <h1 class="title">Paste</h1>
 
-            <div class="notification is-warning">
-                <b>VH7 is currently in beta!</b> At the moment we only support plain
-                text code pastes, this means that your code will not be syntax
-                highlighted now or after the beta.
-            </div>
-
             <form @submit.prevent="handlePaste">
                 <div class="field">
                     <label class="label">Code</label>
@@ -110,7 +104,7 @@
                     <div class="control has-icons-left">
                         <div class="select">
                             <select v-model="pasteForm.language">
-                                <option value="plain" selected="selected">Plain Text</option>
+                                <option v-for="lang in languages" :value="lang"><% lang %></option>
                             </select>
                         </div>
                         <div class="icon is-small is-left">
@@ -130,12 +124,6 @@
     <section id="upload-section" class="section" v-if="tab == 'upload'">
         <div class="container">
             <h1 class="title">Upload</h1>
-
-            <div class="notification is-warning">
-                <b>VH7 is currently in beta!</b> Although file uploads are supported
-                at the moment, we can't guarentee that the files will be stored after
-                the beta.
-            </div>
 
             <div class="notification is-info">
                 Uploaded files will last between {{ config["UPLOAD_MIN_AGE"] }} to {{ config["UPLOAD_MAX_AGE"] }} days depending on their size.
@@ -183,6 +171,7 @@
     <script src="https://cdn.statically.io/gh/vuelidate/vuelidate/5de65cdd/dist/validators.min.js"></script>
     <script src="https://cdn.statically.io/gh/brockpetrie/vue-moment/0f81113a/dist/vue-moment.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/highlight.min.js"></script>
     <script>
         Vue.use(window.vuelidate.default);
         Vue.use(window.vueMoment.default);
@@ -197,14 +186,19 @@
                 },
                 pasteForm: {
                     code: "",
-                    language: "plain"
+                    language: "plaintext"
                 },
                 uploadForm: {
                     file: null
                 },
                 uploadProgress: 100,
                 result: null,
-                error: null
+                error: null,
+                languages: []
+            },
+            created: function() {
+                this.languages = hljs.listLanguages();
+                console.log("Loaded " + this.languages.length + " languages!");
             },
             computed: {
                 disableSubmit() {
@@ -222,7 +216,7 @@
                 clearForms() {
                     this.shortenForm.url = "";
                     this.pasteForm.code = "";
-                    this.pasteForm.language = "plain";
+                    this.pasteForm.language = "plaintext";
                     this.uploadForm.file = null;
 
                     if (this.$refs.file) {
