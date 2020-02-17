@@ -4,8 +4,9 @@ This file contains webargs schema for each of the API requests.
 """
 
 from webargs import fields
+import utils.languages
 
-_valid_languages = ["apache", "bash", "coffeescript", "cpp", "cs", "css", "diff", "go", "http", "ini", "java", "javascript", "json", "kotlin", "less", "lua", "makefile", "xml", "markdown", "nginx", "objectivec", "perl", "php", "plaintext", "properties", "python", "ruby", "rust", "scss", "shell", "sql", "swift", "typescript", "yaml"]
+_valid_languages = utils.languages.language_list()
 
 
 url_args = {

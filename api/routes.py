@@ -10,6 +10,7 @@ import os
 import hashlib
 import utils.retention as retention
 from api.exceptions import ApiException, FileTooLargeException
+import utils.languages as lang
 
 from db import db, ShortLink, Url, Paste, Upload
 
@@ -18,6 +19,12 @@ api = Blueprint("api", __name__, url_prefix="/api")
 
 def _get_ip():
     return request.environ.get("HTTP_X_REAL_IP", request.remote_addr)
+
+
+@api.route("/languages", methods=["GET"])
+def languages():
+    """A flask route for getting the available paste languages."""
+    return jsonify(lang.languages)
 
 
 @api.route("/shorten", methods=["POST"])

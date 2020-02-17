@@ -1,0 +1,172 @@
+[
+    {
+        "id": "apache",
+        "name": "Apache",
+        "filetype": ".conf"
+    },
+    {
+        "id": "bash",
+        "name": "Bash",
+        "filetype": ".sh"
+    },
+    {
+        "id": "coffeescript",
+        "name": "CoffeeScript",
+        "filetype": ".coffee"
+    },
+    {
+        "id": "cpp",
+        "name": "C++",
+        "filetype": ".cpp"
+    },
+    {
+        "id": "cs",
+        "name": "C#",
+        "filetype": ".cs"
+    },
+    {
+        "id": "css",
+        "name": "CSS",
+        "filetype": ".css"
+    },
+    {
+        "id": "diff",
+        "name": "Diff",
+        "filetype": ".diff"
+    },
+    {
+        "id": "go",
+        "name": "Go",
+        "filetype": ".go"
+    },
+    {
+        "id": "http",
+        "name": "HTTP",
+        "filetype": ".http"
+    },
+    {
+        "id": "ini",
+        "name": "INI",
+        "filetype": ".ini"
+    },
+    {
+        "id": "java",
+        "name": "Java",
+        "filetype": ".java"
+    },
+    {
+        "id": "javascript",
+        "name": "JavaScript",
+        "filetype": ".js"
+    },
+    {
+        "id": "json",
+        "name": "JSON",
+        "filetype": ".json"
+    },
+    {
+        "id": "kotlin",
+        "name": "Kotlin",
+        "filetype": ".kt"
+    },
+    {
+        "id": "less",
+        "name": "Less",
+        "filetype": ".less"
+    },
+    {
+        "id": "lua",
+        "name": "Lua",
+        "filetype": ".lua"
+    },
+    {
+        "id": "makefile",
+        "name": "Makefile",
+        "filetype": ""
+    },
+    {
+        "id": "xml",
+        "name": "XML",
+        "filetype": ".xml"
+    },
+    {
+        "id": "markdown",
+        "name": "Markdown",
+        "filetype": ".md"
+    },
+    {
+        "id": "nginx",
+        "name": "NGINX",
+        "filetype": ".conf"
+    },
+    {
+        "id": "objectivec",
+        "name": "Objective C",
+        "filetype": ".h"
+    },
+    {
+        "id": "perl",
+        "name": "Perl",
+        "filetype": ".pl"
+    },
+    {
+        "id": "php",
+        "name": "PHP",
+        "filetype": ".php"
+    },
+    {
+        "id": "plaintext",
+        "name": "Plain Text",
+        "filetype": ".txt"
+    },
+    {
+        "id": "properties",
+        "name": "Properties",
+        "filetype": ".properties"
+    },
+    {
+        "id": "python",
+        "name": "Python",
+        "filetype": ".py"
+    },
+    {
+        "id": "ruby",
+        "name": "Ruby",
+        "filetype": ".rb"
+    },
+    {
+        "id": "rust",
+        "name": "Rust",
+        "filetype": ".rs"
+    },
+    {
+        "id": "scss",
+        "name": "SCSS",
+        "filetype": ".scss"
+    },
+    {
+        "id": "shell",
+        "name": "Shell",
+        "filetype": ""
+    },
+    {
+        "id": "sql",
+        "name": "SQL",
+        "filetype": ".sql"
+    },
+    {
+        "id": "swift",
+        "name": "Swift",
+        "filetype": ".swift"
+    },
+    {
+        "id": "typescript",
+        "name": "TypeScript",
+        "filetype": ".ts"
+    },
+    {
+        "id": "yaml",
+        "name": "YAML",
+        "filetype": ".yaml"
+    }
+]

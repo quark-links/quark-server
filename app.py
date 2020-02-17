@@ -12,6 +12,7 @@ from api.routes import api
 import os
 import config
 import cleanup
+import utils.languages as lang
 
 # Create a new Flask server
 app = Flask(__name__)
@@ -40,7 +41,7 @@ app.register_blueprint(api)
 @app.route("/")
 def index():
     """The main index page."""
-    return render_template("home.jinja2")
+    return render_template("home.jinja2", languages=lang.languages)
 
 
 @app.route("/<id>")

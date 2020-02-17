@@ -109,7 +109,9 @@
                     <div class="control has-icons-left">
                         <div class="select">
                             <select v-model="pasteForm.language">
-                                <option v-for="lang in languages" :value="lang"><% lang %></option>
+                                {% for lang in languages %}
+                                    <option value="{{ lang['id'] }}">{{ lang["name"] }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                         <div class="icon is-small is-left">
@@ -186,7 +188,6 @@
     <script src="https://cdn.statically.io/gh/vuelidate/vuelidate/5de65cdd/dist/validators.min.js"></script>
     <script src="https://cdn.statically.io/gh/brockpetrie/vue-moment/0f81113a/dist/vue-moment.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/highlight.min.js"></script>
     <script>
         Vue.use(window.vuelidate.default);
         Vue.use(window.vueMoment.default);
@@ -208,12 +209,7 @@
                 },
                 uploadProgress: 100,
                 result: null,
-                error: null,
-                languages: []
-            },
-            created: function() {
-                this.languages = hljs.listLanguages();
-                console.log("Loaded " + this.languages.length + " languages!");
+                error: null
             },
             computed: {
                 disableSubmit() {
