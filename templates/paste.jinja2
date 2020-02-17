@@ -14,8 +14,36 @@
     <section class="section">
         <div class="container">
             <h1 class="is-size-2">Paste</h1>
-            <p><b>Language:</b> {{ paste.language|e }}</p>
-            <pre><code class="lang-{{ paste.language|e }}">{{ paste.code|e }}</code></pre>
+            <div class="buttons">
+                <button class="button is-primary" type="button" id="copy-button" data-clipboard-target="#code-block">
+                    <span id="copy-button-default">
+                        <span class="icon">
+                            <i class="fas fa-copy"></i>
+                        </span>
+                        <span>Copy</span>
+                    </span>
+                    <span id="copy-button-success" style="display: none;">
+                        <span class="icon">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        <span>Copied!</span>
+                    </span>
+                    <span id="copy-button-failure" style="display: none;">
+                        <span class="icon">
+                            <i class="fas fa-cross"></i>
+                        </span>
+                        <span>Failed to copy!</span>
+                    </span>
+                </button>
+                <a class="button is-link" href="?dl=1">
+                    <span class="icon">
+                        <i class="fas fa-download"></i>
+                    </span>
+                    <span>Download</span>
+                </a>
+            </div>
+            <p><b>Language:</b> {{ language['name']|e }}</p>
+            <pre id="code-block"><code class="lang-{{ paste.language|e }}">{{ paste.code|e }}</code></pre>
         </div>
     </section>
 {% endblock %}
@@ -23,7 +51,41 @@
 {% block footer %}
     {{ super() }}
     <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/highlight.min.js"></script>
+    <script src="https://cdn.statically.io/gh/zenorocha/clipboard.js/ce79f170/dist/clipboard.min.js"></script>
     <script>
         hljs.initHighlightingOnLoad();
+
+        $(document).ready(function() {
+            var clipboard = new ClipboardJS("#copy-button");
+
+            clipboard.on("success", function(e) {
+                console.info(e);
+                e.clearSelection();
+
+                $("#copy-button").removeClass("is-primary").addClass("is-success");
+                $("#copy-button-default").hide();
+                $("#copy-button-success").show();
+
+                setTimeout(function() {
+                    $("#copy-button").removeClass("is-success").addClass("is-primary");
+                    $("#copy-button-default").show();
+                    $("#copy-button-success").hide();
+                }, 2000);
+            });
+
+            clipboard.on("error", function(e) {
+                console.error(e);
+
+                $("#copy-button").removeClass("is-primary").addClass("is-danger");
+                $("#copy-button-default").hide();
+                $("#copy-button-failure").show();
+
+                setTimeout(function() {
+                    $("#copy-button").removeClass("is-danger").addClass("is-primary");
+                    $("#copy-button-default").show();
+                    $("#copy-button-failure").hide();
+                }, 2000);
+            });
+        });
     </script>
 {% endblock %}

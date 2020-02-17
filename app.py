@@ -5,6 +5,7 @@ database.
 """
 
 from flask import Flask, render_template, redirect, send_file, request
+from flask import Response
 from flask_migrate import Migrate
 from db import db, hashids, ShortLink
 from flask_cors import CORS
@@ -60,7 +61,18 @@ def goto(id):
         # Redirect user to the URL
         return redirect(shortlink.url.url, 301)
     elif shortlink.paste is not None:
-        return render_template("paste.jinja2", paste=shortlink.paste)
+        language = lang.get_language_by_id(shortlink.paste.language)
+
+        if request.args.get("dl") is not None:
+            return Response(shortlink.paste.code, headers={
+                "Content-disposition":
+                    "attachment; filename=paste-{}{}".format(
+                        shortlink.link(False), language["filetype"])
+            })
+        else:
+            return render_template("paste.jinja2",
+                                   paste=shortlink.paste,
+                                   language=language)
     elif shortlink.upload is not None:
         if request.args.get("dl") is not None:
             # Get the path of the upload by joining the filename with the

@@ -45,15 +45,19 @@ class ShortLink(db.Model):
         """
         self.creator_ip = creator_ip
 
-    def link(self):
+    def link(self, leading_slash=True):
         """Get the short link.
 
         The output of this should be added to the end of the instance URL.
 
+        Args:
+            leading_slash (bool, optional): Add a leading slash to the
+                beginning of the short link. Defaults to True.
+
         Returns:
-            str: The short link with a slash at the beginning.
+            str: The short link.
         """
-        return "/" + hashids.encode(self.id)
+        return ("/" if leading_slash else "") + hashids.encode(self.id)
 
 
 class Url(db.Model):
