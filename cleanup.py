@@ -35,6 +35,7 @@ def cleanup_uploads():
 
 def start():
     """Start the cleanup function timers."""
+    cleanup_uploads()
     tl.start()
 
 

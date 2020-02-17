@@ -11,6 +11,7 @@ import os
 SQLALCHEMY_DATABASE_URI = os.getenv("VH7_DB_CONNECTION_STRING",
                                     "sqlite:///db.sqlite")
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+SQLALCHEMY_POOL_PRE_PING = True
 
 # The folder where uploaded files should go. Defaults to 'uploads' in the base
 # of the project.
