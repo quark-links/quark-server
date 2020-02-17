@@ -17,6 +17,23 @@
     	src="https://img.shields.io/drone/build/jake-walker/vh7/master?server=https%3A%2F%2Fci.jakewalker.xyz&style=flat-square"></a>
 </p>
 
+<!-- TOC -->
+
+- [Overview](#overview)
+- [Getting Started](#getting-started)
+    - [Deployment Notes](#deployment-notes)
+    - [Docker](#docker)
+        - [Manually Building Docker Image](#manually-building-docker-image)
+- [Development](#development)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+- [Running Tests](#running-tests)
+    - [Code Style](#code-style)
+- [Contributing](#contributing)
+- [License](#license)
+
+<!-- /TOC -->
+
 ## Overview
 
 - **Free.** VH7 is not only free to use on the [official instance](https://vh7.uk) but is also free to download and run
@@ -28,7 +45,47 @@ links.
 
 ## Getting Started
 
-**VH7 isn't ready for a production setup yet, so these instructions are for setting VH7 up in a development environment.**
+The recommended way of deploying is with [Docker](#docker), however, if you wish to deploy it with something else, there are instructions [here](http://docs.gunicorn.org/en/latest/deploy.html) on how to do so.
+
+Check the [configuration page](https://github.com/jake-walker/vh7/wiki/Configuration) to see the different settings that VH7 can be configured with.
+
+### Deployment Notes
+
+- It is recommended to use a reverse proxy such as [Nginx](https://www.nginx.com/) or [Caddy](https://caddyserver.com/) between the internet and the instance of VH7.
+- It is recommended to use a MySQL database instead of the default SQLite database.
+
+### Docker
+
+The suggested way of running VH7 is through Docker. Docker images are automatically built for every version of VH7 at [`jakewalker/vh7`](https://hub.docker.com/r/jakewalker/vh7).
+
+```
+docker volume create vh7_uploads
+docker run --detach \
+           --name vh7 \
+           --restart always \
+           -e VH7_DB_CONNECTION_STRING=mysql+mysqldb://username:password@hostname/database
+           -e VH7_UPLOAD_FOLDER=/uploads
+           -e VH7_SECRET=F6yZv5Xy8TBlYGkBs7P2wXlZqFAR3c
+           -e VH7_SALT=wIkikFWxhAOV8O39B2JRCuyZqKQ8U1
+           -e VH7_UPLOAD_MIN_AGE=30
+           -e VH7_UPLOAD_MAX_AGE=90
+           -e VH7_UPLOAD_MAX_SIZE=256
+           -v vh7_uploads:/uploads
+           -p 80:8000
+           jakewalker/vh7:latest
+```
+
+#### Manually Building Docker Image
+
+```
+docker build -t jakewalker/vh7 .
+```
+
+The built Docker image is saved as `vh7`. You can use then use the same command as above to run the newly built Docker image.
+
+## Development
+
+These instructions go over the method to setup a development environment for VH7. These instructions **should not** be used for a production setup of VH7.
 
 ### Prerequisites
 
@@ -46,7 +103,7 @@ git clone https://github.com/jake-walker/vh7
 Install the dependencies
 
 ```
-pipenv install
+pipenv install --dev
 ```
 
 Then setup the database with the latest schema
