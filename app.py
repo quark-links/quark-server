@@ -74,7 +74,8 @@ def goto(id):
                                    paste=shortlink.paste,
                                    language=language)
     elif shortlink.upload is not None:
-        if request.args.get("dl") is not None:
+        if (request.args.get("dl") is not None and
+                shortlink.upload.filename is not None):
             # Get the path of the upload by joining the filename with the
             # upload directory
             path = os.path.join(config.UPLOAD_FOLDER,

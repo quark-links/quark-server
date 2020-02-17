@@ -23,6 +23,7 @@
 - [Getting Started](#getting-started)
     - [Deployment Notes](#deployment-notes)
     - [Docker](#docker)
+        - [Tags](#tags)
         - [Manually Building Docker Image](#manually-building-docker-image)
 - [Development](#development)
     - [Prerequisites](#prerequisites)
@@ -74,6 +75,13 @@ docker run --detach \
            -p 80:8000
            jakewalker/vh7:latest
 ```
+
+#### Tags
+
+The image [`jakewalker/vh7`](https://hub.docker.com/r/jakewalker/vh7) has the following tags:
+
+- **`latest` → All** - Built on every commit to `master`, it should be stable to use in a production environment, but not as stable as the tags below.
+- **`0.1`, `0.1.1` → Stable** - All version tags are more stable than `latest` and should be used where you would like the most stable version of VH7 as possible.
 
 #### Manually Building Docker Image
 

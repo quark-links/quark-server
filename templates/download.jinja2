@@ -17,24 +17,36 @@
                 </ul>
             </div>
 
-            <article class="message is-danger">
-                <div class="message-header">
-                    <p>Danger</p>
-                </div>
-                <div class="message-body">
-                    Files uploaded to VH7 are <b>not checked</b> for viruses,
-                    spyware or other potentially unwanted programs. Please be
-                    cautious when downloading files from people that you don't
-                    know!
-                </div>
-            </article>
+            {% if upload.filename %}
+                <article class="message is-danger">
+                    <div class="message-header">
+                        <p>Danger</p>
+                    </div>
+                    <div class="message-body">
+                        Files uploaded to VH7 are <b>not checked</b> for viruses,
+                        spyware or other potentially unwanted programs. Please be
+                        cautious when downloading files from people that you don't
+                        know!
+                    </div>
+                </article>
 
-            <a class="button is-primary" href="?dl=1">
-                <span class="icon">
-                    <i class="fas fa-download"></i>
-                </span>
-                <span>Download</span>
-            </a>
+                <a class="button is-primary" href="?dl=1">
+                    <span class="icon">
+                        <i class="fas fa-download"></i>
+                    </span>
+                    <span>Download</span>
+                </a>
+            {% else %}
+                <article class="message is-info">
+                    <div class="message-header">
+                        <p>Expired</p>
+                    </div>
+                    <div class="message-body">
+                        Sorry! This file has expired and has been deleted from
+                        VH7.
+                    </div>
+                </article>
+            {% endif %}
         </div>
     </section>
 {% endblock %}
