@@ -7,7 +7,7 @@ WORKDIR /app
 
 RUN chmod 777 /app/entrypoint.sh
 
-RUN apk add --no-cache mariadb-dev g++
+RUN apk add --no-cache mariadb-dev g++ curl
 
 RUN pip install --upgrade pip pipenv
 RUN pipenv install --system
@@ -19,6 +19,8 @@ ENV VH7_SALT "changeme"
 ENV VH7_UPLOAD_MIN_AGE "30"
 ENV VH7_UPLOAD_MAX_AGE "90"
 ENV VH7_UPLOAD_MAX_SIZE "256"
+
+HEALTHCHECK --interval=2m --timeout=10s --retries=3 CMD curl -f http://localhost:8000/ || exit 1
 
 VOLUME /uploads
 
