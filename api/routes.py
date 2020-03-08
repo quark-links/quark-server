@@ -4,7 +4,7 @@ from flask import Blueprint, request, current_app, jsonify
 from url_normalize import url_normalize
 from webargs.flaskparser import use_args
 from api.request_schema import url_args, paste_args, upload_args
-from api.response_schema import url_schema, paste_schema, upload_schema
+from api.response_schema import short_link_schema
 import uuid
 import os
 import hashlib
@@ -12,7 +12,7 @@ import utils.retention as retention
 from api.exceptions import ApiException, FileTooLargeException
 import utils.languages as lang
 
-from db import db, ShortLink, Url, Paste, Upload
+from db import db, ShortLink, Url, Paste, Upload, hashids
 
 api = Blueprint("api", __name__, url_prefix="/api")
 
@@ -35,7 +35,7 @@ def shorten(args):
 
     duplicate = Url.query.filter_by(url=req_url).first()
     if duplicate is not None:
-        return url_schema.jsonify(duplicate)
+        return short_link_schema.jsonify(duplicate.short_link)
     else:
         url = Url(req_url)
         short_link = ShortLink(_get_ip())
@@ -45,7 +45,7 @@ def shorten(args):
         db.session.add(short_link)
         db.session.commit()
 
-        return url_schema.jsonify(url)
+        return short_link_schema.jsonify(short_link)
 
 
 @api.route("/paste", methods=["POST"])
@@ -59,7 +59,7 @@ def paste(args):
 
     duplicate = Paste.query.filter_by(hash=req_hash).first()
     if duplicate is not None:
-        return paste_schema.jsonify(duplicate)
+        return short_link_schema.jsonify(duplicate.short_link)
     else:
         paste = Paste(req_code, req_lang, req_hash)
         short_link = ShortLink(_get_ip())
@@ -69,7 +69,7 @@ def paste(args):
         db.session.add(short_link)
         db.session.commit()
 
-        return paste_schema.jsonify(paste)
+        return short_link_schema.jsonify(short_link)
 
 
 @api.route("/upload", methods=["POST"])
@@ -108,7 +108,7 @@ def upload(args):
 
             db.session.commit()
 
-        return upload_schema.jsonify(duplicate)
+        return short_link_schema.jsonify(duplicate.short_link)
     else:
         ret = retention.calculate(file_size)
 
@@ -126,7 +126,20 @@ def upload(args):
         db.session.add(short_link)
         db.session.commit()
 
-        return upload_schema.jsonify(upload)
+        return short_link_schema.jsonify(short_link)
+
+
+@api.route("/info/<id>", methods=["GET"])
+def info(id):
+    """Route for fetching information about a short link."""
+    try:
+        id = hashids.decode(id)[0]
+    except IndexError:
+        raise ApiException("That short link is not found", 404)
+
+    # Lookup the short link from the id
+    shortlink = ShortLink.query.filter_by(id=id).first()
+    return short_link_schema.jsonify(shortlink)
 
 
 @api.errorhandler(ApiException)

@@ -51,7 +51,7 @@
                 <button class="delete" v-on:click="result = null"></button>
                 <p>Shortened to:<br>
                 <span class="is-size-4"><code><% shortlink %></code></span></p>
-                <p v-if="result.expires" class="is-italic is-size-7">This file will last until <% result.expires | moment("HH:mm ddd Do MMM YYYY") %>.</p>
+                <p v-if="result.upload" class="is-italic is-size-7">This file will last until <% result.upload.expires | moment("HH:mm ddd Do MMM YYYY") %>.</p>
             </div>
         </div>
     </section>
@@ -220,7 +220,7 @@
                         return null;
                     }
 
-                    return window.location.origin + this.result.short_link.link;
+                    return window.location.origin + this.result.link;
                 }
             },
             methods: {

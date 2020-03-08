@@ -59,6 +59,19 @@ class ShortLink(db.Model):
         """
         return ("/" if leading_slash else "") + hashids.encode(self.id)
 
+    def get_type(self):
+        """Get the type of short link.
+
+        Returns:
+            str: The type of short link: 'url', 'paste', 'upload' or None.
+        """
+        if self.url is not None:
+            return "url"
+        if self.paste is not None:
+            return "paste"
+        if self.upload is not None:
+            return "upload"
+
 
 class Url(db.Model):
     """SQLAlchemy model for URLs.
