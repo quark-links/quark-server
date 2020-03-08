@@ -14,6 +14,7 @@ steps:
       - apk add --no-cache mariadb-dev g++
       - pip install --upgrade pip pipenv
       - pipenv install --dev
+      - pipenv check
       - pipenv run flake8
       - pipenv run pytest -svv
   - name: release-docker
