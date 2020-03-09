@@ -46,10 +46,14 @@
     <!-- css -->
     <link rel="stylesheet" href="/static/css/bulma.css">
     <link rel="stylesheet" href="/static/fa/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/vh7.css">
     {% endblock %}
   </head>
   <body>
-    {% block content %}{% endblock %}
+    <div class="wrap-content">
+        {% block content %}{% endblock %}
+    </div>
+    {% include "footer.jinja2" %}
 
     {% block footer %}
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>

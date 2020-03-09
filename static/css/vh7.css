@@ -1,0 +1,16 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.wrap-content {
+    flex: 1 0 auto;
+}
+
+.wrap-footer {
+    flex-shrink: 0;
+}
