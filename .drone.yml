@@ -24,3 +24,6 @@ steps:
         from_secret: docker_password
       repo: jakewalker/vh7
       auto_tag: true
+    when:
+      event:
+        - tag
