@@ -5,6 +5,11 @@ be manually edited here if they need to be.
 """
 
 import os
+from distutils.dist import Distribution
+
+dist = Distribution()
+dist.parse_config_files()
+VERSION = dist.get_option_dict("bumpversion")["current_version"][1]
 
 # URI for creating a database connection with SQLAlchemy. Defaults to a local
 # SQLite database.
