@@ -8,6 +8,7 @@ flake8 = "*"
 flake8-eradicate = "*"
 flake8-docstrings = "*"
 pytest = "*"
+zest-releaser = "*"
 
 [packages]
 flask = "*"
