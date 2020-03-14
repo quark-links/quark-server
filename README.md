@@ -37,6 +37,8 @@
 
 ## Overview
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/29ecbb890baa4834a6b6ed5091d93eb6)](https://app.codacy.com/manual/jake-walker/vh7?utm_source=github.com&utm_medium=referral&utm_content=jake-walker/vh7&utm_campaign=Badge_Grade_Dashboard)
+
 - **Free.** VH7 is not only free to use on the [official instance](https://vh7.uk) but is also free to download and run
 for yourself.
 - **Open Source.** All of VH7's source code is available here for the community to take a look under the hood. _We also
