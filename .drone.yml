@@ -15,7 +15,8 @@ steps:
       - pip install --upgrade pip pipenv
       - pipenv install --dev
       - pipenv run flake8
-      - pipenv run pytest -svv
+      - pipenv run flask db upgrade
+      - pipenv run pytest -svv -p no:warnings
       - python -c "import config;import os;print('latest'+(','+config.VERSION if 'DRONE_TAG' in os.environ else ''))" > .tags
       - cat .tags
   - name: release-docker
