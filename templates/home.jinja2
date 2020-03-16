@@ -258,12 +258,20 @@
                             var errorList = null;
                             if (Array.isArray(e.errors)) {
                                 errorList = e.errors;
+                            } else if (e.errors.json) {
+                                // Flatten error object's values into a single array
+                                errorList = [].concat.apply([], Object.values(e.errors.json));
                             } else {
                                 // Flatten error object's values into a single array
                                 errorList = [].concat.apply([], Object.values(e.errors));
                             }
 
-                            this.error = "The following errors have occurred whilst perfoming the action:<ul><li>" + errorList.join("</li><li>") + "</li></ul>";
+                            if (errorList != null) {
+                                this.error = "The following errors have occurred whilst perfoming the action:<ul><li>" + errorList.join("</li><li>") + "</li></ul>";
+                            } else {
+                                consol.log(e.errors);
+                                this.error = "An unknown error occurred whilst performing the action. Please check the console for more details.";
+                            }
                         } else {
                             console.log("The server's is not in an expected JSON format.");
                             this.error = "An unknown error occurred whilst performing the action. Please check the console for more details.";
