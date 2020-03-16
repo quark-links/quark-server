@@ -1,6 +1,6 @@
 """A file containing all of the Flask routes for the API."""
 
-from flask import Blueprint, request, current_app, jsonify
+from flask import Blueprint, request, current_app, jsonify, Response
 from url_normalize import url_normalize
 from webargs.flaskparser import use_args
 from api.request_schema import url_args, paste_args, upload_args
@@ -11,6 +11,7 @@ import hashlib
 import utils.retention as retention
 from api.exceptions import ApiException, FileTooLargeException
 import utils.languages as lang
+from pathlib import Path
 
 from db import db, ShortLink, Url, Paste, Upload, hashids
 
@@ -140,6 +141,16 @@ def info(id):
     # Lookup the short link from the id
     shortlink = ShortLink.query.filter_by(id=id).first()
     return short_link_schema.jsonify(shortlink)
+
+
+@api.route("/health", methods=["GET"])
+def health():
+    """Route for showing instance health."""
+    # Calculate uploads size
+    uploads_size = sum(p.stat().st_size for p in Path(
+            current_app.config["UPLOAD_FOLDER"]).rglob("*"))
+    uploads_size = round(uploads_size / 1e+6, 1)
+    return Response("OK - {} MB".format(uploads_size), mimetype="text/plain")
 
 
 @api.errorhandler(ApiException)

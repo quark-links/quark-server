@@ -20,7 +20,7 @@ ENV VH7_UPLOAD_MIN_AGE "30"
 ENV VH7_UPLOAD_MAX_AGE "90"
 ENV VH7_UPLOAD_MAX_SIZE "256"
 
-HEALTHCHECK --interval=2m --timeout=10s --retries=3 CMD curl -f http://localhost:8000/ || exit 1
+HEALTHCHECK --interval=2m --timeout=10s --retries=3 CMD curl -f http://localhost:8000/api/health || exit 1
 
 VOLUME /uploads
 
