@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "dae6d4db60ea372da9b0df9845b5e974b8884b17ec7ea4487a84a48dfc70aff1"
+            "sha256": "7e7c100d16cb7a4f37a995e840b00750d1156e560f6a0aaadcd0a01a73a0b2c7"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -55,11 +55,11 @@
         },
         "flask-migrate": {
             "hashes": [
-                "sha256:6fb038be63d4c60727d5dfa5f581a6189af5b4e2925bc378697b4f0a40cfb4e1",
-                "sha256:a96ff1875a49a40bd3e8ac04fce73fdb0870b9211e6168608cbafa4eb839d502"
+                "sha256:4dc4a5cce8cbbb06b8dc963fd86cf8136bd7d875aabe2d840302ea739b243732",
+                "sha256:a69d508c2e09d289f6e55a417b3b8c7bfe70e640f53d2d9deb0d056a384f37ee"
             ],
             "index": "pypi",
-            "version": "==2.5.2"
+            "version": "==2.5.3"
         },
         "flask-sqlalchemy": {
             "hashes": [
@@ -216,11 +216,12 @@
         },
         "webargs": {
             "hashes": [
-                "sha256:d66a056b3a40c5a3774a650fd349db5970cd91fa8f04ac50d00582c949b45b26",
-                "sha256:dfe01cd3711cee9a3651bfd5ca67770ace4a6f35f3cae583aa8400bbf7706bb4"
+                "sha256:4f04918864c7602886335d8099f9b8960ee698b6b914f022736ed50be6b71235",
+                "sha256:871642a2e0c62f21d5b78f357750ac7a87e6bc734c972f633aa5fb6204fbf29a",
+                "sha256:fc81c9f9d391acfbce406a319217319fd8b2fd862f7fdb5319ad06944f36ed25"
             ],
             "index": "pypi",
-            "version": "==6.0.0"
+            "version": "==5.5.3"
         },
         "werkzeug": {
             "hashes": [
@@ -377,6 +378,21 @@
             ],
             "index": "pypi",
             "version": "==5.4.1"
+        },
+        "pytest-assume": {
+            "hashes": [
+                "sha256:1cb83c873fc83c585ca2fac6f3c004e8662f994c2b28e4e6986371a22ee63938",
+                "sha256:b8d5b55c9f78d6814cce40c65b124ae7235304a39c8e02fd451b784eab5150f7"
+            ],
+            "index": "pypi",
+            "version": "==2.2.0"
+        },
+        "pytest-dependency": {
+            "hashes": [
+                "sha256:c2a892906192663f85030a6ab91304e508e546cddfe557d692d61ec57a1d946b"
+            ],
+            "index": "pypi",
+            "version": "==0.5.1"
         },
         "six": {
             "hashes": [
