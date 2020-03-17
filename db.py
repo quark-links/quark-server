@@ -29,21 +29,12 @@ class ShortLink(db.Model):
     created = db.Column(db.DateTime(timezone=True), server_default=func.now())
     updated = db.Column(db.DateTime(timezone=True), server_default=func.now(),
                         onupdate=func.now())
-    creator_ip = db.Column(db.String(50), nullable=False)
     url = db.relationship("Url", uselist=False,
                           back_populates="short_link")
     paste = db.relationship("Paste", uselist=False,
                             back_populates="short_link")
     upload = db.relationship("Upload", uselist=False,
                              back_populates="short_link")
-
-    def __init__(self, creator_ip):
-        """Create a new short link object.
-
-        Args:
-            creator_ip (str): The IP of the user who created the short link.
-        """
-        self.creator_ip = creator_ip
 
     def link(self, leading_slash=True):
         """Get the short link.

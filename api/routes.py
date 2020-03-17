@@ -1,6 +1,6 @@
 """A file containing all of the Flask routes for the API."""
 
-from flask import Blueprint, request, current_app, jsonify, Response
+from flask import Blueprint, current_app, jsonify, Response
 from url_normalize import url_normalize
 from webargs.flaskparser import use_args
 from api.request_schema import url_args, paste_args, upload_args
@@ -16,10 +16,6 @@ from pathlib import Path
 from db import db, ShortLink, Url, Paste, Upload, hashids
 
 api = Blueprint("api", __name__, url_prefix="/api")
-
-
-def _get_ip():
-    return request.environ.get("HTTP_X_REAL_IP", request.remote_addr)
 
 
 @api.route("/languages", methods=["GET"])
@@ -39,7 +35,7 @@ def shorten(args):
         return short_link_schema.jsonify(duplicate.short_link)
     else:
         url = Url(req_url)
-        short_link = ShortLink(_get_ip())
+        short_link = ShortLink()
         short_link.url = url
 
         db.session.add(url)
@@ -63,7 +59,7 @@ def paste(args):
         return short_link_schema.jsonify(duplicate.short_link)
     else:
         paste = Paste(req_code, req_lang, req_hash)
-        short_link = ShortLink(_get_ip())
+        short_link = ShortLink()
         short_link.paste = paste
 
         db.session.add(paste)
@@ -117,7 +113,7 @@ def upload(args):
             raise FileTooLargeException()
 
         upload = Upload(req_filename, req_mimetype, filename, req_hash, ret)
-        short_link = ShortLink(_get_ip())
+        short_link = ShortLink()
         short_link.upload = upload
 
         req_file.save(os.path.join(current_app.config["UPLOAD_FOLDER"],
