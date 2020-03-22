@@ -46,3 +46,9 @@ UPLOAD_MAX_SIZE = int(os.getenv("VH7_UPLOAD_MAX_SIZE", 256))
 # The maximum file size that the server will accept before aborting the
 # request.
 MAX_CONTENT_LENGTH = UPLOAD_MAX_SIZE * 1024 * 1024
+
+
+INSTANCE_NAME = os.getenv("VH7_INSTANCE_NAME", "Unnamed VH7 Instance")
+INSTANCE_URL = os.getenv("VH7_INSTANCE_URL", "https://example.com/")
+INSTANCE_EMAIL = os.getenv("VH7_INSTANCE_EMAIL", "hi@example.com")
+INSTANCE_COUNTRY = os.getenv("VH7_INSTANCE_COUNTRY", "United Kingdom")

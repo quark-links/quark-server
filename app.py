@@ -45,6 +45,12 @@ def index():
     return render_template("home.jinja2", languages=lang.languages)
 
 
+@app.route("/privacy")
+def privacy():
+    """The privacy policy page."""
+    return render_template("privacy.jinja2")
+
+
 @app.route("/<id>")
 def goto(id):
     """Route for managing redirects from a short link."""
