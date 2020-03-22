@@ -149,6 +149,21 @@ def health():
     return Response("OK - {} MB".format(uploads_size), mimetype="text/plain")
 
 
+@api.route("/stats", methods=["GET"])
+def stats():
+    """Route for showing instance stats."""
+    short_link_count = ShortLink.query.count()
+    url_count = Url.query.count()
+    paste_count = Paste.query.count()
+    upload_count = Upload.query.count()
+    return jsonify({
+        "totalCount": short_link_count,
+        "shortenCount": url_count,
+        "pasteCount": paste_count,
+        "uploadCount": upload_count
+    })
+
+
 @api.errorhandler(ApiException)
 def handle_api_error(err):
     """A flask error handler for creatinng pretty JSON error responses.

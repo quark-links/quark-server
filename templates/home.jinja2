@@ -200,6 +200,20 @@
             </div>
         </div>
     </section>
+
+    <section class="section" v-if="stats">
+        <div class="container content">
+            <h2 class="title">Stats</h2>
+            <p>
+                <ul>
+                    <li><b>Shortened Links</b>: <% stats.shortenCount %></li>
+                    <li><b>Pasted Code</b>: <% stats.pasteCount %></li>
+                    <li><b>Uploaded Files</b>: <% stats.uploadCount %></li>
+                    <li><b>Total</b>: <% stats.totalCount %></li>
+                </ul>
+            </p>
+        </div>
+    </section>
 </div>
 {% endblock %}
 
@@ -229,6 +243,7 @@
                 uploadForm: {
                     file: null
                 },
+                stats: null,
                 uploadProgress: 100,
                 result: null,
                 error: null
@@ -246,6 +261,17 @@
                 }
             },
             methods: {
+                getStats() {
+                    axios.get("/api/stats").then(function(response) {
+                        if (response.status != 200) {
+                            console.warn("Failed to collect stats, non 200 status code!");
+                            return;
+                        }
+
+                        console.log("Fetched stats", response.data);
+                        app.stats = response.data;
+                    });
+                },
                 clearForms() {
                     this.shortenForm.url = "";
                     this.pasteForm.code = "";
@@ -259,6 +285,7 @@
                 handleResponse(response) {
                     if (response.status != 200) {
                         this.handleError("Status code is not 200!");
+                        return;
                     }
 
                     this.result = response.data;
@@ -357,6 +384,8 @@
             mounted() {
                 var hash = window.location.hash.substring(1);
                 this.tab = hash == "shorten" || hash == "paste" || hash == "upload" ? hash : "shorten";
+
+                this.getStats();
             }
         });
     </script>
