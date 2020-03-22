@@ -10,8 +10,19 @@ from hashids import Hashids
 import config
 import datetime
 from passlib.hash import pbkdf2_sha256
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import MetaData
 
-db = SQLAlchemy()
+metadata = MetaData(naming_convention={
+        "ix": "ix_%(column_0_label)s",
+        "uq": "uq_%(table_name)s_%(column_0_name)s",
+        "ck": "ck_%(table_name)s_%(column_0_name)s",
+        "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+        "pk": "pk_%(table_name)s"
+    })
+Base = declarative_base(metadata=metadata)
+
+db = SQLAlchemy(model_class=Base)
 # Create a new hashids instance for converting database IDs to short links
 hashids = Hashids(min_length=0,
                   alphabet=config.HASHIDS_ALPHABET,

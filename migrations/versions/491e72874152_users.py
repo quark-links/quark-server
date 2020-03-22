@@ -1,15 +1,16 @@
 """Add users table and foreign key.
 
-Revision ID: e6db116d9d63
+Revision ID: 491e72874152
 Revises: a23bc9910bcd
-Create Date: 2020-03-22 14:32:23.479328
+Create Date: 2020-03-22 19:50:18.055716
+
 """
 from alembic import op
 import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'e6db116d9d63'
+revision = '491e72874152'
 down_revision = 'a23bc9910bcd'
 branch_labels = None
 depends_on = None
@@ -29,13 +30,16 @@ def upgrade():
                     sa.PrimaryKeyConstraint('id'),
                     sa.UniqueConstraint('email'),
                     sa.UniqueConstraint('username'))
-    op.add_column('shortlink', sa.Column('user_id', sa.Integer(),
-                                         nullable=True))
-    op.create_foreign_key(None, 'shortlink', 'user', ['user_id'], ['id'])
+    with op.batch_alter_table('shortlink', schema=None) as batch_op:
+        batch_op.add_column(sa.Column('user_id', sa.Integer(), nullable=True))
+        batch_op.create_foreign_key(None, 'user', ['user_id'], ['id'])
 
 
 def downgrade():
     """Undo schema changes."""
-    op.drop_constraint(None, 'shortlink', type_='foreignkey')
-    op.drop_column('shortlink', 'user_id')
+    with op.batch_alter_table('shortlink', schema=None) as batch_op:
+        batch_op.drop_constraint("fk_shortlink_user_id_user",
+                                 type_='foreignkey')
+        batch_op.drop_column('user_id')
+
     op.drop_table('user')
