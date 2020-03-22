@@ -26,3 +26,9 @@ steps:
       password:
         from_secret: docker_password
       repo: jakewalker/vh7
+    when:
+      branch:
+        - master
+      event:
+        exclude:
+          - pull_request
