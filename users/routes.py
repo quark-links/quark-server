@@ -30,7 +30,7 @@ def login():
 
                 return redirect(next or url_for("index"))
             else:
-                flash("Incorrect login credentials!", "error")
+                flash("Incorrect username or password!", "error")
     return render_template("users/login.jinja2", form=form)
 
 
