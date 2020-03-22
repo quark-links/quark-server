@@ -1,11 +1,26 @@
 {% macro render_field(field) %}
     <div class="field">
-        <label class="label">{{ field.label }}</label>
+        {% if field.type != "BooleanField" %}
+            <label class="label">{{ field.label.text }}</label>
+        {% endif %}
         <div class="control">
+            {% set classes = "" %}
+
+            {% if field.type != "BooleanField" %}
+                {% set classes = "input" %}
+            {% endif %}
+
             {% if field.errors %}
-                {{ field(class="input is-danger", **kwargs) | safe }}
+                {% set classes = classes + " is-danger" %}
+            {% endif %}
+
+            {% if field.type != "BooleanField" %}
+                {{ field(class=classes, **kwargs) | safe }}
             {% else %}
-                {{ field(class="input", **kwargs) | safe }}
+                <label class="checkbox">
+                    {{ field(class=classes, **kwargs) | safe }}
+                    {{ field.label.text }}
+                </label>
             {% endif %}
         </div>
         {% if field.errors %}

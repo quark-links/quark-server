@@ -22,7 +22,7 @@ def login():
                 user.authenticated = True
                 db.session.add(user)
                 db.session.commit()
-                login_user(user)
+                login_user(user, remember=form.remember_me.data)
 
                 next = request.args.get("next")
                 if not is_safe_url(next):
