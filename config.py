@@ -47,6 +47,8 @@ UPLOAD_MAX_SIZE = int(os.getenv("VH7_UPLOAD_MAX_SIZE", 256))
 # request.
 MAX_CONTENT_LENGTH = UPLOAD_MAX_SIZE * 1024 * 1024
 
+# Enable flask-wtf CSRF tokens
+WTF_CSRF_ENABLED = True
 
 INSTANCE_NAME = os.getenv("VH7_INSTANCE_NAME", "Unnamed VH7 Instance")
 INSTANCE_URL = os.getenv("VH7_INSTANCE_URL", "https://example.com/")

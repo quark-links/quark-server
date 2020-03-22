@@ -4,8 +4,6 @@
 {% block desc %}Download '{{ upload.original_filename|e }}' from VH7. Expires {{ upload.expires.strftime("%H:%m %d/%m/%Y") }}.{% endblock %}
 
 {% block content %}
-    {% include "nav.jinja2" %}
-
     <section class="section">
         <div class="container">
             <h1 class="is-size-2">{{ upload.original_filename|e }}</h1>

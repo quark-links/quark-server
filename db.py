@@ -9,6 +9,7 @@ from sqlalchemy.sql import func
 from hashids import Hashids
 import config
 import datetime
+from passlib.hash import pbkdf2_sha256
 
 db = SQLAlchemy()
 # Create a new hashids instance for converting database IDs to short links
@@ -35,6 +36,8 @@ class ShortLink(db.Model):
                             back_populates="short_link")
     upload = db.relationship("Upload", uselist=False,
                              back_populates="short_link")
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    user = db.relationship("User", back_populates="short_links")
 
     def link(self, leading_slash=True):
         """Get the short link.
@@ -156,3 +159,81 @@ class Upload(db.Model):
             days (int): The number of days that the file should be kept for.
         """
         self.expires = datetime.datetime.now() + datetime.timedelta(days=days)
+
+
+class User(db.Model):
+    """SQLAlchemy model for users.
+
+    This is for storing the information for a specific user.
+    """
+    __tablename__ = "user"
+
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), nullable=True, unique=True)
+    username = db.Column(db.String(50), nullable=False, unique=True)
+    password = db.Column(db.String(400), nullable=False)
+    authenticated = db.Column(db.Boolean, nullable=False, default=False)
+    active = db.Column(db.Boolean, nullable=False, default=True)
+    short_links = db.relationship("ShortLink", back_populates="user")
+
+    def __init__(self, username, email):
+        """Create a new user object.
+
+        Args:
+            username (str): The desired username.
+            email (str): The email of the user.
+        """
+        self.username = username
+        self.email = email
+
+    def set_password(self, password):
+        """Hash and then set a password for the user.
+
+        Args:
+            password (str): The plain-text password for the user.
+        """
+        password_hash = pbkdf2_sha256.hash(password)
+        self.password = password_hash
+
+    def verify_password(self, password):
+        """Verify a password against the user's stored hash.
+
+        Args:
+            password (str): The plain-text password to verify.
+
+        Returns:
+            bool: True if the password is correct, False if not.
+        """
+        return pbkdf2_sha256.verify(password, self.password)
+
+    @property
+    def is_authenticated(self):
+        """Whether the user has been authenticated or not.
+
+        Required by flask-login.
+        """
+        return self.authenticated
+
+    @property
+    def is_active(self):
+        """Whether the user is active or not.
+
+        Inactive users aren't allowed to login. Required by flask-login.
+        """
+        return self.active
+
+    @property
+    def is_anonymous(self):
+        """Whether the user is anonymous (i.e. doesn't require a password to login).
+
+        No users are anonymous so it is hard-set to False. Required by
+        flask-login.
+        """
+        return False
+
+    def get_id(self):
+        """Get the user's ID.
+
+        Required by flask-login.
+        """
+        return str(self.id)
