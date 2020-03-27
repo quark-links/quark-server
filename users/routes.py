@@ -62,3 +62,11 @@ def logout():
     db.session.commit()
     logout_user()
     return redirect(url_for("index"))
+
+
+@user_blueprint.route("/links")
+@login_required
+def links():
+    """Route for viewing the links associated with the current account."""
+    short_links = current_user.short_links
+    return render_template("users/links.jinja2", links=short_links)
