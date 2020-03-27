@@ -20,6 +20,13 @@ def upgrade():
     """Apply updated schema to the database."""
     op.create_table('user',
                     sa.Column('id', sa.Integer(), nullable=False),
+                    sa.Column('created', sa.DateTime(timezone=True),
+                              server_default=sa.text('(CURRENT_TIMESTAMP)'),
+                              nullable=False),
+                    sa.Column('updated', sa.DateTime(timezone=True),
+                              server_default=sa.text('(CURRENT_TIMESTAMP)'),
+                              onupdate=sa.text('(CURRENT_TIMESTAMP)'),
+                              nullable=False),
                     sa.Column('email', sa.String(length=100), nullable=True),
                     sa.Column('username', sa.String(length=50),
                               nullable=False),

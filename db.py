@@ -12,6 +12,7 @@ import datetime
 from passlib.hash import pbkdf2_sha256
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import MetaData
+import utils.languages as lang
 
 metadata = MetaData(naming_convention={
         "ix": "ix_%(column_0_label)s",
@@ -38,9 +39,10 @@ class ShortLink(db.Model):
     __tablename__ = "shortlink"
 
     id = db.Column(db.Integer, primary_key=True)
-    created = db.Column(db.DateTime(timezone=True), server_default=func.now())
+    created = db.Column(db.DateTime(timezone=True), server_default=func.now(),
+                        nullable=False)
     updated = db.Column(db.DateTime(timezone=True), server_default=func.now(),
-                        onupdate=func.now())
+                        onupdate=func.now(), nullable=False)
     url = db.relationship("Url", uselist=False,
                           back_populates="short_link")
     paste = db.relationship("Paste", uselist=False,
@@ -127,6 +129,15 @@ class Paste(db.Model):
         self.language = language
         self.hash = hash
 
+    def language_info(self):
+        """Get all of the language information for the paste's language.
+
+        Returns:
+            dict: Dictionary containing language information such as id, name
+                and file extension.
+        """
+        return lang.get_language_by_id(self.language)
+
 
 class Upload(db.Model):
     """SQLAlchemy model for uploads.
@@ -180,6 +191,9 @@ class User(db.Model):
     __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
+    created = db.Column(db.DateTime(timezone=True), server_default=func.now())
+    updated = db.Column(db.DateTime(timezone=True), server_default=func.now(),
+                        onupdate=func.now())
     email = db.Column(db.String(100), nullable=True, unique=True)
     username = db.Column(db.String(50), nullable=False, unique=True)
     password = db.Column(db.String(400), nullable=False)
