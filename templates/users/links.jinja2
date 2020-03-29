@@ -65,13 +65,38 @@
 
                             <div class="buttons">
                                 {% if link.get_type() == "url" %}
-                                    <a class="button is-primary is-small" href="{{ link.url.url }}" target="_blank">Go</a>
+                                    <a class="button is-primary is-small" href="{{ link.url.url }}" target="_blank">
+                                        <span class="icon">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </span>
+                                        <span>Go</span>
+                                    </a>
                                 {% elif link.get_type() == "paste" %}
-                                    <a class="button is-primary is-small" href="{{ link.link() }}" target="_blank">View</a>
-                                    <a class="button is-primary is-small" href="{{ link.link() }}?dl=1">Download</a>
+                                    <a class="button is-primary is-small" href="{{ link.link() }}" target="_blank">
+                                        <span class="icon">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </span>
+                                        <span>View</span>
+                                    </a>
+                                    <a class="button is-primary is-small" href="{{ link.link() }}?dl=1">
+                                        <span class="icon">
+                                            <i class="fas fa-download"></i>
+                                        </span>
+                                        <span>Download</span>
+                                    </a>
                                 {% elif link.get_type() == "upload" %}
-                                    <a class="button is-primary is-small" href="{{ link.link() }}" target="_blank">View</a>
-                                    <a class="button is-primary is-small" href="{{ link.link() }}?dl=1">Download</a>
+                                    <a class="button is-primary is-small" href="{{ link.link() }}" target="_blank">
+                                        <span class="icon">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </span>
+                                        <span>View</span>
+                                    </a>
+                                    <a class="button is-primary is-small" href="{{ link.link() }}?dl=1">
+                                        <span class="icon">
+                                            <i class="fas fa-download"></i>
+                                        </span>
+                                        <span>Download</span>
+                                    </a>
                                 {% endif %}
                             </div>
                         </div>
