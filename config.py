@@ -6,6 +6,7 @@ be manually edited here if they need to be.
 
 import os
 from distutils.dist import Distribution
+from distutils.util import strtobool
 
 dist = Distribution()
 dist.parse_config_files()
@@ -36,6 +37,13 @@ HASHIDS_ALPHABET = ("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234"
 # run!
 HASHIDS_SALT = os.getenv("VH7_SALT", "keyboardcat")
 
+# The salt that is used for creating tokens (for example in confirmation
+# emails)
+TOKEN_SALT = os.getenv("VH7_TOKEN_SALT", "keyboardcat")
+
+# The maximum age that tokens can be before expiring in seconds.
+TOKEN_MAX_AGE = int(os.getenv("VH7_TOKEN_MAX_AGE", 7200))
+
 # The minimum age that an uploaded file is stored for in days.
 UPLOAD_MIN_AGE = int(os.getenv("VH7_UPLOAD_MIN_AGE", 30))
 # The maximum age that an uploaded file is stored for in days.
@@ -52,5 +60,15 @@ WTF_CSRF_ENABLED = True
 
 INSTANCE_NAME = os.getenv("VH7_INSTANCE_NAME", "Unnamed VH7 Instance")
 INSTANCE_URL = os.getenv("VH7_INSTANCE_URL", "https://example.com/")
+INSTANCE_OWNER = os.getenv("VH7_INSTANCE_OWNER", "Unknown")
 INSTANCE_EMAIL = os.getenv("VH7_INSTANCE_EMAIL", "hi@example.com")
 INSTANCE_COUNTRY = os.getenv("VH7_INSTANCE_COUNTRY", "United Kingdom")
+
+# Mail configuration
+MAIL_SERVER = os.getenv("VH7_MAIL_SERVER", "localhost")
+MAIL_PORT = int(os.getenv("VH7_MAIL_PORT", 25))
+MAIL_USE_TLS = strtobool(os.getenv("VH7_MAIL_TLS", "off"))
+MAIL_USE_SSL = strtobool(os.getenv("VH7_MAIL_SSL", "off"))
+MAIL_USERNAME = os.getenv("VH7_MAIL_USERNAME", None)
+MAIL_PASSWORD = os.getenv("VH7_MAIL_PASSWORD", None)
+MAIL_DEFAULT_SENDER = os.getenv("VH7_MAIL_SENDER", None)

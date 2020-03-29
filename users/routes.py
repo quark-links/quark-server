@@ -9,6 +9,9 @@ from users.forms import LoginForm, RegisterForm, UpdateAccountForm
 from users.forms import DeleteAccountForm
 from users.forms import UpdatePasswordForm
 from utils.flask_utils import is_safe_url
+import utils.email_token as email_token
+import datetime
+import users.emails as email
 
 user_blueprint = Blueprint("users", __name__)
 
@@ -22,7 +25,17 @@ def login():
         if form.validate_on_submit():
             user = User.query.filter_by(username=form.username.data.strip()
                                         ).first()
-            if user is not None and user.verify_password(form.password.data):
+            if user is None or not user.verify_password(form.password.data):
+                flash("Incorrect username or password!", "error")
+            elif not user.active:
+                flash("Sorry, your account is currently disabled.", "error")
+            elif not user.confirmed:
+                flash(("Sorry, your account does not have a confirmed email "
+                       "yet. Please check your emails to confirm."), "warning")
+
+                token = email_token.generate_confirmation_token(user)
+                email.send_email_confirm(user, token)
+            else:
                 user.authenticated = True
                 db.session.add(user)
                 db.session.commit()
@@ -33,8 +46,7 @@ def login():
                     return abort(400)
 
                 return redirect(next or url_for("index"))
-            else:
-                flash("Incorrect username or password!", "error")
+
     return render_template("users/login.jinja2", form=form)
 
 
@@ -51,7 +63,11 @@ def register():
             db.session.add(user)
             db.session.commit()
 
-            flash("Your account has been created, please login.", "info")
+            token = email_token.generate_confirmation_token(user)
+            email.send_email_confirm(user, token)
+
+            flash(("Your account has been created. You must verify your email "
+                   "address before you can login."), "info")
             return redirect(url_for("users.login"))
     return render_template("users/register.jinja2", form=form)
 
@@ -97,12 +113,20 @@ def account_details():
                 current_user.username = form.username.data.strip()
 
             if form.email.data.strip() != "":
+                current_user.confirmed = False
+                current_user.confirmed_on = None
                 current_user.email = form.email.data.strip()
+
+                token = email_token.generate_confirmation_token(current_user)
+                email.send_email_confirm(current_user, token)
+
+                flash("Your email address has been updated. Please check your "
+                      "emails to confirm your new email address.", "info")
 
             db.session.add(current_user)
             db.session.commit()
 
-            flash("Your account details have been updated successfully",
+            flash("Your account details have been updated successfully.",
                   "success")
             return redirect(url_for("users.account"))
     return render_template("users/update_details.jinja2", form=form)
@@ -151,3 +175,28 @@ def account_delete():
                 flash("Incorrect account details!", "error")
 
     return render_template("users/delete.jinja2", form=form)
+
+
+@user_blueprint.route("/verify/<token>")
+def verify_token(token):
+    """Flask route for verifying a user's email."""
+    user = email_token.verify_confirmation_token(token)
+    if not user:
+        flash("The confirmation link is invalid or has expired.", "danger")
+
+    if user.confirmed:
+        flash("Your account has already been confirmed.",
+              "success")
+    else:
+        user.confirmed = True
+        user.confirmed_on = datetime.datetime.now()
+        db.session.add(user)
+        db.session.commit()
+        flash("Thanks! Your account's email address has been confirmed." +
+              (" You may now login." if current_user.is_authenticated else ""),
+              "success")
+
+    if current_user.is_authenticated:
+        return redirect(url_for("users.account"))
+    else:
+        return redirect(url_for("users.login"))

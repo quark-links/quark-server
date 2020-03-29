@@ -38,7 +38,14 @@
                 <p>
                     <ul>
                         <li><b>Username:</b> {{ current_user.username }}</li>
-                        <li><b>Email:</b> {{ current_user.email }}</li>
+                        <li>
+                            <b>Email:</b> {{ current_user.email }}
+                            {% if current_user.confirmed %}
+                                <span class="tag is-success">Confirmed</span>
+                            {% else %}
+                                <span class="tag is-warning">Unconfirmed</span>
+                            {% endif %}
+                        </li>
                     </ul>
                 </p>
             </div>

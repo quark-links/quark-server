@@ -16,6 +16,7 @@ import config
 import cleanup
 import utils.languages as lang
 from flask_login import LoginManager
+from flask_mail import Mail
 
 # Create a new Flask server
 app = Flask(__name__)
@@ -40,6 +41,10 @@ login_manager.needs_refresh_message = ("To protect your account, we require "
                                        "that you reauthenticate before "
                                        "accessing this page.")
 login_manager.needs_refresh_message_category = "warning"
+
+# Setup mail
+mail = Mail()
+mail.init_app(app)
 
 # Create the upload folder if it doesn't exist
 try:

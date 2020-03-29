@@ -191,15 +191,18 @@ class User(db.Model):
     __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
-    created = db.Column(db.DateTime(timezone=True), server_default=func.now())
+    created = db.Column(db.DateTime(timezone=True), server_default=func.now(),
+                        nullable=False)
     updated = db.Column(db.DateTime(timezone=True), server_default=func.now(),
-                        onupdate=func.now())
+                        onupdate=func.now(), nullable=False)
     email = db.Column(db.String(100), nullable=True, unique=True)
     username = db.Column(db.String(50), nullable=False, unique=True)
     password = db.Column(db.String(400), nullable=False)
     authenticated = db.Column(db.Boolean, nullable=False, default=False)
     active = db.Column(db.Boolean, nullable=False, default=True)
     short_links = db.relationship("ShortLink", back_populates="user")
+    confirmed = db.Column(db.Boolean, nullable=False, default=False)
+    confirmed_on = db.Column(db.DateTime(timezone=True), nullable=True)
 
     def __init__(self, username, email):
         """Create a new user object.
@@ -245,7 +248,7 @@ class User(db.Model):
 
         Inactive users aren't allowed to login. Required by flask-login.
         """
-        return self.active
+        return self.active and self.confirmed
 
     @property
     def is_anonymous(self):
