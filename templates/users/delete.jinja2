@@ -1,0 +1,50 @@
+{% extends "base.jinja2" %}
+{% from "macros/form_helpers.jinja2" import render_field %}
+
+{% block title %}Delete Account - VH7{% endblock %}
+
+{% block content %}
+    <section class="section">
+        <div class="container">
+            <h1 class="title is-2">Delete Account</h1>
+
+            {% include "partials/flash.jinja2" %}
+
+            <div class="notification is-danger">
+                <p>
+                    <strong>Deleting your account is an irreversable action.</strong>
+                    You will no longer be able to login to VH7, but you can create
+                    a new account at any time with the same email address and
+                    username.
+                </p>
+
+                <p>
+                    Please note that it is not possible to delete all of your data,
+                    all of your short links, uploaded files and pastes will remain
+                    on VH7. However, you may request for them to be taken down by
+                    the administrator.
+                </p>
+
+                <p>
+                    To prevent accidental deletion of your account, you will need
+                    to verify some of your account details below.
+                </p>
+            </div>
+
+            <form action="{{ url_for('users.account_delete') }}" method="post">
+                {{ form.csrf_token }}
+                {{ render_field(form.username, placeholder="Username") }}
+                <div class="field">
+                    <div class="control">
+                        <button type="submit" class="button is-danger">
+                            <span class="icon">
+                                <i class="fas fa-paper-plane"></i>
+                            </span>
+                            <span>Delete my Account</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

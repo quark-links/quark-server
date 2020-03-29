@@ -1,0 +1,67 @@
+{% extends "base.jinja2" %}
+
+{% block title %}{{ current_user.username }} - VH7{% endblock %}
+
+{% block content %}
+    <section class="hero is-primary">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">
+                    {{ current_user.username }}'s Account
+                </h1>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="title is-4">Information</h2>
+
+            {% include "partials/flash.jinja2" %}
+
+            <div class="content">
+                <p>
+                    <ul>
+                        <li><b>Created:</b> {{ current_user.created.strftime("%H:%M %d/%m/%Y") }}</li>
+                        <li><b>Updated:</b> {{ current_user.updated.strftime("%H:%M %d/%m/%Y") }}</li>
+                        <li><b>Short Links:</b> {{ current_user.short_links | length }} <a href="/links">(view)</a></li>
+                    </ul>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="title is-4">Details</h2>
+            <div class="content">
+                <p>
+                    <ul>
+                        <li><b>Username:</b> {{ current_user.username }}</li>
+                        <li><b>Email:</b> {{ current_user.email }}</li>
+                    </ul>
+                </p>
+            </div>
+            <div class="buttons">
+                <a href="/account/details" class="button is-primary">
+                    <span class="icon">
+                        <i class="fas fa-user-edit"></i>
+                    </span>
+                    <span>Update Details</span>
+                </a>
+                <a href="/account/password" class="button is-link is-outlined">
+                    <span class="icon">
+                        <i class="fas fa-key"></i>
+                    </span>
+                    <span>Change Password</span>
+                </a>
+                <a href="/account/delete" class="button is-danger is-small is-outlined">
+                    <span class="icon">
+                        <i class="fas fa-trash"></i>
+                    </span>
+                    <span>Delete Account</span>
+                </a>
+            </div>
+        </div>
+    </section>
+{% endblock %}

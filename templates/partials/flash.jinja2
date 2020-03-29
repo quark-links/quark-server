@@ -4,6 +4,8 @@
             {% set color = "primary" %}
             {% if category == "error" %}
                 {% set color = "danger" %}
+            {% elif category == "success" %}
+                {% set color = "success" %}
             {% elif category == "info" %}
                 {% set color = "info" %}
             {% elif category == "warning" %}

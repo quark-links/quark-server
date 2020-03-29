@@ -35,6 +35,11 @@ migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "users.login"
+login_manager.refresh_view = "users.login"
+login_manager.needs_refresh_message = ("To protect your account, we require "
+                                       "that you reauthenticate before "
+                                       "accessing this page.")
+login_manager.needs_refresh_message_category = "warning"
 
 # Create the upload folder if it doesn't exist
 try:

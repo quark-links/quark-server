@@ -1,0 +1,38 @@
+{% extends "base.jinja2" %}
+{% from "macros/form_helpers.jinja2" import render_field %}
+
+{% block title %}Update Details - VH7{% endblock %}
+
+{% block content %}
+    <section class="section">
+        <div class="container">
+            <h1 class="title is-2">Update Details</h1>
+
+            <div class="content">
+                <p>
+                    Use the form below to update your account's details. Leave
+                    any fields blank if you do not wish to change them. Your
+                    account's current details are shown in grey.
+                </p>
+            </div>
+
+            {% include "partials/flash.jinja2" %}
+
+            <form action="{{ url_for('users.account_details') }}" method="post">
+                {{ form.csrf_token }}
+                {{ render_field(form.username, placeholder=current_user.username) }}
+                {{ render_field(form.email, placeholder=current_user.email) }}
+                <div class="field">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">
+                            <span class="icon">
+                                <i class="fas fa-paper-plane"></i>
+                            </span>
+                            <span>Update</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}
