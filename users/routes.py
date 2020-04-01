@@ -6,8 +6,8 @@ from flask_login import login_user, login_required, logout_user, current_user
 from flask_login import fresh_login_required
 from db import db, User
 from users.forms import LoginForm, RegisterForm, UpdateAccountForm
-from users.forms import DeleteAccountForm
-from users.forms import UpdatePasswordForm
+from users.forms import DeleteAccountForm, UpdatePasswordForm
+from users.forms import ForgotPasswordForm, ResetPasswordForm
 from utils.flask_utils import is_safe_url
 import utils.email_token as email_token
 import datetime
@@ -200,3 +200,48 @@ def verify_token(token):
         return redirect(url_for("users.account"))
     else:
         return redirect(url_for("users.login"))
+
+
+@user_blueprint.route("/forgot", methods=["GET", "POST"])
+def forgot_password():
+    """Flask route for requesting a password reset email."""
+    form = ForgotPasswordForm(request.form)
+
+    if request.method == "POST":
+        if form.validate_on_submit():
+            user = User.query.filter_by(email=form.email.data).first()
+
+            if user is not None:
+                token = email_token.generate_password_reset_token(user)
+                email.send_password_reset(user, token)
+                flash(("A password reset email has been sent. Please check "
+                       "your inbox"), "success")
+            else:
+                flash("Sorry, there are no users with that email address.",
+                      "warning")
+
+    return render_template("users/request_password_reset.jinja2", form=form)
+
+
+@user_blueprint.route("/forgot/<token>", methods=["GET", "POST"])
+def forgot_password_reset(token):
+    """Flask route for resetting a users password with a token."""
+    form = ResetPasswordForm(request.form)
+    user = email_token.verify_password_reset_token(token)
+
+    if not user:
+        flash("The password reset link is invalid or has expired.", "error")
+        return redirect(url_for("users.login"))
+
+    if request.method == "POST":
+        if form.validate_on_submit():
+            user.set_password(form.new_password.data)
+            db.session.add(user)
+            db.session.commit()
+
+            flash(("Your password has been successfully updated. You may now "
+                   "login."), "success")
+            return redirect(url_for("users.login"))
+
+    return render_template("users/password_reset.jinja2", form=form,
+                           token=token)

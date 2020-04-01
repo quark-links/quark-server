@@ -24,7 +24,10 @@
                             <span>Login</span>
                         </button>
                     </div>
-                    <p class="help">Don't have an account? <a href="{{ url_for('users.register') }}">Create one here</a></p>
+                    <p class="help">
+                        Don't have an account? <a href="{{ url_for('users.register') }}">Create one here</a>.
+                        Forgotten your password? <a href="{{ url_for('users.forgot_password') }}">Reset your password</a>.
+                    </p>
                 </div>
             </form>
         </div>

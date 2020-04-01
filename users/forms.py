@@ -85,3 +85,19 @@ class UpdatePasswordForm(FlaskForm):
 class DeleteAccountForm(FlaskForm):
     """WTForm class for deleting a user."""
     username = StringField("Username", validators=[DataRequired()])
+
+
+class ForgotPasswordForm(FlaskForm):
+    """WTForm class for requesting a password reset email."""
+    email = EmailField("Email", validators=[DataRequired(), Length(max=100)])
+
+
+class ResetPasswordForm(FlaskForm):
+    """WTForm class form for resetting a user's password."""
+    new_password = PasswordField("New Password",
+                                 validators=[DataRequired(),
+                                             Length(min=6),
+                                             EqualTo("password_confirm",
+                                                     message=("Passwords must "
+                                                              "match"))])
+    password_confirm = PasswordField("Repeat New Password")
