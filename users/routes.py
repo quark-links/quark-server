@@ -182,7 +182,11 @@ def verify_token(token):
     """Flask route for verifying a user's email."""
     user = email_token.verify_confirmation_token(token)
     if not user:
-        flash("The confirmation link is invalid or has expired.", "danger")
+        flash(("The confirmation link is invalid, has expired or has already "
+               "been used."), "danger")
+        return redirect(url_for("users.login"))
+
+    user.clear_tokens()
 
     if user.confirmed:
         flash("Your account has already been confirmed.",
@@ -190,11 +194,12 @@ def verify_token(token):
     else:
         user.confirmed = True
         user.confirmed_on = datetime.datetime.now()
-        db.session.add(user)
-        db.session.commit()
         flash("Thanks! Your account's email address has been confirmed." +
               (" You may now login." if current_user.is_authenticated else ""),
               "success")
+
+    db.session.add(user)
+    db.session.commit()
 
     if current_user.is_authenticated:
         return redirect(url_for("users.account"))
@@ -230,12 +235,14 @@ def forgot_password_reset(token):
     user = email_token.verify_password_reset_token(token)
 
     if not user:
-        flash("The password reset link is invalid or has expired.", "error")
+        flash(("The password reset link is invalid, has expired or has already"
+               " been used."), "error")
         return redirect(url_for("users.login"))
 
     if request.method == "POST":
         if form.validate_on_submit():
             user.set_password(form.new_password.data)
+            user.clear_tokens()
             db.session.add(user)
             db.session.commit()
 

@@ -1,11 +1,16 @@
 """Functions for generating and verifying tokens sent out via email."""
 from itsdangerous import URLSafeTimedSerializer
-from db import User
+from db import User, db
 from config import SECRET_KEY, TOKEN_SALT, TOKEN_MAX_AGE
+import secrets
 
 
 def _get_serializer():
     return URLSafeTimedSerializer(SECRET_KEY)
+
+
+def _generate_db_token():
+    return secrets.token_urlsafe(20)
 
 
 def generate_confirmation_token(user: User):
@@ -17,8 +22,13 @@ def generate_confirmation_token(user: User):
     Returns:
         str: The confirmation token to be sent in an email.
     """
-    return _get_serializer().dumps(("confirm", user.id, user.email),
-                                   salt=TOKEN_SALT)
+    confirm_token = _generate_db_token()
+    user.confirm_token = confirm_token
+    db.session.add(user)
+    db.session.commit()
+
+    return _get_serializer().dumps(("confirm", user.id, user.email,
+                                    confirm_token), salt=TOKEN_SALT)
 
 
 def verify_confirmation_token(token):
@@ -34,13 +44,12 @@ def verify_confirmation_token(token):
 
     # Get the user ID and email from the token
     try:
-        type, user_id, user_email = serializer.loads(
+        type, user_id, user_email, confirm_token = serializer.loads(
             token,
             salt=TOKEN_SALT,
             max_age=TOKEN_MAX_AGE
         )
     except Exception:
-        print("Invalid token")
         return None
 
     if type != "confirm":
@@ -49,8 +58,8 @@ def verify_confirmation_token(token):
     # Check that the token is valid for the user's email.
     user = User.query.filter_by(id=user_id).first()
 
-    if user is None or user.email != user_email:
-        print("Invalid user or email")
+    if (user is None or user.email != user_email or
+            user.confirm_token != confirm_token):
         return None
 
     return user
@@ -65,7 +74,12 @@ def generate_password_reset_token(user: User):
     Returns:
         str: The password reset token to be sent in an email.
     """
-    return _get_serializer().dumps(("reset", user.id),
+    reset_token = _generate_db_token()
+    user.reset_token = reset_token
+    db.session.add(user)
+    db.session.commit()
+
+    return _get_serializer().dumps(("reset", user.id, reset_token),
                                    salt=TOKEN_SALT)
 
 
@@ -81,13 +95,12 @@ def verify_password_reset_token(token):
     serializer = _get_serializer()
 
     try:
-        type, user_id = serializer.loads(
+        type, user_id, reset_token = serializer.loads(
             token,
             salt=TOKEN_SALT,
             max_age=TOKEN_MAX_AGE
         )
     except Exception:
-        print("Invalid token")
         return None
 
     if type != "reset":
@@ -95,7 +108,7 @@ def verify_password_reset_token(token):
 
     user = User.query.filter_by(id=user_id).first()
 
-    if user is None:
+    if user is None or user.reset_token != reset_token:
         return None
 
     return user

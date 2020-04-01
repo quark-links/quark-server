@@ -203,6 +203,8 @@ class User(db.Model):
     short_links = db.relationship("ShortLink", back_populates="user")
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
     confirmed_on = db.Column(db.DateTime(timezone=True), nullable=True)
+    confirm_token = db.Column(db.String(20), nullable=True)
+    reset_token = db.Column(db.String(20), nullable=True)
 
     def __init__(self, username, email):
         """Create a new user object.
@@ -265,3 +267,8 @@ class User(db.Model):
         Required by flask-login.
         """
         return str(self.id)
+
+    def clear_tokens(self):
+        """Remove the confirm and reset tokens so that they can't be reused."""
+        self.confirm_token = None
+        self.reset_token = None

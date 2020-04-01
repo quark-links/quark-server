@@ -1,4 +1,4 @@
-"""Add user email confirmation columns.
+"""Add user email confirmation and password reset columns.
 
 Revision ID: eb4eda067153
 Revises: 491e72874152
@@ -23,6 +23,12 @@ def upgrade():
         batch_op.add_column(sa.Column('confirmed_on',
                                       sa.DateTime(timezone=True),
                                       nullable=True))
+        batch_op.add_column(sa.Column('confirm_token',
+                                      sa.String(20),
+                                      nullable=True))
+        batch_op.add_column(sa.Column('reset_token',
+                                      sa.String(20),
+                                      nullable=True))
 
 
 def downgrade():
@@ -30,3 +36,5 @@ def downgrade():
     with op.batch_alter_table('user', schema=None) as batch_op:
         batch_op.drop_column('confirmed_on')
         batch_op.drop_column('confirmed')
+        batch_op.drop_column('confirm_token')
+        batch_op.drop_column('reset_token')
