@@ -24,10 +24,10 @@ def upgrade():
                                       sa.DateTime(timezone=True),
                                       nullable=True))
         batch_op.add_column(sa.Column('confirm_token',
-                                      sa.String(20),
+                                      sa.String(100),
                                       nullable=True))
         batch_op.add_column(sa.Column('reset_token',
-                                      sa.String(20),
+                                      sa.String(100),
                                       nullable=True))
 
 
