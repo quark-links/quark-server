@@ -2,7 +2,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.fields.html5 import EmailField
-from wtforms.validators import DataRequired, Length, Optional
+from wtforms.validators import DataRequired, Length, Optional, EqualTo
 from users.validators import Unique
 from db import User
 
@@ -36,8 +36,13 @@ class RegisterForm(FlaskForm):
                                        message=("There is already an account "
                                                 "with that email.")
                                    )])
-    password = PasswordField("Password", validators=[DataRequired(),
-                                                     Length(min=6)])
+    password = PasswordField("Password",
+                             validators=[DataRequired(),
+                                         Length(min=6),
+                                         EqualTo("password_confirm",
+                                                 message="Passwords must match"
+                                                 )])
+    password_confirm = PasswordField("Repeat Password")
 
 
 class UpdateAccountForm(FlaskForm):
@@ -66,8 +71,13 @@ class UpdateAccountForm(FlaskForm):
 
 class UpdatePasswordForm(FlaskForm):
     """WTForm class for updating a user's password."""
-    new_password = PasswordField("New Password", validators=[DataRequired(),
-                                                             Length(min=6)])
+    new_password = PasswordField("New Password",
+                                 validators=[DataRequired(),
+                                             Length(min=6),
+                                             EqualTo("password_confirm",
+                                                     message=("Passwords must "
+                                                              "match"))])
+    password_confirm = PasswordField("Repeat New Password")
     current_password = PasswordField("Current Password",
                                      validators=[DataRequired()])
 
