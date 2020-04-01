@@ -1,0 +1,108 @@
+{% extends "base.jinja2" %}
+{% from "macros/form_helpers.jinja2" import render_field %}
+
+{% block title %}Links - VH7{% endblock %}
+
+{% block content %}
+    <section class="hero is-primary">
+        <div class="hero-body">
+            <div class="container">
+            <h1 class="title">
+                {{ current_user.username }}'s Shortened Links
+            </h1>
+            <h2 class="subtitle">
+                {{ links | length }} short links
+            </h2>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            {% if links | length == 0 %}
+                <div class="notification is-info">
+                    We couldn't find any shortened links associated with your account. Go and make
+                    some <a href="/">here</a>!
+                </div>
+            {% endif %}
+
+            {% for link in links %}
+                <div class="message">
+                    <div class="message-header">
+                        <p>
+                            {{ request.host_url + link.link(False) }}
+                            <span class="is-italic has-text-weight-normal">
+                                -
+                                {% if link.get_type() == "url" %}
+                                    Shortened URL to {{ link.url.url }}
+                                {% elif link.get_type() == "paste" %}
+                                    Pasted {{ link.paste.language_info().name }} code
+                                {% elif link.get_type() == "upload" %}
+                                    Uploaded file {{ link.upload.original_filename | e }}
+                                {% endif %}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="message-body">
+                        <div class="content">
+                            <p>
+                                <ul>
+                                    <li><b>Type:</b> {{ link.get_type() }}</li>
+                                    <li><b>Created:</b> {{ link.created.strftime("%H:%M %d/%m/%Y") }}</li>
+                                    <li><b>Updated:</b> {{ link.updated.strftime("%H:%M %d/%m/%Y") }}</li>
+                                    {% if link.get_type() == "url" %}
+                                        <li><b>URL:</b> {{ link.url.url }}</li>
+                                    {% elif link.get_type() == "paste" %}
+                                        <li><b>Language:</b> {{ link.paste.language_info().name }}</li>
+                                    {% elif link.get_type() == "upload" %}
+                                        <li><b>Filename:</b> {{ link.upload.original_filename | e }}</li>
+                                        <li><b>Expires:</b> {{ link.upload.expires.strftime("%H:%M %d/%m/%Y") }}</li>
+                                        <li><b>SHA256 Hash:</b> <code>{{ link.upload.hash }}</code></li>
+                                        <li><b>File Type:</b> {{ link.upload.mimetype | e }}</li>
+                                    {% endif %}
+                                </ul>
+                            </p>
+
+                            <div class="buttons">
+                                {% if link.get_type() == "url" %}
+                                    <a class="button is-primary is-small" href="{{ link.url.url }}" target="_blank">
+                                        <span class="icon">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </span>
+                                        <span>Go</span>
+                                    </a>
+                                {% elif link.get_type() == "paste" %}
+                                    <a class="button is-primary is-small" href="{{ link.link() }}" target="_blank">
+                                        <span class="icon">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </span>
+                                        <span>View</span>
+                                    </a>
+                                    <a class="button is-primary is-small" href="{{ link.link() }}?dl=1">
+                                        <span class="icon">
+                                            <i class="fas fa-download"></i>
+                                        </span>
+                                        <span>Download</span>
+                                    </a>
+                                {% elif link.get_type() == "upload" %}
+                                    <a class="button is-primary is-small" href="{{ link.link() }}" target="_blank">
+                                        <span class="icon">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </span>
+                                        <span>View</span>
+                                    </a>
+                                    <a class="button is-primary is-small" href="{{ link.link() }}?dl=1">
+                                        <span class="icon">
+                                            <i class="fas fa-download"></i>
+                                        </span>
+                                        <span>Download</span>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

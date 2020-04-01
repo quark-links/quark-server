@@ -1,18 +1,16 @@
 {% extends "base.jinja2" %}
 
 {% block title %}Download - VH7{% endblock %}
-{% block desc %}Download '{{ upload.original_filename|e }}' from VH7. Expires {{ upload.expires.strftime("%H:%m %d/%m/%Y") }}.{% endblock %}
+{% block desc %}Download '{{ upload.original_filename|e }}' from VH7. Expires {{ upload.expires.strftime("%H:%M %d/%m/%Y") }}.{% endblock %}
 
 {% block content %}
-    {% include "nav.jinja2" %}
-
     <section class="section">
         <div class="container">
             <h1 class="is-size-2">{{ upload.original_filename|e }}</h1>
             <div class="content">
                 <ul>
                     <li><b>SHA256:</b> <code>{{ upload.hash }}</code></li>
-                    <li><b>Expires:</b> {{ upload.expires.strftime("%H:%m %d/%m/%Y") }}</li>
+                    <li><b>Expires:</b> {{ upload.expires.strftime("%H:%M %d/%m/%Y") }}</li>
                     <li><b>File Type:</b> {{ upload.mimetype|e }}</li>
                 </ul>
             </div>

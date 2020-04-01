@@ -1,0 +1,33 @@
+{% extends "base.jinja2" %}
+{% from "macros/form_helpers.jinja2" import render_field %}
+
+{% block title %}Register - VH7{% endblock %}
+
+{% block content %}
+    <section class="section">
+        <div class="container">
+            <h1 class="title is-2">Register</h1>
+
+            {% include "partials/flash.jinja2" %}
+
+            <form action="{{ url_for('users.register') }}" method="post">
+                {{ form.csrf_token }}
+                {{ render_field(form.username, placeholder="Username") }}
+                {{ render_field(form.email, placeholder="Email") }}
+                {{ render_field(form.password, placeholder="Password") }}
+                {{ render_field(form.password_confirm, placeholder="Password Confirm") }}
+                <div class="field">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">
+                            <span class="icon">
+                                <i class="fas fa-paper-plane"></i>
+                            </span>
+                            <span>Register</span>
+                        </button>
+                    </div>
+                    <p class="help">Already have an account? <a href="{{ url_for('users.login') }}">Login here</a></p>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

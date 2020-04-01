@@ -12,6 +12,7 @@ import utils.retention as retention
 from api.exceptions import ApiException, FileTooLargeException
 import utils.languages as lang
 from pathlib import Path
+from flask_login import current_user
 
 from db import db, ShortLink, Url, Paste, Upload, hashids
 
@@ -38,6 +39,10 @@ def shorten(args):
         short_link = ShortLink()
         short_link.url = url
 
+        # If there is a logged in user, set them as the owner
+        if current_user.is_authenticated:
+            short_link.user = current_user
+
         db.session.add(url)
         db.session.add(short_link)
         db.session.commit()
@@ -61,6 +66,10 @@ def paste(args):
         paste = Paste(req_code, req_lang, req_hash)
         short_link = ShortLink()
         short_link.paste = paste
+
+        # If there is a logged in user, set them as the owner
+        if current_user.is_authenticated:
+            short_link.user = current_user
 
         db.session.add(paste)
         db.session.add(short_link)
@@ -115,6 +124,10 @@ def upload(args):
         upload = Upload(req_filename, req_mimetype, filename, req_hash, ret)
         short_link = ShortLink()
         short_link.upload = upload
+
+        # If there is a logged in user, set them as the owner
+        if current_user.is_authenticated:
+            short_link.user = current_user
 
         req_file.save(os.path.join(current_app.config["UPLOAD_FOLDER"],
                                    filename))

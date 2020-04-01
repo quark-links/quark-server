@@ -4,10 +4,7 @@
 
 {% block content %}
 <div id="app">
-    <section class="hero is-primary is-medium is-bold">
-        <div class="hero-head">
-            {% include "nav.jinja2" %}
-        </div>
+    <section class="hero is-primary is-medium">
         <div class="hero-body">
             <div class="container">
                 <h1 class="title">
@@ -36,6 +33,8 @@
             </nav>
         </div>
     </section>
+
+    {% include "partials/flash.jinja2" %}
 
     <section id="feedback-section" class="section" v-if="uploadProgress < 100 || result">
         <div class="container">

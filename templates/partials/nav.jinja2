@@ -1,0 +1,58 @@
+<nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+            <img src="/static/img/logo white.png" alt="VH7 Logo">
+        </a>
+
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div id="navbar" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item {% if request.endpoint == 'index' %}is-active{% endif %}" href="/">
+                Home
+            </a>
+
+            <a class="navbar-item" href="https://github.com/jake-walker/vh7/wiki/API" target="_blank">
+                Documentation
+            </a>
+        </div>
+        <div class="navbar-end">
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link">
+                    {% if current_user.is_authenticated %}
+                        Hi {{ current_user.username }}!
+                    {% else %}
+                        Not logged in
+                    {% endif %}
+                </a>
+
+                <div class="navbar-dropdown is-right">
+                    {% if current_user.is_authenticated %}
+                        <a class="navbar-item" href="/account">
+                            My Account
+                        </a>
+                        <a class="navbar-item" href="/links">
+                            My Short Links
+                        </a>
+                        <hr class="navbar-divider">
+                        <a class="navbar-item" href="/logout">
+                            Logout
+                        </a>
+                    {% else %}
+                        <a class="navbar-item" href="/login">
+                            Login
+                        </a>
+                        <a class="navbar-item" href="/register">
+                            Register
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

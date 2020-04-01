@@ -21,10 +21,11 @@ def upgrade():
                     sa.Column('id', sa.Integer(), nullable=False),
                     sa.Column('created', sa.DateTime(timezone=True),
                               server_default=sa.text('(CURRENT_TIMESTAMP)'),
-                              nullable=True),
+                              nullable=False),
                     sa.Column('updated', sa.DateTime(timezone=True),
                               server_default=sa.text('(CURRENT_TIMESTAMP)'),
-                              nullable=True),
+                              onupdate=sa.text('(CURRENT_TIMESTAMP)'),
+                              nullable=False),
                     sa.Column('creator_ip', sa.String(length=50),
                               nullable=False),
                     sa.PrimaryKeyConstraint('id'))

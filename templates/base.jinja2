@@ -51,9 +51,11 @@
   </head>
   <body>
     <div class="wrap-content">
+        {% include "partials/nav.jinja2" %}
+
         {% block content %}{% endblock %}
     </div>
-    {% include "footer.jinja2" %}
+    {% include "partials/footer.jinja2" %}
 
     {% block footer %}
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>

@@ -1,0 +1,13 @@
+<p>
+    Hello {{ user.username }},
+</p>
+<p>
+    Welcome to VH7! Please follow the following link to activate your account:
+</p>
+<p>
+    <a href="{{ confirm_url }}">{{ confirm_url }}</a>
+</p>
+<p>
+    Thanks!<br>
+    {{ config.INSTANCE_OWNER }}
+</p>

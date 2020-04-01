@@ -7,13 +7,16 @@ database.
 from flask import Flask, render_template, redirect, send_file, request
 from flask import Response
 from flask_migrate import Migrate
-from db import db, hashids, ShortLink
+from db import db, hashids, ShortLink, User
 from flask_cors import CORS
 from api.routes import api
+from users.routes import user_blueprint
 import os
 import config
 import cleanup
 import utils.languages as lang
+from flask_login import LoginManager
+from flask_mail import Mail
 
 # Create a new Flask server
 app = Flask(__name__)
@@ -29,6 +32,20 @@ db.app = app
 
 migrate = Migrate(app, db)
 
+# Setup login manager
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "users.login"
+login_manager.refresh_view = "users.login"
+login_manager.needs_refresh_message = ("To protect your account, we require "
+                                       "that you reauthenticate before "
+                                       "accessing this page.")
+login_manager.needs_refresh_message_category = "warning"
+
+# Setup mail
+mail = Mail()
+mail.init_app(app)
+
 # Create the upload folder if it doesn't exist
 try:
     os.makedirs(app.config["UPLOAD_FOLDER"])
@@ -37,6 +54,13 @@ except FileExistsError:
 
 # Load API routes
 app.register_blueprint(api)
+app.register_blueprint(user_blueprint)
+
+
+@login_manager.user_loader
+def load_user(id):
+    """Find a user in the database by their id."""
+    return User.query.filter_by(id=id).first()
 
 
 @app.route("/")
