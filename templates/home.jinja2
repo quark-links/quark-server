@@ -7,12 +7,26 @@
     <section class="hero is-primary is-medium">
         <div class="hero-body">
             <div class="container">
-                <h1 class="title">
-                    VH7
-                </h1>
-                <h2 class="subtitle">
-                    A free and open source <u>URL shortening</u>, <u>file sharing</u> and <u>pastebin</u> service.
-                </h2>
+                {% if current_user.is_authenticated %}
+                    <h1 class="title">
+                        Welcome back {{ current_user.username }}!
+                    </h1>
+                    <p>
+                        <a class="button is-white is-outlined" href="/links">
+                            <span class="icon">
+                                <i class="fas fa-link"></i>
+                            </span>
+                            <span>My Short Links</span>
+                        </a>
+                    </p>
+                {% else %}
+                    <h1 class="title">
+                        VH7
+                    </h1>
+                    <h2 class="subtitle">
+                        A free and open source <u>URL shortening</u>, <u>file sharing</u> and <u>pastebin</u> service.
+                    </h2>
+                {% endif %}
             </div>
         </div>
         <div class="hero-foot">
