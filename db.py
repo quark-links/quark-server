@@ -205,6 +205,7 @@ class User(db.Model):
     confirmed_on = db.Column(db.DateTime(timezone=True), nullable=True)
     confirm_token = db.Column(db.String(100), nullable=True)
     reset_token = db.Column(db.String(100), nullable=True)
+    api_key = db.Column(db.String(100), nullable=True)
 
     def __init__(self, username, email):
         """Create a new user object.

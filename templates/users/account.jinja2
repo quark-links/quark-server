@@ -33,6 +33,37 @@
 
     <section class="section">
         <div class="container">
+            <h2 class="title is-4">API Key</h2>
+            <div class="content">
+                <p>
+                    Your API key can be used to use the API while being logged
+                    into your account. This allows you to still save your links
+                    to your account while using the API.
+                </p>
+                {% if current_user.api_key %}
+                    <p class="has-text-danger">
+                        Your API key provides <b>full access</b> to your account.
+                        Treat it like a password.
+                    </p>
+                    <pre><code>{{ current_user.api_key }}</code></pre>
+                {% else %}
+                    <p class="is-italic">
+                        You currently have no API key assigned to your account.
+                        Click the regenerate API key button below to create one.
+                    </p>
+                {% endif %}
+            </div>
+            <a href="/account/regen_api_key" class="button is-primary">
+                <span class="icon">
+                    <i class="fas fa-sync"></i>
+                </span>
+                <span>Regenerate API Key</span>
+            </a>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
             <h2 class="title is-4">Details</h2>
             <div class="content">
                 <p>

@@ -4,7 +4,8 @@ from flask import Blueprint, current_app, jsonify, Response
 from url_normalize import url_normalize
 from webargs.flaskparser import use_args
 from api.request_schema import url_args, paste_args, upload_args
-from api.response_schema import short_link_schema
+from api.response_schema import short_link_schema, user_schema
+from api.response_schema import short_links_schema
 import uuid
 import os
 import hashlib
@@ -12,7 +13,7 @@ import utils.retention as retention
 from api.exceptions import ApiException, FileTooLargeException
 import utils.languages as lang
 from pathlib import Path
-from flask_login import current_user
+from flask_login import current_user, login_required
 
 from db import db, ShortLink, Url, Paste, Upload, hashids
 
@@ -23,6 +24,21 @@ api = Blueprint("api", __name__, url_prefix="/api")
 def languages():
     """A flask route for getting the available paste languages."""
     return jsonify(lang.languages)
+
+
+@api.route("/user", methods=["GET"])
+@login_required
+def user_info():
+    """A flask route for getting the current user."""
+    return user_schema.jsonify(current_user)
+
+
+@api.route("/user/links", methods=["GET"])
+@login_required
+def user_links():
+    """A flask route for getting the current user's links."""
+    links = ShortLink.query.filter_by(user_id=current_user.id)
+    return short_links_schema.jsonify(links)
 
 
 @api.route("/shorten", methods=["POST"])

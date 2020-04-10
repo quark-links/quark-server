@@ -5,7 +5,7 @@ This file contains Marshmallow schema for each of the API responses.
 
 from flask_marshmallow import Marshmallow
 from marshmallow import post_dump
-from db import ShortLink, Url, Paste, Upload
+from db import ShortLink, Url, Paste, Upload, User
 
 ma = Marshmallow()
 
@@ -73,6 +73,15 @@ class ShortLinkSchema(ma.ModelSchema):
     upload = ma.Nested(UploadSchema, skip_missing=True)
 
 
+class UserSchema(ma.ModelSchema):
+    """Marshmallow schema for user objects."""
+    class Meta:
+        """Metadata about the schema."""
+        fields = ("created", "updated", "email", "username", "confirmed",
+                  "confirmed_on")
+        model = User
+
+
 short_link_schema = ShortLinkSchema()
 short_links_schema = ShortLinkSchema(many=True)
 url_schema = UrlSchema()
@@ -81,3 +90,4 @@ paste_schema = PasteSchema()
 pastes_schema = PasteSchema(many=True)
 upload_schema = UploadSchema()
 uploads_schema = UploadSchema(many=True)
+user_schema = UserSchema()

@@ -17,6 +17,8 @@ import cleanup
 import utils.languages as lang
 from flask_login import LoginManager
 from flask_mail import Mail
+import users.api_keys as api_keys
+from api.exceptions import AuthenticationException
 
 # Create a new Flask server
 app = Flask(__name__)
@@ -61,6 +63,23 @@ app.register_blueprint(user_blueprint)
 def load_user(id):
     """Find a user in the database by their id."""
     return User.query.filter_by(id=id).first()
+
+
+@login_manager.request_loader
+def load_user_from_request(request):
+    """Find a user in the database by their API key."""
+    if request.blueprint == "api":
+        api_key = request.headers.get("Authorization")
+        if api_key:
+            api_key = api_key.replace("Bearer ", "", 1)
+            user = api_keys.verify_api_key(api_key)
+
+            if user is None:
+                raise AuthenticationException()
+            else:
+                return user
+
+    return None
 
 
 @app.route("/")

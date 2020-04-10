@@ -12,6 +12,7 @@ from utils.flask_utils import is_safe_url
 import utils.email_token as email_token
 import datetime
 import users.emails as email
+import users.api_keys as api_keys
 
 user_blueprint = Blueprint("users", __name__)
 
@@ -175,6 +176,16 @@ def account_delete():
                 flash("Incorrect account details!", "error")
 
     return render_template("users/delete.jinja2", form=form)
+
+
+@user_blueprint.route("/account/regen_api_key")
+@login_required
+@fresh_login_required
+def account_regen_api_key():
+    """Flask route for regenerating a user's API key."""
+    api_keys.generate_api_key(user=current_user)
+    flash("Your API key has been regenerated.", "success")
+    return redirect(url_for("users.account"))
 
 
 @user_blueprint.route("/verify/<token>")

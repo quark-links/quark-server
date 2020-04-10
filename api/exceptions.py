@@ -21,3 +21,13 @@ class FileTooLargeException(ApiException):
         """Create a new FileTooLargeException."""
         self.message = "The uploaded file exceeds the maximum file size."
         self.code = 400
+
+
+class AuthenticationException(ApiException):
+    """Raised when a user has not authenticated properly."""
+    def __init__(self):
+        """Create a new AuthenticationException."""
+        self.message = ("The authentication header is incorrect. Please check "
+                        "the documentation and ensure that your API key is "
+                        "correct.")
+        self.code = 401
