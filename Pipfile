@@ -32,6 +32,7 @@ passlib = "~=1.7.2"
 flask-wtf = "~=0.14.3"
 itsdangerous = "~=1.1.0"
 flask-mail = "~=0.9.1"
+flask-qrcode = "*"
 
 [requires]
 python_version = "3.7"

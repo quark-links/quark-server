@@ -19,6 +19,7 @@ from flask_login import LoginManager
 from flask_mail import Mail
 import users.api_keys as api_keys
 from api.exceptions import AuthenticationException
+from flask_qrcode import QRcode
 
 # Create a new Flask server
 app = Flask(__name__)
@@ -47,6 +48,8 @@ login_manager.needs_refresh_message_category = "warning"
 # Setup mail
 mail = Mail()
 mail.init_app(app)
+
+QRcode(app)
 
 # Create the upload folder if it doesn't exist
 try:

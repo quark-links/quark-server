@@ -59,8 +59,39 @@
                 </span>
                 <span>Regenerate API Key</span>
             </a>
+            <button id="show-qr" class="button is-primary">
+                <span class="icon">
+                    <i class="fas fa-qrcode"></i>
+                </span>
+                <span>Show QR Code</span>
+            </button>
         </div>
     </section>
+
+    <div id="qr-modal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card" style="padding: 1em;">
+            <header class="modal-card-head">
+                <p class="modal-card-title">API Key QR Code</p>
+                <button id="qr-modal-close" class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <p>
+                    Below is a QR code of your account's API key. Scan it using
+                    compatible apps to login to your VH7 account.
+
+                    <span class="has-text-danger">
+                        Your API key provides <b>full access</b> to your account.
+                        Treat it like a password.
+                    </span>
+                </p>
+
+                <div class="has-text-centered" style="padding: 1em;">
+                    <img src="{{ qrcode(current_user.api_key) }}">
+                </div>
+            </section>
+        </div>
+    </div>
 
     <section class="section">
         <div class="container">
@@ -102,4 +133,17 @@
             </div>
         </div>
     </section>
+{% endblock %}
+
+{% block footer %}
+    {{ super() }}
+    <script>
+        $("#show-qr").click(function() {
+            $("#qr-modal").addClass("is-active");
+        });
+
+        $("#qr-modal-close").click(function() {
+            $("#qr-modal").removeClass("is-active");
+        });
+    </script>
 {% endblock %}
