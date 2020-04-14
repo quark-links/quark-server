@@ -26,8 +26,12 @@ app = Flask(__name__)
 # Load configuration from the 'config.py' file
 app.config.from_object("config")
 
+# Load API routes
+app.register_blueprint(api)
+app.register_blueprint(user_blueprint)
+
 # Setup CORS on the Flask application
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Setup the SQLAlchemy database
 db.init_app(app)
@@ -56,10 +60,6 @@ try:
     os.makedirs(app.config["UPLOAD_FOLDER"])
 except FileExistsError:
     pass
-
-# Load API routes
-app.register_blueprint(api)
-app.register_blueprint(user_blueprint)
 
 
 @login_manager.user_loader
