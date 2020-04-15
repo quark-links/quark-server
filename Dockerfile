@@ -7,7 +7,7 @@ WORKDIR /app
 
 RUN chmod 777 /app/entrypoint.sh
 
-RUN apk add --no-cache mariadb-dev g++ curl
+RUN apk add --no-cache mariadb-dev g++ curl jpeg-dev zlib-dev freetype-dev lcms2-dev openjpeg-dev tiff-dev tk-dev tcl-dev harfbuzz-dev fribidi-dev
 
 RUN pip install --upgrade pip pipenv
 RUN pipenv install --system

@@ -11,7 +11,7 @@ steps:
   - name: test
     image: python:3.7-alpine
     commands:
-      - apk add --no-cache mariadb-dev g++
+      - apk add --no-cache mariadb-dev g++ jpeg-dev zlib-dev freetype-dev lcms2-dev openjpeg-dev tiff-dev tk-dev tcl-dev harfbuzz-dev fribidi-dev
       - pip install --upgrade pip pipenv
       - pipenv install --dev
       - pipenv run flake8
