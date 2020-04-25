@@ -72,3 +72,7 @@ MAIL_USE_SSL = strtobool(os.getenv("VH7_MAIL_SSL", "off"))
 MAIL_USERNAME = os.getenv("VH7_MAIL_USERNAME", None)
 MAIL_PASSWORD = os.getenv("VH7_MAIL_PASSWORD", None)
 MAIL_DEFAULT_SENDER = os.getenv("VH7_MAIL_SENDER", None)
+
+# Recaptcha configuration
+RECAPTCHA_PUBLIC_KEY = os.getenv("VH7_RECAPTCHA_PUBLIC", None)
+RECAPTCHA_PRIVATE_KEY = os.getenv("VH7_RECAPTCHA_PRIVATE", None)
