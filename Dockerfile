@@ -2,6 +2,12 @@ FROM python:3.7-alpine
 
 LABEL com.centurylinklabs.watchtower.enable="true"
 
+# Keeps Python from generating .pyc files in the container
+ENV PYTHONDONTWRITEBYTECODE 1
+
+# Turns off buffering for easier container logging
+ENV PYTHONUNBUFFERED 1
+
 ADD . /app
 WORKDIR /app
 
