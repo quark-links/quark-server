@@ -7,7 +7,7 @@
     <section class="section">
         <div class="container">
             <h1 class="is-size-2">{{ upload.original_filename|e }}</h1>
-            <div class="content">
+            <div class="content" style="overflow-x: auto;">
                 <ul>
                     <li><b>SHA256:</b> <code>{{ upload.hash }}</code></li>
                     <li><b>Expires:</b> {{ upload.expires.strftime("%H:%M %d/%m/%Y") }}</li>
@@ -28,12 +28,14 @@
                     </div>
                 </article>
 
-                <a class="button is-primary" href="?dl=1">
+                <a class="button is-primary" href="?dl=1" style="margin-bottom: 10px;">
                     <span class="icon">
                         <i class="fas fa-download"></i>
                     </span>
                     <span>Download</span>
                 </a>
+
+                {% include "partials/file-preview.jinja2" %}
             {% else %}
                 <article class="message is-info">
                     <div class="message-header">

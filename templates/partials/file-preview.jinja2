@@ -1,0 +1,37 @@
+{% if upload.mimetype in ['video/mp4', 'video/webm', 'video/ogg'] %}
+    <h2 class="is-size-3">Video Preview <span class="tag is-warning">beta</span></h2>
+    {% if showpreview %}
+        <video controls>
+            <source src="?dl=1" type="{{ upload.mimetype }}">
+        </video>
+    {% else %}
+        <article class="message is-info" style="margin-top: 10px;">
+            <div class="message-header">
+                <p>Preview available!</p>
+            </div>
+            <div class="message-body">
+                This file can be previewed in your browser.
+                <a href="?preview=1">Click here</a> the to show the preview.
+                <b>We are currently not showing previews by default as they are in beta. Please give your feedback <a href="https://github.com/jake-walker/vh7/issues/16">here</a>.</b>
+            </div>
+        </article>
+    {% endif %}
+{% elif upload.mimetype.split("/")[0] == "image" %}
+    <h2 class="is-size-3">Image Preview <span class="tag is-warning">beta</span></h2>
+    {% if showpreview %}
+        <figure class="image">
+            <img src="?dl=1">
+        </figure>
+    {% else %}
+        <article class="message is-info" style="margin-top: 10px;">
+            <div class="message-header">
+                <p>Preview available!</p>
+            </div>
+            <div class="message-body">
+                This file can be previewed in your browser.
+                <a href="?preview=1">Click here</a> the to show the preview.
+                <b>We are currently not showing previews by default as they are in beta. Please give your feedback <a href="https://github.com/jake-walker/vh7/issues/16">here</a>.</b>
+            </div>
+        </article>
+    {% endif %}
+{% endif %}

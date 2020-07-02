@@ -138,7 +138,9 @@ def goto(id):
                              attachment_filename=filename,
                              mimetype=shortlink.upload.mimetype)
         else:
-            return render_template("download.jinja2", upload=shortlink.upload)
+            return render_template("download.jinja2", upload=shortlink.upload,
+                                   showpreview=(request.args.get("preview")
+                                                is not None))
     else:
         raise Exception("Short Link isn't pointed to any other type!")
 
