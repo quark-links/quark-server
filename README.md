@@ -97,7 +97,7 @@ These instructions go over the method to setup a development environment for VH7
 
 ### Prerequisites
 
-- [Python 3.7](https://www.python.org/downloads/) (or any other version of Python 3)
+- [Python 3.8](https://www.python.org/downloads/) (or any other version of Python 3)
 - [Pipenv](https://github.com/pypa/pipenv) (for managing dependencies and a virtual environment)
 
 ### Installation
