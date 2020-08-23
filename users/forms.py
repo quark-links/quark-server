@@ -1,10 +1,12 @@
 """WTForm form classes for user management."""
-from flask_wtf import FlaskForm, RecaptchaField
+from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired, Length, Optional, EqualTo
 from users.validators import Unique
 from db import User
+from wtforms_hcaptcha.fields import HcaptchaField
+from config import HCAPTCHA_SITE_KEY, HCAPTCHA_SECRET_KEY
 
 
 class LoginForm(FlaskForm):
@@ -13,7 +15,8 @@ class LoginForm(FlaskForm):
                                                    Length(min=3, max=50)])
     password = PasswordField("Password", validators=[DataRequired()])
     remember_me = BooleanField("Remember Me")
-    recaptcha = RecaptchaField()
+    captcha = HcaptchaField(site_key=HCAPTCHA_SITE_KEY,
+                            secret_key=HCAPTCHA_SECRET_KEY)
 
 
 class RegisterForm(FlaskForm):
@@ -44,7 +47,8 @@ class RegisterForm(FlaskForm):
                                                  message="Passwords must match"
                                                  )])
     password_confirm = PasswordField("Repeat Password")
-    recaptcha = RecaptchaField()
+    captcha = HcaptchaField(site_key=HCAPTCHA_SITE_KEY,
+                            secret_key=HCAPTCHA_SECRET_KEY)
 
 
 class UpdateAccountForm(FlaskForm):

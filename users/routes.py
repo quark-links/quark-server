@@ -20,7 +20,10 @@ user_blueprint = Blueprint("users", __name__)
 @user_blueprint.route("/login", methods=["GET", "POST"])
 def login():
     """Flask route for logging in users."""
-    form = LoginForm(request.form)
+    form = LoginForm(request.form, captcha={
+        "ip_address": request.environ.get("HTTP_X_REAL_IP",
+                                          request.remote_addr)
+    })
 
     if request.method == "POST":
         if form.validate_on_submit():
@@ -54,7 +57,10 @@ def login():
 @user_blueprint.route("/register", methods=["GET", "POST"])
 def register():
     """Flask route for registering new users."""
-    form = RegisterForm(request.form)
+    form = RegisterForm(request.form, captcha={
+        "ip_address": request.environ.get("HTTP_X_REAL_IP",
+                                          request.remote_addr)
+    })
 
     if request.method == "POST":
         if form.validate_on_submit():

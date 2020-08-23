@@ -32,8 +32,9 @@ passlib = "~=1.7.2"
 flask-wtf = "~=0.14.3"
 itsdangerous = "~=1.1.0"
 flask-mail = "~=0.9.1"
-flask-qrcode = "*"
-markdown2 = "*"
+flask-qrcode = "~=3.0.0"
+markdown2 = "~=2.3.9"
+wtforms-hcaptcha = "~=0.1.1"
 
 [requires]
 python_version = "3.8"

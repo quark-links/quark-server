@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Bytecode and buffering is disabled in Dockerfile.
 - Python 3.8 is now used by default instead of Python 3.7.
+- Now using hCaptcha instead of Google reCAPTCHA.
 
 ### Fixed
 
