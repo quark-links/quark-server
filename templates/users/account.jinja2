@@ -59,12 +59,14 @@
                 </span>
                 <span>Regenerate API Key</span>
             </a>
-            <button id="show-qr" class="button is-primary">
-                <span class="icon">
-                    <i class="fas fa-qrcode"></i>
-                </span>
-                <span>Show QR Code</span>
-            </button>
+            {% if current_user.api_key %}
+                <button id="show-qr" class="button is-primary">
+                    <span class="icon">
+                        <i class="fas fa-qrcode"></i>
+                    </span>
+                    <span>Show QR Code</span>
+                </button>
+            {% endif %}
         </div>
     </section>
 
