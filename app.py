@@ -4,7 +4,7 @@ This file is the entrypoint for running VH7. It starts up Flask and sets up the
 database.
 """
 
-from flask import Flask, render_template, redirect, send_file, request
+from flask import Flask, render_template, redirect, send_file, request, abort
 from flask import Response
 from flask_migrate import Migrate
 from db import db, hashids, ShortLink, User
@@ -20,6 +20,7 @@ from flask_mail import Mail
 import users.api_keys as api_keys
 from api.exceptions import AuthenticationException
 from flask_qrcode import QRcode
+import markdown2
 
 # Create a new Flask server
 app = Flask(__name__)
@@ -95,6 +96,21 @@ def index():
 def privacy():
     """The privacy policy page."""
     return render_template("privacy.jinja2")
+
+
+@app.route("/changelog")
+def changelog():
+    """The changelog page."""
+    changelog_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                  "CHANGELOG1.md")
+
+    if not os.path.exists(changelog_path):
+        abort(404)
+
+    with open(changelog_path, "r") as f:
+        cl = markdown2.markdown(f.read())
+
+    return render_template("changelog.jinja2", cl=cl)
 
 
 @app.route("/<id>")
