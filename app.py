@@ -102,7 +102,7 @@ def privacy():
 def changelog():
     """The changelog page."""
     changelog_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                  "CHANGELOG1.md")
+                                  "CHANGELOG.md")
 
     if not os.path.exists(changelog_path):
         abort(404)
