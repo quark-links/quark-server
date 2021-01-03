@@ -99,7 +99,40 @@ def get_user_links(db: Session, user_id: int):
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = pbkdf2_sha256.hash(user.password)
     db_user = models.User(email=user.email, password=hashed_password)
+
+    if user.name is not None and user.name.strip() != "":
+        db_user.name = user.name.strip()
+
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+def update_user(db: Session, user: models.User, new_user: schemas.UserUpdate):
+    if new_user.name is not None and new_user.name.strip() != "":
+        user.name = new_user.name
+
+    if new_user.email is not None and new_user.email.strip() != "" and user.email != new_user.email:
+        user.email = new_user.email
+        user.confirmed = False
+        user.confirmed_on = None
+
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+def get_stats(db: Session):
+    shortens = db.query(models.Url).count()
+    uploads = db.query(models.Upload).count()
+    pastes = db.query(models.Paste).count()
+    total = db.query(models.ShortLink).count()
+
+    return {
+        "shortened_links": shortens,
+        "uploaded_files": uploads,
+        "pasted_code": pastes,
+        "total": total
+    }

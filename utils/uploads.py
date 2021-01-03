@@ -4,7 +4,7 @@ import os
 
 def get_uploads_folder():
     default_upload_path = os.path.join(os.path.dirname(
-        os.path.realpath(__file__)), "uploads")
+        os.path.realpath(__file__)), "../uploads")
     return os.getenv("UPLOAD_FOLDER", default_upload_path)
 
 
@@ -15,3 +15,9 @@ def save_upload(file: SpooledTemporaryFile, filename: str):
 
     with open(os.path.join(uploads_folder, filename), "wb") as f:
         f.writelines(file.readlines())
+
+
+def get_path(filename: str):
+    uploads_folder = get_uploads_folder()
+    path = os.path.join(uploads_folder, filename)
+    return path

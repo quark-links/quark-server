@@ -71,15 +71,29 @@ class Upload(UploadBase):
 
 
 class UserBase(BaseModel):
+    name: Optional[str]
     email: EmailStr
 
     class Config:
         schema_extra = {
             "example": {
+                "name": "John Doe",
                 "email": "hi@example.com"
             }
         }
 
+
+class UserUpdate(BaseModel):
+    name: Optional[str]
+    email: Optional[EmailStr]
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "name": "John Doe",
+                "email": "hi@example.com"
+            }
+        }
 
 class UserCreate(UserBase):
     password: str
@@ -87,6 +101,7 @@ class UserCreate(UserBase):
     class Config:
         schema_extra = {
             "example": {
+                "name": "John Doe",
                 "email": "hi@example.com",
                 "password": "password123"
             }
@@ -95,7 +110,6 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: int
-    name: Optional[str]
     created: datetime.date
     updated: datetime.date
     confirmed: bool
