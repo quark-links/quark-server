@@ -15,7 +15,9 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v1
         with:
-          python-verson: ${{ matrix.python }}
+          python-version: ${{ matrix.python }}
+      - name: Install pipenv
+        run: pip install pipenv
       - name: Install dependencies
         run: pipenv install --dev
       # TODO: Sort mypy linting

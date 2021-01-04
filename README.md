@@ -12,9 +12,9 @@
 	</strong>
 </p>
 <p align="center">
-	<a href="https://ci.jakewalker.xyz/jake-walker/vh7"><img
+	<a href="https://github.com/jake-walker/vh7/actions?query=workflow%3Aci"><img
         alt="Build Status"
-    	src="https://img.shields.io/drone/build/jake-walker/vh7/master?server=https%3A%2F%2Fci.jakewalker.xyz&style=flat-square"></a>
+    	src="https://img.shields.io/github/workflow/status/jake-walker/vh7/ci/master?style=flat-square"></a>
 </p>
 
 <!-- TOC -->
