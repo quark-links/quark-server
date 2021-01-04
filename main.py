@@ -20,7 +20,7 @@ from os import getenv
 from urllib.parse import urljoin
 
 
-SECRET_KEY = "f8afd7fcece3aa4d3ae21216c9a3b76be631fd2febc0dabd1dbb2402a77dbd7f"
+SECRET_KEY = getenv("JWT_KEY", "keyboardcat")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 43200
 
@@ -193,6 +193,10 @@ def short_link_download(short_link_id: str, db: Session = Depends(get_db)):
     if short_link.upload is None:
         raise HTTPException(status_code=404,
                             detail="The given short link is not a file")
+
+    if short_link.upload.filename is None:
+        raise HTTPException(status_code=404,
+                            detail="The given short link has expired")
 
     return FileResponse(get_path(short_link.upload.filename),
                         filename=short_link.upload.original_filename,

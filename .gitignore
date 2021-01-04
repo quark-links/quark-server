@@ -149,4 +149,4 @@ dmypy.json
 ### Project Specific ###
 .env
 data.db
-*/uploads/
+uploads/

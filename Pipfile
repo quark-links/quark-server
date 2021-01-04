@@ -19,6 +19,9 @@ hashids = "*"
 passlib = "*"
 python-jose = {extras = ["cryptography"], version = "*"}
 aiofiles = "*"
+logzero = "*"
+pydantic = "*"
+mysqlclient = "*"
 
 [requires]
 python_version = "3.8"

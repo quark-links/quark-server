@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 from pydantic import BaseModel, HttpUrl, EmailStr, validator
 import datetime
 from database import hashids

@@ -1,0 +1,39 @@
+name: ci
+on:
+  - push
+  - pull_request
+jobs:
+  ci:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python: [3.8]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-verson: ${{ matrix.python }}
+      - name: Install dependencies
+        run: pipenv install --dev
+      # TODO: Sort mypy linting
+      - name: Lint
+        run: flake8
+
+  release:
+    runs-on: ubuntu-latest
+    needs: ci
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build & Push Docker Image
+        uses: mr-smithers-excellent/docker-build-push@v3
+        with:
+          image: vh7/vh7
+          tag: latest
+          registry: docker.pkg.github.com
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}

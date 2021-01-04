@@ -9,9 +9,9 @@ def calculate_retention(file_size):
     Returns:
         int: The number of days that the file should be retained for.
     """
-    min_age = os.getenv("UPLOAD_MIN_AGE", 30)
-    max_age = os.getenv("UPLOAD_MAX_AGE", 90)
-    max_size = os.getenv("UPLOAD_MAX_SIZE", 256)
+    min_age = int(os.getenv("UPLOAD_MIN_AGE", "30"))
+    max_age = int(os.getenv("UPLOAD_MAX_AGE", "90"))
+    max_size = int(os.getenv("UPLOAD_MAX_SIZE", "256"))
 
     if file_size > max_size or file_size < 0:
         return -1

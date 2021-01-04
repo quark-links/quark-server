@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 import datetime
 
-from database import Base, hashids
+from database import Base
 
 
 class ShortLink(Base):
