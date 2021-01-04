@@ -1,10 +1,21 @@
 FROM tiangolo/uvicorn-gunicorn-fastapi:python3.7
 
+# Keeps Python from generating .pyc files in the container
+ENV PYTHONDONTWRITEBYTECODE 1
+
+# Turns off buffering for easier container logging
+ENV PYTHONUNBUFFERED 1
+
 RUN mkdir -p /app
 RUN mkdir -p /uploads
 RUN mkdir -p /data
 WORKDIR /app
 COPY . /app
+
+RUN chmod +x /app/entrypoint.sh
+
+RUN pip install --upgrade pip pipenv
+RUN pipenv install --system
 
 ENV DATABASE_URL=sqlite:///data/data.db
 ENV HASHIDS_SALT=keyboardcat
@@ -19,3 +30,5 @@ ENV UPLOAD_FOLDER=/uploads
 
 EXPOSE 80
 VOLUME [ "/uploads", "/data" ]
+
+ENTRYPOINT [ "sh", "/app/entrypoint.sh" ]

@@ -19,10 +19,10 @@ jobs:
       - name: Install pipenv
         run: pip install pipenv
       - name: Install dependencies
-        run: pipenv install --dev
+        run: pipenv install --system --dev
       # TODO: Sort mypy linting
-      - name: Lint
-        run: flake8
+      # - name: Lint
+      #   run: flake8
 
   release:
     runs-on: ubuntu-latest
