@@ -10,6 +10,3 @@ echo "Executing database migrations..."
 alembic upgrade head
 
 echo "Prestart complete!"
-
-echo "Starting server..."
-exec "$@"
