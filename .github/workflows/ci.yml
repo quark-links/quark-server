@@ -35,7 +35,7 @@ jobs:
         uses: mr-smithers-excellent/docker-build-push@v5.2
         with:
           image: jakewalker/vh7
-          tag: latest
+          tags: latest,v1
           registry: docker.io
           username: jakewalker
           password: ${{ secrets.DOCKER_PASSWORD }}
