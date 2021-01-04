@@ -143,6 +143,8 @@ def create_paste(paste: schemas.PasteCreate, db: Session = Depends(get_db),
                  user: Optional[schemas.User] =
                  Depends(get_optional_active_user)):
     """Save code to a short link."""
+    # TODO: Validate languages
+    paste.language = "plain"
     return crud.create_paste(db=db, paste=paste, user=user)
 
 
