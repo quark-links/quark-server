@@ -32,10 +32,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build & Push Docker Image
-        uses: mr-smithers-excellent/docker-build-push@v3
+        uses: mr-smithers-excellent/docker-build-push@v5.2
         with:
-          image: vh7/vh7
+          image: jakewalker/vh7
           tag: latest
-          registry: docker.pkg.github.com
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: docker.io
+          username: jakewalker
+          password: ${{ secrets.DOCKER_PASSWORD }}
