@@ -3,11 +3,14 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from os import getenv
 
-# TODO: Load database URI from environment variables
 SQLALCHEMY_DATABASE_URL = getenv("DATABASE_URL", "sqlite:///data.db")
+SQLALCHEMY_ARGUMENTS = {}
+
+if SQLALCHEMY_DATABASE_URL.startswith("sqlite:"):
+    SQLALCHEMY_ARGUMENTS["check_same_thread"] = False
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL,
-                       connect_args={"check_same_thread": False})
+                       connect_args=SQLALCHEMY_ARGUMENTS)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 metadata = MetaData(naming_convention={

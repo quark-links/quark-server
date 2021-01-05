@@ -144,7 +144,6 @@ class ShortLink(BaseModel):
 
     @validator("link", pre=True, always=True)
     def default_link(cls, v, *, values, **kwargs):
-        # TODO: get base domain from envionment variables
         link = urljoin(getenv("INSTANCE_URL", "https://vh7.uk/"),
                        utils.idencode.encode(values['id']))
         return v or link
