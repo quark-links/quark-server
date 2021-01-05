@@ -1,4 +1,7 @@
-ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+from os import getenv
+
+ALPHABET = getenv("ID_ALPHABET", ("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQ"
+                                  "RSTUVWXYZ0123456789"))
 
 
 def encode(n: int) -> str:

@@ -19,6 +19,7 @@ RUN pipenv install --system
 
 ENV DATABASE_URL=sqlite:////data/data.db
 ENV JWT_KEY=f8afd7fcece3aa4d3ae21216c9a3b76be631fd2febc0dabd1dbb2402a77dbd7f
+ENV ID_ALPHABET=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
 ENV INSTANCE_APP_URL=https://app.vh7.uk
 ENV INSTANCE_URL=https://unknown.vh7.uk
 ENV INSTANCE_ADMIN=admin@unknown.vh7.uk
