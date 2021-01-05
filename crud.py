@@ -10,10 +10,21 @@ from fastapi import HTTPException
 from utils.uploads import save_upload
 from passlib.hash import pbkdf2_sha256
 from typing import Optional
+from url_normalize import url_normalize
 
 
 def create_shorten(db: Session, url: schemas.Url,
                    user: Optional[schemas.User] = None):
+    url.url = url_normalize(url.url)
+
+    # Find conflicts that can be send instead
+    conflict = db.query(models.Url).filter(
+            models.Url.url == url.url,
+            models.Url.short_link.has(user=user)).first()
+
+    if conflict is not None and conflict.short_link is not None:
+        return conflict.short_link
+
     db_url = models.Url(url=url.url)
     db_short_link = models.ShortLink()
     db_short_link.url = db_url
@@ -31,6 +42,15 @@ def create_shorten(db: Session, url: schemas.Url,
 def create_paste(db: Session, paste: schemas.PasteCreate,
                  user: Optional[schemas.User] = None):
     code_hash = hashlib.sha256(paste.code.encode("utf8")).hexdigest()
+
+    # Find conflicts that can be send instead
+    conflict = db.query(models.Paste).filter(
+            models.Paste.hash == code_hash,
+            models.Paste.short_link.has(user=user)).first()
+
+    if conflict is not None and conflict.short_link is not None:
+        return conflict.short_link
+
     db_paste = models.Paste(code=paste.code, language=paste.language,
                             hash=code_hash)
     db_short_link = models.ShortLink()
@@ -53,6 +73,14 @@ def create_upload(db: Session, filename: str, file: SpooledTemporaryFile,
 
     # Reset the file back to the beginning
     file.seek(0)
+
+    # Find conflicts that can be send instead
+    conflict = db.query(models.Upload).filter(
+            models.Upload.hash == file_hash,
+            models.Upload.short_link.has(user=user)).first()
+
+    if conflict is not None and conflict.short_link is not None:
+        return conflict.short_link
 
     file_size = os.fstat(file.fileno()).st_size / 1e+6
     retention = calculate_retention(file_size)
@@ -93,7 +121,9 @@ def get_user_by_email(db: Session, email: str):
 
 
 def get_user_links(db: Session, user_id: int):
-    return db.query(models.ShortLink).filter(models.ShortLink.user_id == user_id).order_by(models.ShortLink.created.desc()).all()
+    return db.query(models.ShortLink).filter(
+        models.ShortLink.user_id == user_id).order_by(
+        models.ShortLink.created.desc()).all()
 
 
 def create_user(db: Session, user: schemas.UserCreate):
@@ -113,7 +143,8 @@ def update_user(db: Session, user: models.User, new_user: schemas.UserUpdate):
     if new_user.name is not None and new_user.name.strip() != "":
         user.name = new_user.name
 
-    if new_user.email is not None and new_user.email.strip() != "" and user.email != new_user.email:
+    if (new_user.email is not None and new_user.email.strip() != "" and
+            user.email != new_user.email):
         user.email = new_user.email
         user.confirmed = False
         user.confirmed_on = None
