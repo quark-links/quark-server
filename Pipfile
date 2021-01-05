@@ -15,13 +15,14 @@ alembic = "*"
 email-validator = "*"
 python-dotenv = "*"
 python-multipart = "*"
-hashids = "*"
 passlib = "*"
 python-jose = {extras = ["cryptography"], version = "*"}
 aiofiles = "*"
 logzero = "*"
 pydantic = "*"
 mysqlclient = "*"
+nanoid = "*"
+url-normalize = "*"
 
 [requires]
 python_version = "3.8"

@@ -18,7 +18,6 @@ RUN pip install --upgrade pip pipenv
 RUN pipenv install --system
 
 ENV DATABASE_URL=sqlite:////data/data.db
-ENV HASHIDS_SALT=keyboardcat
 ENV JWT_KEY=f8afd7fcece3aa4d3ae21216c9a3b76be631fd2febc0dabd1dbb2402a77dbd7f
 ENV INSTANCE_APP_URL=https://app.vh7.uk
 ENV INSTANCE_URL=https://unknown.vh7.uk

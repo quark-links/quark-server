@@ -1,13 +1,7 @@
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from hashids import Hashids
 from os import getenv
-
-# TODO: Load hashids config from environment variables
-hashids = Hashids(min_length=0, alphabet=("abcdefghijklmnopqrstuvwxyzABCDEFGHI"
-                                          "JKLMNOPQRSTUVWXYZ0123456789"),
-                  salt=getenv("HASHIDS_SALT", "keyboardcat"))
 
 # TODO: Load database URI from environment variables
 SQLALCHEMY_DATABASE_URL = getenv("DATABASE_URL", "sqlite:///data.db")

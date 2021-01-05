@@ -63,7 +63,6 @@ docker run --detach \
            --restart always \
            -e DATABASE_URL=mysql+mysqldb://username:password@hostname/database
            -e JWT_KEY=F6yZv5Xy8TBlYGkBs7P2wXlZqFAR3c
-           -e HASHIDS_SALT=wIkikFWxhAOV8O39B2JRCuyZqKQ8U1
            -e UPLOAD_MIN_AGE=30
            -e UPLOAD_MAX_AGE=90
            -e UPLOAD_MAX_SIZE=256

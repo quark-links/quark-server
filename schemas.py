@@ -1,7 +1,9 @@
 from typing import Optional
 from pydantic import BaseModel, HttpUrl, EmailStr, validator
 import datetime
-from database import hashids
+from urllib.parse import urljoin
+from os import getenv
+import utils.idencode
 
 
 class Url(BaseModel):
@@ -95,6 +97,7 @@ class UserUpdate(BaseModel):
             }
         }
 
+
 class UserCreate(UserBase):
     password: str
 
@@ -109,7 +112,6 @@ class UserCreate(UserBase):
 
 
 class User(UserBase):
-    id: int
     created: datetime.date
     updated: datetime.date
     confirmed: bool
@@ -143,7 +145,8 @@ class ShortLink(BaseModel):
     @validator("link", pre=True, always=True)
     def default_link(cls, v, *, values, **kwargs):
         # TODO: get base domain from envionment variables
-        link = "https://vh7.uk/" + hashids.encode(values["id"])
+        link = urljoin(getenv("INSTANCE_URL", "https://vh7.uk/"),
+                       utils.idencode.encode(values['id']))
         return v or link
 
     class Config:
@@ -165,9 +168,34 @@ class InstanceStats(BaseModel):
     pasted_code: int
     total: int
 
+    class Config:
+        schema_extra = {
+            "example": {
+                "shortened_links": 3,
+                "uploaded_files": 2,
+                "pasted_code": 1,
+                "total": 6
+            }
+        }
+
 
 class InstanceInformation(BaseModel):
     url: str
     stats: InstanceStats
     admin: str
     version: str
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "url": "https://example.vh7.uk",
+                "admin": "Example Admin <hi@example.vh7.uk>",
+                "version": "1.0.0",
+                "stats": {
+                    "shortened_links": 3,
+                    "uploaded_files": 2,
+                    "pasted_code": 1,
+                    "total": 6
+                }
+            }
+        }

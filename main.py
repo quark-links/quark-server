@@ -15,11 +15,12 @@ from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from typing import Optional, List
 from fastapi.middleware.cors import CORSMiddleware
-from database import hashids
 from os import getenv
 from urllib.parse import urljoin
+import utils.idencode
 
 
+VERSION = "1.1.0"
 SECRET_KEY = getenv("JWT_KEY", "keyboardcat")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 43200
@@ -28,11 +29,16 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 43200
 app = FastAPI(title="VH7",
               description=("A free and open source URL shortening, file "
                            "sharing and pastebin service."),
-              version="1.0.0", openapi_tags=[
+              version=VERSION, openapi_tags=[
                   {
                       "name": "users",
                       "description": ("Operations with users. The **login** "
                                       "logic is also here.")
+                  },
+                  {
+                      "name": "routing",
+                      "description": ("Routing endpoints for seamless "
+                                      "integration with the web app.")
                   }
               ])
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True,
@@ -121,15 +127,14 @@ def get_optional_active_user(current_user: schemas.User =
     return current_user
 
 
-@app.get("/")
+@app.get("/", tags=["routing"])
 def web_app():
     """Redirect to the web app."""
     return RedirectResponse(getenv("INSTANCE_APP_URL", "https://app.vh7.uk"),
                             status_code=308)
 
 
-@app.post("/shorten", response_model=schemas.ShortLink,
-          response_model_exclude={"id"})
+@app.post("/shorten", response_model=schemas.ShortLink)
 def create_shorten(url: schemas.Url, db: Session = Depends(get_db),
                    user: Optional[schemas.User] =
                    Depends(get_optional_active_user)):
@@ -137,8 +142,7 @@ def create_shorten(url: schemas.Url, db: Session = Depends(get_db),
     return crud.create_shorten(db=db, url=url, user=user)
 
 
-@app.post("/paste", response_model=schemas.ShortLink,
-          response_model_exclude={"id"})
+@app.post("/paste", response_model=schemas.ShortLink)
 def create_paste(paste: schemas.PasteCreate, db: Session = Depends(get_db),
                  user: Optional[schemas.User] =
                  Depends(get_optional_active_user)):
@@ -148,8 +152,7 @@ def create_paste(paste: schemas.PasteCreate, db: Session = Depends(get_db),
     return crud.create_paste(db=db, paste=paste, user=user)
 
 
-@app.post("/upload", response_model=schemas.ShortLink,
-          response_model_exclude={"id"})
+@app.post("/upload", response_model=schemas.ShortLink)
 def create_upload(file: UploadFile = File(...), db: Session = Depends(get_db),
                   user: Optional[schemas.User] =
                   Depends(get_optional_active_user)):
@@ -158,15 +161,13 @@ def create_upload(file: UploadFile = File(...), db: Session = Depends(get_db),
                               mimetype=file.content_type, user=user)
 
 
-@app.get("/info/{short_link_id}", response_model=schemas.ShortLink,
-         response_model_exclude={"id"})
+@app.get("/info/{short_link_id}", response_model=schemas.ShortLink)
 def short_link_info(short_link_id: str, db: Session = Depends(get_db)):
     """Get information on a given short link."""
     try:
-        decoded_id = hashids.decode(short_link_id)[0]
-    except IndexError:
-        raise HTTPException(status_code=404,
-                            detail="Short link not found")
+        decoded_id = utils.idencode.decode(short_link_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid short link")
 
     short_link = crud.get_short_link(db=db, short_link_id=decoded_id)
 
@@ -177,14 +178,13 @@ def short_link_info(short_link_id: str, db: Session = Depends(get_db)):
                             detail="Short link not found")
 
 
-@app.get("/download/{short_link_id}")
+@app.get("/dl/{short_link_id}")
 def short_link_download(short_link_id: str, db: Session = Depends(get_db)):
     """Download the file from a given short link (only for uploads)."""
     try:
-        decoded_id = hashids.decode(short_link_id)[0]
-    except IndexError:
-        raise HTTPException(status_code=404,
-                            detail="Short link not found")
+        decoded_id = utils.idencode.decode(short_link_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid short link")
 
     short_link = crud.get_short_link(db=db, short_link_id=decoded_id)
 
@@ -205,22 +205,19 @@ def short_link_download(short_link_id: str, db: Session = Depends(get_db)):
                         media_type=short_link.upload.mimetype)
 
 
-@app.post("/user", response_model=schemas.User, tags=["users"],
-          response_model_exclude={"id"})
+@app.post("/user", response_model=schemas.User, tags=["users"])
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     """Create a new user account."""
     return crud.create_user(db=db, user=user)
 
 
-@app.get("/users/me", response_model=schemas.User, tags=["users"],
-         response_model_exclude={"id"})
+@app.get("/users/me", response_model=schemas.User, tags=["users"])
 def get_user(current_user: schemas.User = Depends(get_required_user)):
     """Get the logged in user details."""
     return current_user
 
 
-@app.patch("/users/me", tags=["users"], response_model=schemas.User,
-           response_model_exclude={"id"})
+@app.patch("/users/me", tags=["users"], response_model=schemas.User)
 def update_user(new_data: schemas.UserUpdate, db: Session = Depends(get_db),
                 current_user: schemas.User = Depends(get_required_user)):
     """Update a user's details."""
@@ -228,7 +225,7 @@ def update_user(new_data: schemas.UserUpdate, db: Session = Depends(get_db),
 
 
 @app.get("/users/me/links", response_model=List[schemas.ShortLink],
-         tags=["users"], response_model_exclude={"id"})
+         tags=["users"])
 def get_user_links(db: Session = Depends(get_db), current_user: schemas.User =
                    Depends(get_required_active_user)):
     """Get a user's saved short links."""
@@ -265,22 +262,21 @@ def get_instance_information(db: Session = Depends(get_db)):
     return {
         "url": getenv("INSTANCE_URL", "https://unknown.vh7.uk"),
         "admin": getenv("INSTANCE_ADMIN", "admin@unknown.vh7.uk"),
-        "version": "1.0.0",
+        "version": VERSION,
         "stats": stats
     }
 
 
-@app.get("/{short_link_id}")
+@app.get("/{short_link_id}", tags=["routing"])
 def short_link_redirect(short_link_id: str, db: Session = Depends(get_db)):
     """Route short links. URL type short links are redirected straight to the
     URL that was shortened. All other types are redirected to the web app for
     viewing.
     """
     try:
-        decoded_id = hashids.decode(short_link_id)[0]
-    except IndexError:
-        raise HTTPException(status_code=404,
-                            detail="Short link not found")
+        decoded_id = utils.idencode.decode(short_link_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid short link")
 
     short_link = crud.get_short_link(db=db, short_link_id=decoded_id)
 
