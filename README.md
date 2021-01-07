@@ -12,9 +12,10 @@
 	</strong>
 </p>
 <p align="center">
-	<a href="https://github.com/jake-walker/vh7/actions?query=workflow%3Aci"><img
-        alt="Build Status"
-    	src="https://img.shields.io/github/workflow/status/jake-walker/vh7/ci/master?style=flat-square"></a>
+	<a href="https://github.com/jake-walker/vh7/actions?query=workflow%3Aci" target="_blank"><img alt="Build Status" title="Build Status" src="https://img.shields.io/github/workflow/status/jake-walker/vh7/ci/main"></a>
+    <a href="https://deepsource.io/gh/jake-walker/vh7/?ref=repository-badge" target="_blank"><img alt="DeepSource" title="DeepSource" src="https://deepsource.io/gh/jake-walker/vh7.svg/?label=active+issues&show_trend=true"/></a>
+    <img alt="License" title="Licence" src="https://img.shields.io/github/license/jake-walker/vh7">
+    <img alt="Pipenv Python version" src="https://img.shields.io/github/pipenv/locked/python-version/jake-walker/vh7/main">
 </p>
 
 <!-- TOC -->
