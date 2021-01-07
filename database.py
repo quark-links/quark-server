@@ -4,13 +4,15 @@ from sqlalchemy.orm import sessionmaker
 from os import getenv
 
 SQLALCHEMY_DATABASE_URL = getenv("DATABASE_URL", "sqlite:///data.db")
+SQLALCHEMY_POOL_RECYCLE = int(getenv("DATABASE_POOL_RECYCLE", -1))
 SQLALCHEMY_ARGUMENTS = {}
 
 if SQLALCHEMY_DATABASE_URL.startswith("sqlite:"):
     SQLALCHEMY_ARGUMENTS["check_same_thread"] = False
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL,
-                       connect_args=SQLALCHEMY_ARGUMENTS)
+                       connect_args=SQLALCHEMY_ARGUMENTS,
+                       pool_recycle=SQLALCHEMY_POOL_RECYCLE)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 metadata = MetaData(naming_convention={
