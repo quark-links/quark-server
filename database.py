@@ -13,7 +13,8 @@ if SQLALCHEMY_DATABASE_URL.startswith("sqlite:"):
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL,
                        connect_args=SQLALCHEMY_ARGUMENTS,
-                       pool_recycle=SQLALCHEMY_POOL_RECYCLE)
+                       pool_recycle=SQLALCHEMY_POOL_RECYCLE,
+                       pool_pre_ping=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 metadata = MetaData(naming_convention={
