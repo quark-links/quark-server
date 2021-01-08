@@ -1,3 +1,4 @@
+"""Alembic migration environment."""
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
@@ -25,16 +26,9 @@ fileConfig(config.config_file_name)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
 import database  # noqa: E402
 import models  # noqa: E402, F401
 target_metadata = database.Base.metadata
-
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
 
 
 def run_migrations_offline():

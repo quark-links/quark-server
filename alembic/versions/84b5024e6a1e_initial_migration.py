@@ -17,6 +17,7 @@ depends_on = None
 
 
 def upgrade():
+    """Upgrade the database from the previous version."""
     op.create_table('user',
                     sa.Column('id', sa.Integer(), nullable=False),
                     sa.Column('created', sa.DateTime(timezone=True),
@@ -89,6 +90,7 @@ def upgrade():
 
 
 def downgrade():
+    """Downgrade the database to the previous version."""
     op.drop_table('url')
     op.drop_table('upload')
     op.drop_table('paste')

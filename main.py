@@ -1,3 +1,4 @@
+"""Main VH7 API server."""
 from utils.uploads import get_path
 from fastapi import FastAPI, Depends, File, UploadFile
 from fastapi.exceptions import HTTPException
@@ -47,6 +48,11 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
 
 
 def get_db():
+    """Fetch a database instance.
+
+    Yields:
+        Session: A database instance
+    """
     db = SessionLocal()
     try:
         yield db
@@ -55,6 +61,16 @@ def get_db():
 
 
 def authenticate_user(db: Session, username: str, password: str):
+    """Fetch a user by their username and verify their password is correct.
+
+    Args:
+        db (Session): A database instance
+        username (str): The username of the user
+        password (str): The password of the user
+
+    Returns:
+        User: The valid user or False
+    """
     db_user = crud.get_user_by_email(db=db, email=username)
     if not db_user:
         return False
@@ -64,6 +80,15 @@ def authenticate_user(db: Session, username: str, password: str):
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    """Generate an access token for a user.
+
+    Args:
+        data (dict): The data to store with the access token
+        expires_delta (timedelta, optional): [description]. Defaults to None.
+
+    Returns:
+        str: The JWT access token
+    """
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -76,6 +101,15 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 def get_current_user(db: Session = Depends(get_db),
                      token: str = Depends(oauth2_scheme)):
+    """Get the current user from the request.
+
+    Args:
+        db (Session): A database instance.
+        token (str): The user's access token.
+
+    Returns:
+        User: User that is currently authenticated.
+    """
     credentials_exception = HTTPException(status_code=401,
                                           detail=("Could not validate "
                                                   "credentials"),
@@ -100,6 +134,17 @@ def get_current_user(db: Session = Depends(get_db),
 
 
 def get_required_user(current_user: schemas.User = Depends(get_current_user)):
+    """Get the authorized user and fail if there is not one.
+
+    Args:
+        current_user (schemas.User, optional): The current user.
+
+    Raises:
+        HTTPException: If there is no user logged in.
+
+    Returns:
+        User: The authorized user.
+    """
     if current_user is None:
         raise HTTPException(status_code=401,
                             detail="Authentication is required")
@@ -108,6 +153,17 @@ def get_required_user(current_user: schemas.User = Depends(get_current_user)):
 
 def get_required_active_user(current_user: schemas.User =
                              Depends(get_current_user)):
+    """Get the authorized and **active** user and fail if there is not one.
+
+     Args:
+        current_user (schemas.User, optional): The current user.
+
+    Raises:
+        HTTPException: If there is no user logged in.
+
+    Returns:
+        User: The authorized user.
+    """
     if current_user is None:
         raise HTTPException(status_code=401,
                             detail="Authentication is required")
@@ -119,6 +175,19 @@ def get_required_active_user(current_user: schemas.User =
 
 def get_optional_active_user(current_user: schemas.User =
                              Depends(get_current_user)):
+    """Get the authorized and **active** user.
+
+    If there is no user, this will still allow access.
+
+    Args:
+        current_user (schemas.User, optional): The current user.
+
+    Raises:
+        HTTPException: If there is no user logged in.
+
+    Returns:
+        User: The authorized user.
+    """
     if current_user is None:
         return None
     if not current_user.active:  # or not current_user.confirmed:
@@ -171,11 +240,11 @@ def short_link_info(short_link_id: str, db: Session = Depends(get_db)):
 
     short_link = crud.get_short_link(db=db, short_link_id=decoded_id)
 
-    if short_link is not None:
-        return short_link
-    else:
+    if short_link is None:
         raise HTTPException(status_code=404,
                             detail="Short link not found")
+
+    return short_link
 
 
 @app.get("/dl/{short_link_id}")
@@ -235,8 +304,10 @@ def get_user_links(db: Session = Depends(get_db), current_user: schemas.User =
 @app.post("/token", response_model=schemas.Token, tags=["users"])
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
                            db: Session = Depends(get_db)):
-    """Authenticate with a user's username and password to receive a token for
-    use with the API.
+    """Authenticate with username and password and receive a token.
+
+    Authenticate with a user's username and password and receive a token for
+    doing other actions with the API.
     """
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
@@ -269,9 +340,10 @@ def get_instance_information(db: Session = Depends(get_db)):
 
 @app.get("/{short_link_id}", tags=["routing"])
 def short_link_redirect(short_link_id: str, db: Session = Depends(get_db)):
-    """Route short links. URL type short links are redirected straight to the
-    URL that was shortened. All other types are redirected to the web app for
-    viewing.
+    """Route short links.
+
+    URL type short links are redirected straight to the URL that was shortened.
+    All other types are redirected to the web app for viewing.
     """
     try:
         decoded_id = utils.idencode.decode(short_link_id)

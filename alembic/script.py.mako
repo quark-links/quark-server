@@ -3,7 +3,6 @@
 Revision ID: ${up_revision}
 Revises: ${down_revision | comma,n}
 Create Date: ${create_date}
-
 """
 from alembic import op
 import sqlalchemy as sa
@@ -17,8 +16,10 @@ depends_on = ${repr(depends_on)}
 
 
 def upgrade():
+    """Upgrade the database from the previous version."""
     ${upgrades if upgrades else "pass"}
 
 
 def downgrade():
+    """Downgrade the database to the previous version."""
     ${downgrades if downgrades else "pass"}

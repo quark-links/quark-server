@@ -1,10 +1,19 @@
+"""Methods for encoding IDs."""
 from os import getenv
 
-ALPHABET = getenv("ID_ALPHABET", ("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQ"
-                                  "RSTUVWXYZ0123456789"))
+ALPHABET = list(getenv("ID_ALPHABET", ("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKL"
+                                       "MNOPQRSTUVWXYZ0123456789")))
 
 
 def encode(n: int) -> str:
+    """Encode a given ID into a string.
+
+    Args:
+        n (int): The ID to encode.
+
+    Returns:
+        str: The encoded ID.
+    """
     if n == 0:
         return ALPHABET[0]
     arr = []
@@ -17,6 +26,14 @@ def encode(n: int) -> str:
 
 
 def decode(encoded_id: str) -> int:
+    """Decode a given string into an ID.
+
+    Args:
+        encoded_id (str): The string to decode.
+
+    Returns:
+        int: The decoded ID.
+    """
     base = len(ALPHABET)
     length = len(encoded_id)
     n = 0

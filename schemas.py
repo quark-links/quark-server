@@ -1,3 +1,4 @@
+"""Pydantic schemas."""
 from typing import Optional
 from pydantic import BaseModel, HttpUrl, EmailStr, validator
 import datetime
@@ -7,9 +8,11 @@ import utils.idencode
 
 
 class Url(BaseModel):
+    """Schema for shortened URLs."""
     url: HttpUrl
 
     class Config:
+        """Pydantic config section."""
         orm_mode = True
         schema_extra = {
             "example": {
@@ -19,10 +22,12 @@ class Url(BaseModel):
 
 
 class PasteBase(BaseModel):
+    """Schema for pasted code."""
     language: str
     code: str
 
     class Config:
+        """Pydantic config section."""
         schema_extra = {
             "example": {
                 "language": "python",
@@ -35,9 +40,11 @@ PasteCreate = PasteBase
 
 
 class Paste(PasteBase):
+    """Schema for pasted code."""
     hash: str
 
     class Config:
+        """Pydantic config section."""
         orm_mode = True
         schema_extra = {
             "example": {
@@ -50,12 +57,14 @@ class Paste(PasteBase):
 
 
 class UploadBase(BaseModel):
+    """Schema for uploaded files."""
     mimetype: str
     original_filename: str
     hash: str
     expires: datetime.date
 
     class Config:
+        """Pydantic config section."""
         schema_extra = {
             "example": {
                 "mimetype": "image/jpeg",
@@ -68,15 +77,19 @@ class UploadBase(BaseModel):
 
 
 class Upload(UploadBase):
+    """Schema for uploaded files."""
     class Config:
+        """Pydantic config section."""
         orm_mode = True
 
 
 class UserBase(BaseModel):
+    """Schema for users."""
     name: Optional[str]
     email: EmailStr
 
     class Config:
+        """Pydantic config section."""
         schema_extra = {
             "example": {
                 "name": "John Doe",
@@ -86,10 +99,12 @@ class UserBase(BaseModel):
 
 
 class UserUpdate(BaseModel):
+    """Schema for updating a user."""
     name: Optional[str]
     email: Optional[EmailStr]
 
     class Config:
+        """Pydantic config section."""
         schema_extra = {
             "example": {
                 "name": "John Doe",
@@ -99,9 +114,11 @@ class UserUpdate(BaseModel):
 
 
 class UserCreate(UserBase):
+    """Schema for creating a user."""
     password: str
 
     class Config:
+        """Pydantic config section."""
         schema_extra = {
             "example": {
                 "name": "John Doe",
@@ -112,12 +129,14 @@ class UserCreate(UserBase):
 
 
 class User(UserBase):
+    """Schema for users."""
     created: datetime.date
     updated: datetime.date
     confirmed: bool
     confirmed_on: Optional[datetime.date]
 
     class Config:
+        """Pydantic config section."""
         orm_mode = True
         schema_extra = {
             "example": {
@@ -133,41 +152,55 @@ class User(UserBase):
 
 
 class ShortLink(BaseModel):
+    """Schema for short links."""
     id: int
     created: datetime.date
     updated: datetime.date
     url: Optional[Url]
     paste: Optional[Paste]
     upload: Optional[Upload]
-    # user: Optional[User]
-    link: str = None
+    link: str = ""
 
     @validator("link", pre=True, always=True)
     def default_link(cls, v, *, values, **kwargs):
+        """Pydantic validator for encoding the short link ID into a link.
+
+        Args:
+            v (str): The current value for link.
+            values (any): The other values in the object.
+
+        Returns:
+            str: The new link
+        """
         link = urljoin(getenv("INSTANCE_URL", "https://vh7.uk/"),
                        utils.idencode.encode(values['id']))
         return v or link
 
     class Config:
+        """Pydantic config section."""
         orm_mode = True
 
 
 class Token(BaseModel):
+    """Schema for authentication tokens."""
     access_token: str
     token_type: str
 
 
 class TokenData(BaseModel):
+    """Schema for authentication token data."""
     username: Optional[str] = None
 
 
 class InstanceStats(BaseModel):
+    """Schema for instance statistics."""
     shortened_links: int
     uploaded_files: int
     pasted_code: int
     total: int
 
     class Config:
+        """Pydantic config section."""
         schema_extra = {
             "example": {
                 "shortened_links": 3,
@@ -179,12 +212,14 @@ class InstanceStats(BaseModel):
 
 
 class InstanceInformation(BaseModel):
+    """Schema for instance information."""
     url: str
     stats: InstanceStats
     admin: str
     version: str
 
     class Config:
+        """Pydantic config section."""
         schema_extra = {
             "example": {
                 "url": "https://example.vh7.uk",

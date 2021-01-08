@@ -17,11 +17,13 @@ depends_on = None
 
 
 def upgrade():
+    """Upgrade the database from the previous version."""
     with op.batch_alter_table('user', schema=None) as batch_op:
         batch_op.drop_column('authenticated')
 
 
 def downgrade():
+    """Downgrade the database to the previous version."""
     with op.batch_alter_table('user', schema=None) as batch_op:
         batch_op.add_column(sa.Column('authenticated', sa.BOOLEAN(),
                                       nullable=False, server_default="0"))

@@ -17,6 +17,7 @@ depends_on = None
 
 
 def upgrade():
+    """Upgrade the database from the previous version."""
     with op.batch_alter_table('user', schema=None) as batch_op:
         batch_op.add_column(sa.Column('name', sa.String(length=50),
                                       nullable=True))
@@ -25,6 +26,7 @@ def upgrade():
 
 
 def downgrade():
+    """Downgrade the database to the previous version."""
     with op.batch_alter_table('user', schema=None) as batch_op:
         batch_op.add_column(sa.Column('username', sa.VARCHAR(length=50),
                                       nullable=False))

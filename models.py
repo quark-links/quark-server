@@ -1,3 +1,4 @@
+"""SQLAlchemy models."""
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy import Text
 from sqlalchemy.orm import relationship
@@ -8,6 +9,10 @@ from database import Base
 
 
 class ShortLink(Base):
+    """SQLAlchemy model for short link.
+
+    This is for storing the information for a specific short link.
+    """
     __tablename__ = "shortlink"
 
     id = Column(Integer, primary_key=True)
@@ -39,6 +44,10 @@ class ShortLink(Base):
 
 
 class Url(Base):
+    """SQLAlchemy model for URLs.
+
+    This is for storing the information for a URL.
+    """
     __tablename__ = "url"
 
     id = Column(Integer, primary_key=True)
@@ -56,6 +65,10 @@ class Url(Base):
 
 
 class Paste(Base):
+    """SQLAlchemy model for pastes.
+
+    This is for storing the information for a single code paste.
+    """
     __tablename__ = "paste"
 
     id = Column(Integer, primary_key=True)
@@ -65,20 +78,25 @@ class Paste(Base):
     code = Column(Text(), nullable=False)
     hash = Column(String(64), nullable=False)
 
-    def __init__(self, code, language, hash):
+    def __init__(self, code, language, code_hash):
         """Create a new paste object.
+
         Args:
             code (str): The chunk of text to be stored.
             language (str): The programming language that the paste is written
                 in.
-            hash (str): A SHA256 hash of the `code`.
+            code_hash (str): A SHA256 hash of the `code`.
         """
         self.code = code
         self.language = language
-        self.hash = hash
+        self.hash = code_hash
 
 
 class Upload(Base):
+    """SQLAlchemy model for uploads.
+
+    This is for storing the information for a single uploaded file.
+    """
     __tablename__ = "upload"
 
     id = Column(Integer, primary_key=True)
@@ -90,7 +108,8 @@ class Upload(Base):
     hash = Column(String(64), nullable=False)
     expires = Column(DateTime(timezone=True), nullable=False)
 
-    def __init__(self, original_filename, mimetype, filename, hash, retention):
+    def __init__(self, original_filename, mimetype, filename, file_hash,
+                 retention):
         """Create a new upload object.
 
         Args:
@@ -98,17 +117,18 @@ class Upload(Base):
                 file.
             mimetype (str): The MIME type of the uploaded file.
             filename (str): The filename of the uploaded file on the server.
-            hash (str): A SHA256 hash of the uploaded file.
+            file_hash (str): A SHA256 hash of the uploaded file.
             retention (int): The number of days until the file expires.
         """
         self.original_filename = original_filename
         self.mimetype = mimetype
         self.filename = filename
-        self.hash = hash
+        self.hash = file_hash
         self.set_retention(retention)
 
     def set_retention(self, days):
         """Set the expiry date to now plus the specified number of days.
+
         Args:
             days (int): The number of days that the file should be kept for.
         """
@@ -117,6 +137,7 @@ class Upload(Base):
 
 class User(Base):
     """SQLAlchemy model for users.
+
     This is for storing the information for a specific user.
     """
     __tablename__ = "user"
@@ -139,9 +160,10 @@ class User(Base):
 
     def __init__(self, email, password):
         """Create a new user object.
+
         Args:
-            username (str): The desired username.
             email (str): The email of the user.
+            password (str): The hashed password of the user.
         """
         self.email = email
         self.password = password

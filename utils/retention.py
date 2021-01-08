@@ -1,9 +1,11 @@
+"""Retention methods."""
 import math
 import os
 
 
 def calculate_retention(file_size):
     """Calculate the file retention for a specified file size.
+
     Args:
         file_size (int): The size of the file in Mb.
     Returns:

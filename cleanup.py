@@ -1,3 +1,10 @@
+"""Methods for cleaning up expired uploads.
+
+These should be run as a cronjob. For example, to run every 6 hours:
+
+    0 */6 * * * /path/to/venv/python /path/to/vh7/cleanup.py >/dev/null 2>&1
+"""
+
 from logzero import logger
 import models
 from database import SessionLocal
@@ -7,6 +14,7 @@ import os
 
 
 def run_cleanup():
+    """Perform a full cleanup."""
     logger.info("Performing cleanup...")
 
     db = SessionLocal()
