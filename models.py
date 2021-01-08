@@ -16,7 +16,7 @@ class ShortLink(Base):
     __tablename__ = "shortlink"
 
     id = Column(Integer, primary_key=True)
-    link = Column(String, unique=True, index=True)
+    link = Column(String(100), unique=True, index=True)
     created = Column(DateTime(timezone=True), server_default=func.now(),
                      nullable=False)
     updated = Column(DateTime(timezone=True), server_default=func.now(),
