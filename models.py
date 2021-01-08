@@ -16,6 +16,7 @@ class ShortLink(Base):
     __tablename__ = "shortlink"
 
     id = Column(Integer, primary_key=True)
+    link = Column(String, unique=True, index=True)
     created = Column(DateTime(timezone=True), server_default=func.now(),
                      nullable=False)
     updated = Column(DateTime(timezone=True), server_default=func.now(),
@@ -28,6 +29,14 @@ class ShortLink(Base):
                           back_populates="short_link")
     user_id = Column(Integer, ForeignKey("user.id"))
     user = relationship("User", back_populates="short_links")
+
+    def __init__(self, link):
+        """Create a new short link.
+
+        Args:
+            link (str): A generated short link.
+        """
+        self.link = link
 
     def get_type(self):
         """Get the type of short link.

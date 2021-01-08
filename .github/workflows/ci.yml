@@ -20,8 +20,8 @@ jobs:
         run: pip install pipenv
       - name: Install dependencies
         run: pipenv install --system --dev
-      - name: Type checking
-        run: mypy main.py
+      # - name: Type checking
+      #   run: mypy main.py
       - name: Lint
         run: flake8
 

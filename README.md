@@ -1,5 +1,5 @@
 <h1 align="center">
-	<img src="https://github.com/jake-walker/vh7-app/blob/master/static/img/vh7.png?raw=true" style="height: 4em;" alt="VH7 Logo">
+	<img src="https://github.com/jake-walker/vh7-app/blob/main/static/img/vh7.png?raw=true" style="height: 4em;" alt="VH7 Logo">
 </h1>
 
 <h3 align="center">

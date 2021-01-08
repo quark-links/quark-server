@@ -1,10 +1,7 @@
 """Pydantic schemas."""
 from typing import Optional
-from pydantic import BaseModel, HttpUrl, EmailStr, validator
+from pydantic import BaseModel, HttpUrl, EmailStr
 import datetime
-from urllib.parse import urljoin
-from os import getenv
-import utils.idencode
 
 
 class Url(BaseModel):
@@ -153,28 +150,12 @@ class User(UserBase):
 
 class ShortLink(BaseModel):
     """Schema for short links."""
-    id: int
     created: datetime.date
     updated: datetime.date
     url: Optional[Url]
     paste: Optional[Paste]
     upload: Optional[Upload]
-    link: str = ""
-
-    @validator("link", pre=True, always=True)
-    def default_link(cls, v, *, values, **kwargs):
-        """Pydantic validator for encoding the short link ID into a link.
-
-        Args:
-            v (str): The current value for link.
-            values (any): The other values in the object.
-
-        Returns:
-            str: The new link
-        """
-        link = urljoin(getenv("INSTANCE_URL", "https://vh7.uk/"),
-                       utils.idencode.encode(values['id']))
-        return v or link
+    link: str
 
     class Config:
         """Pydantic config section."""

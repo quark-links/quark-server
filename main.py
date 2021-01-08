@@ -18,7 +18,6 @@ from typing import Optional, List
 from fastapi.middleware.cors import CORSMiddleware
 from os import getenv
 from urllib.parse import urljoin
-import utils.idencode
 
 
 VERSION = "1.1.0"
@@ -230,15 +229,10 @@ def create_upload(file: UploadFile = File(...), db: Session = Depends(get_db),
                               mimetype=file.content_type, user=user)
 
 
-@app.get("/info/{short_link_id}", response_model=schemas.ShortLink)
-def short_link_info(short_link_id: str, db: Session = Depends(get_db)):
+@app.get("/info/{link}", response_model=schemas.ShortLink)
+def short_link_info(link: str, db: Session = Depends(get_db)):
     """Get information on a given short link."""
-    try:
-        decoded_id = utils.idencode.decode(short_link_id)
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid short link")
-
-    short_link = crud.get_short_link(db=db, short_link_id=decoded_id)
+    short_link = crud.get_short_link(db=db, link=link)
 
     if short_link is None:
         raise HTTPException(status_code=404,
@@ -247,15 +241,10 @@ def short_link_info(short_link_id: str, db: Session = Depends(get_db)):
     return short_link
 
 
-@app.get("/dl/{short_link_id}")
-def short_link_download(short_link_id: str, db: Session = Depends(get_db)):
+@app.get("/dl/{link}")
+def short_link_download(link: str, db: Session = Depends(get_db)):
     """Download the file from a given short link (only for uploads)."""
-    try:
-        decoded_id = utils.idencode.decode(short_link_id)
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid short link")
-
-    short_link = crud.get_short_link(db=db, short_link_id=decoded_id)
+    short_link = crud.get_short_link(db=db, link=link)
 
     if short_link is None:
         raise HTTPException(status_code=404,
@@ -338,19 +327,14 @@ def get_instance_information(db: Session = Depends(get_db)):
     }
 
 
-@app.get("/{short_link_id}", tags=["routing"])
-def short_link_redirect(short_link_id: str, db: Session = Depends(get_db)):
+@app.get("/{link}", tags=["routing"])
+def short_link_redirect(link: str, db: Session = Depends(get_db)):
     """Route short links.
 
     URL type short links are redirected straight to the URL that was shortened.
     All other types are redirected to the web app for viewing.
     """
-    try:
-        decoded_id = utils.idencode.decode(short_link_id)
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid short link")
-
-    short_link = crud.get_short_link(db=db, short_link_id=decoded_id)
+    short_link = crud.get_short_link(db=db, link=link)
 
     if short_link is None:
         raise HTTPException(status_code=404,
@@ -358,7 +342,7 @@ def short_link_redirect(short_link_id: str, db: Session = Depends(get_db)):
 
     # Default to redirecting the request to the web app
     url = urljoin(getenv("INSTANCE_APP_URL", "https://app.vh7.uk"), "/link/")
-    url = urljoin(url, short_link_id)
+    url = urljoin(url, link)
 
     # If the short link is a URL, redirect straight to that instead of the
     # web app

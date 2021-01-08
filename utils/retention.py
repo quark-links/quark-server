@@ -8,6 +8,7 @@ def calculate_retention(file_size):
 
     Args:
         file_size (int): The size of the file in Mb.
+
     Returns:
         int: The number of days that the file should be retained for.
     """

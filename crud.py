@@ -12,6 +12,35 @@ from utils.uploads import save_upload
 from passlib.hash import pbkdf2_sha256
 from typing import Optional
 from url_normalize import url_normalize
+from utils.linkgenerate import generate_link
+
+
+def create_short_link(db: Session, user: Optional[schemas.User] = None
+                      ) -> models.ShortLink:
+    """Create a new short link.
+
+    Args:
+        db (Session): A database instance.
+        user (Optional[schemas.User], optional): The user that has created the
+            short link. Defaults to None.
+
+    Returns:
+        models.ShortLink: The created short link.
+    """
+    link = None
+
+    while True:
+        link = generate_link()
+
+        conflict = db.query(models.ShortLink).filter(
+            models.ShortLink.link == link).first()
+
+        if conflict is None:
+            break
+
+    db_short_link = models.ShortLink(link=link)
+    db_short_link.user = user
+    return db_short_link
 
 
 def create_shorten(db: Session, url: schemas.Url,
@@ -38,11 +67,8 @@ def create_shorten(db: Session, url: schemas.Url,
         return conflict.short_link
 
     db_url = models.Url(url=url.url)
-    db_short_link = models.ShortLink()
+    db_short_link = create_short_link(db=db, user=user)
     db_short_link.url = db_url
-
-    if user is not None:
-        db_short_link.user = user
 
     db.add(db_url)
     db.add(db_short_link)
@@ -76,11 +102,8 @@ def create_paste(db: Session, paste: schemas.PasteCreate,
 
     db_paste = models.Paste(code=paste.code, language=paste.language,
                             code_hash=code_hash)
-    db_short_link = models.ShortLink()
+    db_short_link = create_short_link(db=db, user=user)
     db_short_link.paste = db_paste
-
-    if user is not None:
-        db_short_link.user = user
 
     db.add(db_paste)
     db.add(db_short_link)
@@ -131,11 +154,8 @@ def create_upload(db: Session, filename: str, file: SpooledTemporaryFile,
     db_upload = models.Upload(original_filename=filename, mimetype=mimetype,
                               filename=new_filename, file_hash=file_hash,
                               retention=retention)
-    db_short_link = models.ShortLink()
+    db_short_link = create_short_link(db=db, user=user)
     db_short_link.upload = db_upload
-
-    if user is not None:
-        db_short_link.user = user
 
     save_upload(file, new_filename)
 
@@ -146,18 +166,18 @@ def create_upload(db: Session, filename: str, file: SpooledTemporaryFile,
     return db_short_link
 
 
-def get_short_link(db: Session, short_link_id: int):
+def get_short_link(db: Session, link: int):
     """Get a short link by it's ID.
 
     Args:
         db (Session): A database instance.
-        short_link_id (int): The ID of the short link to find.
+        link (int): The link of the short link to find.
 
     Returns:
         ShortLink: The short link.
     """
     return db.query(models.ShortLink).filter(
-        models.ShortLink.id == short_link_id).first()
+        models.ShortLink.link == link).first()
 
 
 def get_user(db: Session, user_id: int):
