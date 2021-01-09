@@ -21,6 +21,7 @@ class ShortLink(Base):
                      nullable=False)
     updated = Column(DateTime(timezone=True), server_default=func.now(),
                      onupdate=func.now(), nullable=False)
+    expiry = Column(DateTime(timezone=True), nullable=True)
     url = relationship("Url", uselist=False,
                        back_populates="short_link")
     paste = relationship("Paste", uselist=False,
@@ -50,6 +51,14 @@ class ShortLink(Base):
             return "paste"
         if self.upload is not None:
             return "upload"
+
+    def set_expiry_days(self, days):
+        """Set the expiry date to now plus the specified number of days.
+
+        Args:
+            days (int): The number of days that the file should be kept for.
+        """
+        self.expiry = datetime.datetime.now() + datetime.timedelta(days=days)
 
 
 class Url(Base):
@@ -115,10 +124,8 @@ class Upload(Base):
     original_filename = Column(String(400), nullable=False)
     filename = Column(String(400), nullable=True)
     hash = Column(String(64), nullable=False)
-    expires = Column(DateTime(timezone=True), nullable=False)
 
-    def __init__(self, original_filename, mimetype, filename, file_hash,
-                 retention):
+    def __init__(self, original_filename, mimetype, filename, file_hash):
         """Create a new upload object.
 
         Args:
@@ -127,21 +134,11 @@ class Upload(Base):
             mimetype (str): The MIME type of the uploaded file.
             filename (str): The filename of the uploaded file on the server.
             file_hash (str): A SHA256 hash of the uploaded file.
-            retention (int): The number of days until the file expires.
         """
         self.original_filename = original_filename
         self.mimetype = mimetype
         self.filename = filename
         self.hash = file_hash
-        self.set_retention(retention)
-
-    def set_retention(self, days):
-        """Set the expiry date to now plus the specified number of days.
-
-        Args:
-            days (int): The number of days that the file should be kept for.
-        """
-        self.expires = datetime.datetime.now() + datetime.timedelta(days=days)
 
 
 class User(Base):

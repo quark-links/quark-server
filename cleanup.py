@@ -19,8 +19,8 @@ def run_cleanup():
 
     db = SessionLocal()
     results = db.query(models.Upload).filter(
-        models.Upload.expires <= datetime.datetime.utcnow(),
-        models.Upload.filename.isnot(None))
+        models.Upload.filename.isnot(None)).join(models.ShortLink).filter(
+        models.ShortLink.expiry <= datetime.datetime.utcnow())
 
     logger.info("Found {} expired uploads!".format(results.count()))
 

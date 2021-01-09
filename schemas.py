@@ -58,7 +58,6 @@ class UploadBase(BaseModel):
     mimetype: str
     original_filename: str
     hash: str
-    expires: datetime.date
 
     class Config:
         """Pydantic config section."""
@@ -67,8 +66,7 @@ class UploadBase(BaseModel):
                 "mimetype": "image/jpeg",
                 "original_filename": "picture.jpeg",
                 "hash": ("50d858e0985ecc7f60418aaf0cc5ab587f42c2570a884095a9e8"
-                         "ccacd0f6545c"),
-                "expires": "2020-01-01"
+                         "ccacd0f6545c")
             }
         }
 
@@ -127,10 +125,10 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     """Schema for users."""
-    created: datetime.date
-    updated: datetime.date
+    created: datetime.datetime
+    updated: datetime.datetime
     confirmed: bool
-    confirmed_on: Optional[datetime.date]
+    confirmed_on: Optional[datetime.datetime]
 
     class Config:
         """Pydantic config section."""
@@ -150,12 +148,13 @@ class User(UserBase):
 
 class ShortLink(BaseModel):
     """Schema for short links."""
-    created: datetime.date
-    updated: datetime.date
+    created: datetime.datetime
+    updated: datetime.datetime
     url: Optional[Url]
     paste: Optional[Paste]
     upload: Optional[Upload]
     link: str
+    expiry: Optional[datetime.datetime]
 
     class Config:
         """Pydantic config section."""

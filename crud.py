@@ -13,6 +13,7 @@ from passlib.hash import pbkdf2_sha256
 from typing import Optional
 from url_normalize import url_normalize
 from utils.linkgenerate import generate_link
+import datetime
 
 
 def create_short_link(db: Session, user: Optional[schemas.User] = None
@@ -136,14 +137,6 @@ def create_upload(db: Session, filename: str, file: SpooledTemporaryFile,
     # Reset the file back to the beginning
     file.seek(0)
 
-    # Find conflicts that can be send instead
-    conflict = db.query(models.Upload).filter(
-            models.Upload.hash == file_hash,
-            models.Upload.short_link.has(user=user)).first()
-
-    if conflict is not None and conflict.short_link is not None:
-        return conflict.short_link
-
     file_size = os.fstat(file.fileno()).st_size / 1e+6
     retention = calculate_retention(file_size)
 
@@ -151,11 +144,32 @@ def create_upload(db: Session, filename: str, file: SpooledTemporaryFile,
         raise HTTPException(status_code=413,
                             detail="Uploaded file is too large")
 
+    # Find conflicts that can be send instead
+    conflict = db.query(models.Upload).filter(
+            models.Upload.hash == file_hash,
+            models.Upload.short_link.has(user=user)).first()
+
+    if conflict is not None and conflict.short_link is not None:
+        # Resave file and reset retention if properly expired
+        if conflict.filename is None:
+            save_upload(file, new_filename)
+            conflict.filename = new_filename
+
+        if conflict.short_link.expiry <= datetime.datetime.utcnow():
+            conflict.short_link.set_expiry_days(retention)
+
+        db.add(conflict)
+        db.add(conflict.short_link)
+        db.commit()
+        db.refresh(conflict)
+
+        return conflict.short_link
+
     db_upload = models.Upload(original_filename=filename, mimetype=mimetype,
-                              filename=new_filename, file_hash=file_hash,
-                              retention=retention)
+                              filename=new_filename, file_hash=file_hash)
     db_short_link = create_short_link(db=db, user=user)
     db_short_link.upload = db_upload
+    db_short_link.set_expiry_days(retention)
 
     save_upload(file, new_filename)
 
