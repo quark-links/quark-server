@@ -24,6 +24,7 @@ mysqlclient = "~=2.0.3"
 url-normalize = "~=1.4.3"
 python-dotenv = "~=0.15.0"
 email-validator = "~=1.1.2"
+fastapi-utils = "~=0.2.1"
 
 [requires]
 python_version = "3.8"

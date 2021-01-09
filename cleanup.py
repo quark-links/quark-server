@@ -38,7 +38,7 @@ def run_cleanup():
         result.filename = None
         db.add(result)
 
-    logger.info("Saving database changes...")
+    logger.debug("Saving database changes...")
     db.commit()
     db.close()
 

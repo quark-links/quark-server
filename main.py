@@ -1,11 +1,12 @@
 """Main VH7 API server."""
+from cleanup import run_cleanup
 from utils.uploads import get_path
 from fastapi import FastAPI, Depends, File, UploadFile
 from fastapi.exceptions import HTTPException
 from sqlalchemy.orm import Session
 from starlette.responses import FileResponse, RedirectResponse
 import uvicorn
-
+from fastapi_utils.tasks import repeat_every
 import crud
 from crud import get_user_by_email
 import schemas
@@ -18,9 +19,10 @@ from typing import Optional, List
 from fastapi.middleware.cors import CORSMiddleware
 from os import getenv
 from urllib.parse import urljoin
+from logzero import logger
 
 
-VERSION = "1.1.0"
+VERSION = "1.1.1"
 SECRET_KEY = getenv("JWT_KEY", "keyboardcat")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 43200
@@ -359,6 +361,19 @@ def short_link_redirect(link: str, db: Session = Depends(get_db)):
         url = short_link.url.url
 
     return RedirectResponse(url, status_code=308)
+
+
+@app.on_event("startup")
+def task_startup_message() -> None:
+    """Show version information on startup."""
+    logger.info("Welcome to VH7 API Server (v{})".format(VERSION))
+
+
+@app.on_event("startup")
+@repeat_every(seconds=14400)
+def task_cleanup() -> None:
+    """Perform a cleanup periodically."""
+    run_cleanup()
 
 
 if __name__ == "__main__":

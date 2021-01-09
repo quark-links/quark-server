@@ -30,5 +30,3 @@ ENV UPLOAD_FOLDER=/uploads
 
 EXPOSE 80
 VOLUME [ "/uploads", "/data" ]
-
-# ENTRYPOINT [ "sh", "/app/entrypoint.sh" ]
