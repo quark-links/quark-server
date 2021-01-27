@@ -240,7 +240,8 @@ def short_link_info(link: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404,
                             detail="Short link not found")
 
-    if short_link.expiry <= datetime.utcnow():
+    if (short_link.expiry is not None and
+            short_link.expiry <= datetime.utcnow()):
         raise HTTPException(status_code=404,
                             detail="The given short link has expired")
 
@@ -260,7 +261,8 @@ def short_link_download(link: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404,
                             detail="The given short link is not a file")
 
-    if (short_link.expiry <= datetime.datetime.utcnow() or
+    if (short_link.expiry is not None and
+        short_link.expiry <= datetime.utcnow() or
             short_link.upload.filename is None):
         raise HTTPException(status_code=404,
                             detail="The given short link has expired")
@@ -347,7 +349,8 @@ def short_link_redirect(link: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404,
                             detail="Short link not found")
 
-    if short_link.expiry <= datetime.datetime.utcnow():
+    if (short_link.expiry is not None and
+            short_link.expiry <= datetime.utcnow()):
         raise HTTPException(status_code=404,
                             detail="The given short link has expired")
 
