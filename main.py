@@ -20,6 +20,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from os import getenv
 from urllib.parse import urljoin
 from logzero import logger
+import utils.languages
 
 
 VERSION = "1.1.1"
@@ -217,8 +218,6 @@ def create_paste(paste: schemas.PasteCreate, db: Session = Depends(get_db),
                  user: Optional[schemas.User] =
                  Depends(get_optional_active_user)):
     """Save code to a short link."""
-    # TODO: Validate languages
-    paste.language = "plain"
     return crud.create_paste(db=db, paste=paste, user=user)
 
 
@@ -334,6 +333,12 @@ def get_instance_information(db: Session = Depends(get_db)):
         "version": VERSION,
         "stats": stats
     }
+
+
+@app.get("/languages", tags=["misc"])
+def get_languages():
+    """Get a list of the supported paste languages."""
+    return utils.languages.languages
 
 
 @app.get("/{link}", tags=["routing"])

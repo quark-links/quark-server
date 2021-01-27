@@ -1,7 +1,8 @@
 """Pydantic schemas."""
 from typing import Optional
-from pydantic import BaseModel, HttpUrl, EmailStr
+from pydantic import BaseModel, HttpUrl, EmailStr, validator
 import datetime
+import utils.languages
 
 
 class Url(BaseModel):
@@ -31,6 +32,24 @@ class PasteBase(BaseModel):
                 "code": "def add(a, b):\n    return a + b"
             }
         }
+
+    @validator("language")
+    def supported_language(cls, v):
+        """Ensure the language of the paste is supported.
+
+        Args:
+            v (str): Value for the language field.
+
+        Raises:
+            ValueError: The value is not valid.
+
+        Returns:
+            str: The validated value.
+        """
+        v = v.lower().strip()
+        if v not in utils.languages.language_ids:
+            raise ValueError("Language not supported")
+        return v
 
 
 PasteCreate = PasteBase
