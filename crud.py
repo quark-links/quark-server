@@ -10,7 +10,7 @@ from utils.retention import calculate_retention
 from fastapi import HTTPException
 from utils.uploads import save_upload
 from passlib.hash import pbkdf2_sha256
-from typing import Optional
+from typing import IO, Optional, Union
 from url_normalize import url_normalize
 from utils.linkgenerate import generate_link
 import datetime
@@ -45,7 +45,7 @@ def create_short_link(db: Session, user: Optional[schemas.User] = None
 
 
 def create_shorten(db: Session, url: schemas.Url,
-                   user: Optional[schemas.User] = None):
+                   user: Optional[schemas.User] = None) -> models.ShortLink:
     """Create a new short URL.
 
     Args:
@@ -79,7 +79,7 @@ def create_shorten(db: Session, url: schemas.Url,
 
 
 def create_paste(db: Session, paste: schemas.PasteCreate,
-                 user: Optional[schemas.User] = None):
+                 user: Optional[schemas.User] = None) -> models.ShortLink:
     """Create a new paste.
 
     Args:
@@ -113,8 +113,9 @@ def create_paste(db: Session, paste: schemas.PasteCreate,
     return db_short_link
 
 
-def create_upload(db: Session, filename: str, file: SpooledTemporaryFile,
-                  mimetype: str, user: Optional[schemas.User] = None):
+def create_upload(db: Session, filename: str,
+                  file: Union[SpooledTemporaryFile, IO], mimetype: str,
+                  user: Optional[schemas.User] = None) -> models.ShortLink:
     """Create and save an uploaded file.
 
     Args:
@@ -180,12 +181,12 @@ def create_upload(db: Session, filename: str, file: SpooledTemporaryFile,
     return db_short_link
 
 
-def get_short_link(db: Session, link: int):
+def get_short_link(db: Session, link: str) -> models.ShortLink:
     """Get a short link by it's ID.
 
     Args:
         db (Session): A database instance.
-        link (int): The link of the short link to find.
+        link (str): The link of the short link to find.
 
     Returns:
         ShortLink: The short link.
@@ -194,7 +195,7 @@ def get_short_link(db: Session, link: int):
         models.ShortLink.link == link).first()
 
 
-def get_user(db: Session, user_id: int):
+def get_user(db: Session, user_id: int) -> models.User:
     """Get a user by it's ID.
 
     Args:
@@ -207,7 +208,7 @@ def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
 
 
-def get_user_by_email(db: Session, email: str):
+def get_user_by_email(db: Session, email: str) -> models.User:
     """Get a user by it's email address.
 
     Args:
@@ -220,7 +221,7 @@ def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
 
-def get_user_links(db: Session, user_id: int):
+def get_user_links(db: Session, user_id: int) -> models.ShortLink:
     """Get a given user's short links.
 
     Args:
@@ -235,7 +236,7 @@ def get_user_links(db: Session, user_id: int):
         models.ShortLink.created.desc()).all()
 
 
-def create_user(db: Session, user: schemas.UserCreate):
+def create_user(db: Session, user: schemas.UserCreate) -> models.User:
     """Create a new user.
 
     Args:
@@ -257,7 +258,8 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 
-def update_user(db: Session, user: models.User, new_user: schemas.UserUpdate):
+def update_user(db: Session, user: models.User, new_user: schemas.UserUpdate
+                ) -> models.User:
     """Update a user.
 
     Args:
@@ -283,7 +285,7 @@ def update_user(db: Session, user: models.User, new_user: schemas.UserUpdate):
     return user
 
 
-def get_stats(db: Session):
+def get_stats(db: Session) -> dict[str, int]:
     """Get the current statistics.
 
     Args:

@@ -3,7 +3,7 @@ from tempfile import SpooledTemporaryFile
 import os
 
 
-def get_uploads_folder():
+def get_uploads_folder() -> str:
     """Get the path to the folder for upload storage.
 
     Returns:
@@ -14,7 +14,7 @@ def get_uploads_folder():
     return os.getenv("UPLOAD_FOLDER", default_upload_path)
 
 
-def save_upload(file: SpooledTemporaryFile, filename: str):
+def save_upload(file: SpooledTemporaryFile, filename: str) -> None:
     """Save a given uploaded file into the upload folder.
 
     Args:
@@ -29,7 +29,7 @@ def save_upload(file: SpooledTemporaryFile, filename: str):
         f.writelines(file.readlines())
 
 
-def get_path(filename: str):
+def get_path(filename: str) -> str:
     """Get the path to a file.
 
     Args:

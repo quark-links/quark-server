@@ -4,7 +4,7 @@ import secrets
 WORD_LISTS = ("words/1.txt", "words/2.txt")
 
 
-def generate_link(separator=".") -> str:
+def generate_link(separator: str = ".") -> str:
     """Generate a short link.
 
     Args:

@@ -13,7 +13,7 @@ from utils.uploads import get_path
 import os
 
 
-def run_cleanup():
+def run_cleanup() -> None:
     """Perform a full cleanup."""
     logger.info("Performing cleanup...")
 

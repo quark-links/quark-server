@@ -4,7 +4,7 @@ from utils.uploads import get_path
 from fastapi import FastAPI, Depends, File, UploadFile
 from fastapi.exceptions import HTTPException
 from sqlalchemy.orm import Session
-from starlette.responses import FileResponse, RedirectResponse
+from starlette.responses import FileResponse, RedirectResponse, Response
 import uvicorn
 from fastapi_utils.tasks import repeat_every
 import crud
@@ -15,12 +15,13 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.hash import pbkdf2_sha256
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from typing import Optional, List
+from typing import Any, Optional, List
 from fastapi.middleware.cors import CORSMiddleware
 from os import getenv
 from urllib.parse import urljoin
 from logzero import logger
 import utils.languages
+import models
 
 
 VERSION = "1.1.1"
@@ -49,7 +50,7 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True,
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
 
 
-def get_db():
+def get_db() -> Session:
     """Fetch a database instance.
 
     Yields:
@@ -62,7 +63,8 @@ def get_db():
         db.close()
 
 
-def authenticate_user(db: Session, username: str, password: str):
+def authenticate_user(db: Session, username: str, password: str
+                      ) -> Optional[models.User]:
     """Fetch a user by their username and verify their password is correct.
 
     Args:
@@ -75,13 +77,14 @@ def authenticate_user(db: Session, username: str, password: str):
     """
     db_user = crud.get_user_by_email(db=db, email=username)
     if not db_user:
-        return False
+        return None
     if not pbkdf2_sha256.verify(password, db_user.password):
-        return False
+        return None
     return db_user
 
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None
+                        ) -> str:
     """Generate an access token for a user.
 
     Args:
@@ -102,7 +105,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 
 def get_current_user(db: Session = Depends(get_db),
-                     token: str = Depends(oauth2_scheme)):
+                     token: str = Depends(oauth2_scheme)) -> models.User:
     """Get the current user from the request.
 
     Args:
@@ -129,13 +132,20 @@ def get_current_user(db: Session = Depends(get_db),
         token_data = schemas.TokenData(username=username)
     except JWTError:
         raise credentials_exception
+
+    if token_data.username is None:
+        raise credentials_exception
+
     user = get_user_by_email(db=db, email=token_data.username)
+
     if user is None:
         raise credentials_exception
+
     return user
 
 
-def get_required_user(current_user: schemas.User = Depends(get_current_user)):
+def get_required_user(current_user: schemas.User = Depends(get_current_user)
+                      ) -> schemas.User:
     """Get the authorized user and fail if there is not one.
 
     Args:
@@ -153,8 +163,8 @@ def get_required_user(current_user: schemas.User = Depends(get_current_user)):
     return current_user
 
 
-def get_required_active_user(current_user: schemas.User =
-                             Depends(get_current_user)):
+def get_required_active_user(current_user: models.User =
+                             Depends(get_current_user)) -> models.User:
     """Get the authorized and **active** user and fail if there is not one.
 
      Args:
@@ -175,14 +185,14 @@ def get_required_active_user(current_user: schemas.User =
     return current_user
 
 
-def get_optional_active_user(current_user: schemas.User =
-                             Depends(get_current_user)):
+def get_optional_active_user(current_user: models.User =
+                             Depends(get_current_user)) -> models.User:
     """Get the authorized and **active** user.
 
     If there is no user, this will still allow access.
 
     Args:
-        current_user (schemas.User, optional): The current user.
+        current_user (models.User, optional): The current user.
 
     Raises:
         HTTPException: If there is no user logged in.
@@ -199,7 +209,7 @@ def get_optional_active_user(current_user: schemas.User =
 
 
 @app.get("/", tags=["routing"])
-def web_app():
+def web_app() -> Response:
     """Redirect to the web app."""
     return RedirectResponse(getenv("INSTANCE_APP_URL", "https://app.vh7.uk"),
                             status_code=308)
@@ -208,7 +218,7 @@ def web_app():
 @app.post("/shorten", response_model=schemas.ShortLink)
 def create_shorten(url: schemas.Url, db: Session = Depends(get_db),
                    user: Optional[schemas.User] =
-                   Depends(get_optional_active_user)):
+                   Depends(get_optional_active_user)) -> Response:
     """Shorten a URL into a short link."""
     return crud.create_shorten(db=db, url=url, user=user)
 
@@ -216,7 +226,7 @@ def create_shorten(url: schemas.Url, db: Session = Depends(get_db),
 @app.post("/paste", response_model=schemas.ShortLink)
 def create_paste(paste: schemas.PasteCreate, db: Session = Depends(get_db),
                  user: Optional[schemas.User] =
-                 Depends(get_optional_active_user)):
+                 Depends(get_optional_active_user)) -> Response:
     """Save code to a short link."""
     return crud.create_paste(db=db, paste=paste, user=user)
 
@@ -224,14 +234,14 @@ def create_paste(paste: schemas.PasteCreate, db: Session = Depends(get_db),
 @app.post("/upload", response_model=schemas.ShortLink)
 def create_upload(file: UploadFile = File(...), db: Session = Depends(get_db),
                   user: Optional[schemas.User] =
-                  Depends(get_optional_active_user)):
+                  Depends(get_optional_active_user)) -> Response:
     """Upload a file to a short link."""
     return crud.create_upload(db=db, filename=file.filename, file=file.file,
                               mimetype=file.content_type, user=user)
 
 
 @app.get("/info/{link}", response_model=schemas.ShortLink)
-def short_link_info(link: str, db: Session = Depends(get_db)):
+def short_link_info(link: str, db: Session = Depends(get_db)) -> Response:
     """Get information on a given short link."""
     short_link = crud.get_short_link(db=db, link=link)
 
@@ -248,7 +258,7 @@ def short_link_info(link: str, db: Session = Depends(get_db)):
 
 
 @app.get("/dl/{link}")
-def short_link_download(link: str, db: Session = Depends(get_db)):
+def short_link_download(link: str, db: Session = Depends(get_db)) -> Response:
     """Download the file from a given short link (only for uploads)."""
     short_link = crud.get_short_link(db=db, link=link)
 
@@ -272,35 +282,38 @@ def short_link_download(link: str, db: Session = Depends(get_db)):
 
 
 @app.post("/user", response_model=schemas.User, tags=["users"])
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)
+                ) -> Response:
     """Create a new user account."""
     return crud.create_user(db=db, user=user)
 
 
 @app.get("/users/me", response_model=schemas.User, tags=["users"])
-def get_user(current_user: schemas.User = Depends(get_required_user)):
+def get_user(current_user: schemas.User = Depends(get_required_user)
+             ) -> schemas.User:
     """Get the logged in user details."""
     return current_user
 
 
 @app.patch("/users/me", tags=["users"], response_model=schemas.User)
 def update_user(new_data: schemas.UserUpdate, db: Session = Depends(get_db),
-                current_user: schemas.User = Depends(get_required_user)):
+                current_user: models.User = Depends(get_required_user)
+                ) -> Response:
     """Update a user's details."""
     return crud.update_user(db=db, user=current_user, new_user=new_data)
 
 
 @app.get("/users/me/links", response_model=List[schemas.ShortLink],
          tags=["users"])
-def get_user_links(db: Session = Depends(get_db), current_user: schemas.User =
-                   Depends(get_required_active_user)):
+def get_user_links(db: Session = Depends(get_db), current_user: models.User =
+                   Depends(get_required_active_user)) -> Response:
     """Get a user's saved short links."""
     return crud.get_user_links(db=db, user_id=current_user.id)
 
 
 @app.post("/token", response_model=schemas.Token, tags=["users"])
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
-                           db: Session = Depends(get_db)):
+                           db: Session = Depends(get_db)) -> dict[str, str]:
     """Authenticate with username and password and receive a token.
 
     Authenticate with a user's username and password and receive a token for
@@ -323,7 +336,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
 
 
 @app.get("/info", response_model=schemas.InstanceInformation)
-def get_instance_information(db: Session = Depends(get_db)):
+def get_instance_information(db: Session = Depends(get_db)) -> dict[str, Any]:
     """Get the instance's information and statistics."""
     stats = crud.get_stats(db)
 
@@ -336,13 +349,13 @@ def get_instance_information(db: Session = Depends(get_db)):
 
 
 @app.get("/languages", tags=["misc"])
-def get_languages():
+def get_languages() -> Response:
     """Get a list of the supported paste languages."""
     return utils.languages.languages
 
 
 @app.get("/{link}", tags=["routing"])
-def short_link_redirect(link: str, db: Session = Depends(get_db)):
+def short_link_redirect(link: str, db: Session = Depends(get_db)) -> Response:
     """Route short links.
 
     URL type short links are redirected straight to the URL that was shortened.

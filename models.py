@@ -1,4 +1,5 @@
 """SQLAlchemy models."""
+from typing import Optional
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy import Text
 from sqlalchemy.orm import relationship
@@ -31,7 +32,7 @@ class ShortLink(Base):
     user_id = Column(Integer, ForeignKey("user.id"))
     user = relationship("User", back_populates="short_links")
 
-    def __init__(self, link):
+    def __init__(self, link: str) -> None:
         """Create a new short link.
 
         Args:
@@ -39,7 +40,7 @@ class ShortLink(Base):
         """
         self.link = link
 
-    def get_type(self):
+    def get_type(self) -> Optional[str]:
         """Get the type of short link.
 
         Returns:
@@ -52,7 +53,9 @@ class ShortLink(Base):
         if self.upload is not None:
             return "upload"
 
-    def set_expiry_days(self, days):
+        return None
+
+    def set_expiry_days(self, days: int) -> None:
         """Set the expiry date to now plus the specified number of days.
 
         Args:
@@ -73,7 +76,7 @@ class Url(Base):
     short_link = relationship("ShortLink", back_populates="url")
     url = Column(String(2048), nullable=False)
 
-    def __init__(self, url):
+    def __init__(self, url: str) -> None:
         """Create a new URL object.
 
         Args:
@@ -96,7 +99,7 @@ class Paste(Base):
     code = Column(Text(), nullable=False)
     hash = Column(String(64), nullable=False)
 
-    def __init__(self, code, language, code_hash):
+    def __init__(self, code: str, language: str, code_hash: str) -> None:
         """Create a new paste object.
 
         Args:
@@ -125,7 +128,8 @@ class Upload(Base):
     filename = Column(String(400), nullable=True)
     hash = Column(String(64), nullable=False)
 
-    def __init__(self, original_filename, mimetype, filename, file_hash):
+    def __init__(self, original_filename: str, mimetype: str, filename: str,
+                 file_hash: str) -> None:
         """Create a new upload object.
 
         Args:
@@ -164,7 +168,7 @@ class User(Base):
     reset_token = Column(String(100), nullable=True)
     api_key = Column(String(100), nullable=True)
 
-    def __init__(self, email, password):
+    def __init__(self, email: str, password: str) -> None:
         """Create a new user object.
 
         Args:
