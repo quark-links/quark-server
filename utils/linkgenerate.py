@@ -1,15 +1,13 @@
 """Link generation."""
 import secrets
 
-WORD_LIST = "words.txt"
+WORD_LISTS = ("words/1.txt", "words/2.txt")
 
 
-def generate_link(length=2, separator=".") -> str:
+def generate_link(separator=".") -> str:
     """Generate a short link.
 
     Args:
-        length (int, optional): The number of words long that the link should
-            be. Defaults to 2.
         separator (str, optional): The separator character between the words.
             Defaults to ".".
 
@@ -18,10 +16,9 @@ def generate_link(length=2, separator=".") -> str:
     """
     output = []
 
-    with open(WORD_LIST, "r") as file:
-        words = file.readlines()
-
-        for i in range(length):
+    for word_list in WORD_LISTS:
+        with open(word_list, "r") as file:
+            words = file.readlines()
             output.append(secrets.choice(words).strip())
 
     return separator.join(output)
