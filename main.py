@@ -15,7 +15,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.hash import pbkdf2_sha256
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from typing import Any, Optional, List
+from typing import Any, Dict, Optional, List
 from fastapi.middleware.cors import CORSMiddleware
 from os import getenv
 from urllib.parse import urljoin
@@ -313,7 +313,7 @@ def get_user_links(db: Session = Depends(get_db), current_user: models.User =
 
 @app.post("/token", response_model=schemas.Token, tags=["users"])
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
-                           db: Session = Depends(get_db)) -> dict[str, str]:
+                           db: Session = Depends(get_db)) -> Dict[str, str]:
     """Authenticate with username and password and receive a token.
 
     Authenticate with a user's username and password and receive a token for
@@ -336,7 +336,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
 
 
 @app.get("/info", response_model=schemas.InstanceInformation)
-def get_instance_information(db: Session = Depends(get_db)) -> dict[str, Any]:
+def get_instance_information(db: Session = Depends(get_db)) -> Dict[str, Any]:
     """Get the instance's information and statistics."""
     stats = crud.get_stats(db)
 

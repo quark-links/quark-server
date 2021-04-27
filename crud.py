@@ -14,6 +14,7 @@ from typing import IO, Optional, Union
 from url_normalize import url_normalize
 from utils.linkgenerate import generate_link
 import datetime
+from typing import Dict
 
 
 def create_short_link(db: Session, user: Optional[schemas.User] = None
@@ -285,7 +286,7 @@ def update_user(db: Session, user: models.User, new_user: schemas.UserUpdate
     return user
 
 
-def get_stats(db: Session) -> dict[str, int]:
+def get_stats(db: Session) -> Dict[str, int]:
     """Get the current statistics.
 
     Args:

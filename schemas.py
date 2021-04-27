@@ -34,7 +34,7 @@ class PasteBase(BaseModel):
         }
 
     @validator("language")
-    def supported_language(_, v: str) -> str:
+    def supported_language(cls, v: str) -> str:
         """Ensure the language of the paste is supported.
 
         Args:
