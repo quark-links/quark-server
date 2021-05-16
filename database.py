@@ -2,10 +2,10 @@
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from os import getenv
+from config import settings
 
-SQLALCHEMY_DATABASE_URL = getenv("DATABASE_URL", "sqlite:///data.db")
-SQLALCHEMY_POOL_RECYCLE = int(getenv("DATABASE_POOL_RECYCLE", "-1"))
+SQLALCHEMY_DATABASE_URL = settings.database
+SQLALCHEMY_POOL_RECYCLE = 3600
 SQLALCHEMY_ARGUMENTS = {}
 
 if SQLALCHEMY_DATABASE_URL.startswith("sqlite:"):
