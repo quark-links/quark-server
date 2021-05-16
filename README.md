@@ -48,6 +48,10 @@ links.
 
 The recommended way of deploying is with [Docker](#docker), however, if you wish to deploy it with something else, there are instructions [here](https://fastapi.tiangolo.com/deployment/) on how to do so.
 
+An OAuth2 server is also needed. If you are going the self-hosting route, you can go for something like [FusionAuth](https://fusionauth.io/), or if you want something hosted, you could use [Auth0](https://auth0.com/) or [Okta](https://www.okta.com/).
+
+Configuration can be done inside the `settings.toml` file (or in `.secrets.toml` which is ignored by Git) or via environment variables with the format `VH7_[SECTION]__[NAME]`.
+
 ### Deployment Notes
 
 - It is recommended to use a reverse proxy such as [Nginx](https://www.nginx.com/) or [Caddy](https://caddyserver.com/) between the internet and the instance of VH7.
@@ -62,12 +66,10 @@ docker volume create vh7_uploads
 docker run --detach \
            --name vh7 \
            --restart always \
-           -e DATABASE_URL=mysql+mysqldb://username:password@hostname/database
-           -e JWT_KEY=F6yZv5Xy8TBlYGkBs7P2wXlZqFAR3c
-           -e UPLOAD_MIN_AGE=30
-           -e UPLOAD_MAX_AGE=90
-           -e UPLOAD_MAX_SIZE=256
-           -e UPLOAD_FOLDER=/uploads
+           -e VH7_DATABASE=mysql+mysqldb://username:password@hostname/database
+           -e VH7_UPLOADS__MIN_AGE=30
+           -e VH7_UPLOADS__MAX_AGE=90
+           -e VH7_UPLOADS__MAX_SIZE=256
            -v vh7_uploads:/uploads
            -p 80:8000
            jakewalker/vh7:latest

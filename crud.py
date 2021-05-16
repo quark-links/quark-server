@@ -9,7 +9,6 @@ import os
 from utils.retention import calculate_retention
 from fastapi import HTTPException
 from utils.uploads import save_upload
-from passlib.hash import pbkdf2_sha256
 from typing import IO, Optional, Union
 from url_normalize import url_normalize
 from utils.linkgenerate import generate_link
@@ -196,6 +195,28 @@ def get_short_link(db: Session, link: str) -> models.ShortLink:
         models.ShortLink.link == link).first()
 
 
+def get_or_create_user(db: Session, sub: str) -> models.User:
+    """Get a user from their sub value and make one if they don't exist.
+
+    Args:
+        db (Session): A database instance.
+        sub (str): The user's sub value.
+
+    Returns:
+        models.User: The user.
+    """
+    result = db.query(models.User).filter(models.User.sub == sub).first()
+
+    if result is not None:
+        return result
+
+    db_user = models.User(sub)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
 def get_user(db: Session, user_id: int) -> models.User:
     """Get a user by it's ID.
 
@@ -207,19 +228,6 @@ def get_user(db: Session, user_id: int) -> models.User:
         User: The user.
     """
     return db.query(models.User).filter(models.User.id == user_id).first()
-
-
-def get_user_by_email(db: Session, email: str) -> models.User:
-    """Get a user by it's email address.
-
-    Args:
-        db (Session): A database instance.
-        email (str): The email of the user to find.
-
-    Returns:
-        User: The user.
-    """
-    return db.query(models.User).filter(models.User.email == email).first()
 
 
 def get_user_links(db: Session, user_id: int) -> models.ShortLink:
@@ -235,55 +243,6 @@ def get_user_links(db: Session, user_id: int) -> models.ShortLink:
     return db.query(models.ShortLink).filter(
         models.ShortLink.user_id == user_id).order_by(
         models.ShortLink.created.desc()).all()
-
-
-def create_user(db: Session, user: schemas.UserCreate) -> models.User:
-    """Create a new user.
-
-    Args:
-        db (Session): A database instance.
-        user (schemas.UserCreate): The user to create.
-
-    Returns:
-        User: The created user.
-    """
-    hashed_password = pbkdf2_sha256.hash(user.password)
-    db_user = models.User(email=user.email, password=hashed_password)
-
-    if user.name is not None and user.name.strip() != "":
-        db_user.name = user.name.strip()
-
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
-
-
-def update_user(db: Session, user: models.User, new_user: schemas.UserUpdate
-                ) -> models.User:
-    """Update a user.
-
-    Args:
-        db (Session): A database instance.
-        user (models.User): The user to update.
-        new_user (schemas.UserUpdate): The information about a user to update.
-
-    Returns:
-        User: The updated user.
-    """
-    if new_user.name is not None and new_user.name.strip() != "":
-        user.name = new_user.name
-
-    if (new_user.email is not None and new_user.email.strip() != "" and
-            user.email != new_user.email):
-        user.email = new_user.email
-        user.confirmed = False
-        user.confirmed_on = None
-
-    db.add(user)
-    db.commit()
-    db.refresh(user)
-    return user
 
 
 def get_stats(db: Session) -> Dict[str, int]:

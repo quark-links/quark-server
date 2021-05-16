@@ -1,6 +1,6 @@
 """Pydantic schemas."""
 from typing import Optional
-from pydantic import BaseModel, HttpUrl, EmailStr, validator
+from pydantic import BaseModel, HttpUrl, validator
 import datetime
 import utils.languages
 
@@ -99,70 +99,10 @@ class Upload(UploadBase):
 
 class UserBase(BaseModel):
     """Schema for users."""
-    name: Optional[str]
-    email: EmailStr
-
-    class Config:
-        """Pydantic config section."""
-        schema_extra = {
-            "example": {
-                "name": "John Doe",
-                "email": "hi@example.com"
-            }
-        }
-
-
-class UserUpdate(BaseModel):
-    """Schema for updating a user."""
-    name: Optional[str]
-    email: Optional[EmailStr]
-
-    class Config:
-        """Pydantic config section."""
-        schema_extra = {
-            "example": {
-                "name": "John Doe",
-                "email": "hi@example.com"
-            }
-        }
-
-
-class UserCreate(UserBase):
-    """Schema for creating a user."""
-    password: str
-
-    class Config:
-        """Pydantic config section."""
-        schema_extra = {
-            "example": {
-                "name": "John Doe",
-                "email": "hi@example.com",
-                "password": "password123"
-            }
-        }
 
 
 class User(UserBase):
     """Schema for users."""
-    created: datetime.datetime
-    updated: datetime.datetime
-    confirmed: bool
-    confirmed_on: Optional[datetime.datetime]
-
-    class Config:
-        """Pydantic config section."""
-        orm_mode = True
-        schema_extra = {
-            "example": {
-                "id": 1337,
-                "name": "John Doe",
-                "created": "2020-01-01",
-                "updated": "2020-01-01",
-                "email": "hi@example.com",
-                "confirmed": True,
-                "confirmed_on": "2020-01-01"
-            }
-        }
 
 
 class ShortLink(BaseModel):

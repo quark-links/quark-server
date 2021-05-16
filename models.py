@@ -1,6 +1,6 @@
 """SQLAlchemy models."""
 from typing import Optional
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy import Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -153,27 +153,17 @@ class User(Base):
     __tablename__ = "user"
 
     id = Column(Integer, primary_key=True)
+    sub = Column(String(100), nullable=True)
     created = Column(DateTime(timezone=True), server_default=func.now(),
                      nullable=False)
     updated = Column(DateTime(timezone=True), server_default=func.now(),
                      onupdate=func.now(), nullable=False)
-    email = Column(String(100), nullable=True, unique=True)
-    name = Column(String(50), nullable=True)
-    password = Column(String(400), nullable=False)
-    active = Column(Boolean, nullable=False, default=True)
     short_links = relationship("ShortLink", back_populates="user")
-    confirmed = Column(Boolean, nullable=False, default=False)
-    confirmed_on = Column(DateTime(timezone=True), nullable=True)
-    confirm_token = Column(String(100), nullable=True)
-    reset_token = Column(String(100), nullable=True)
-    api_key = Column(String(100), nullable=True)
 
-    def __init__(self, email: str, password: str) -> None:
+    def __init__(self, sub: str) -> None:
         """Create a new user object.
 
         Args:
-            email (str): The email of the user.
-            password (str): The hashed password of the user.
+            sub (str): The user's external user ID.
         """
-        self.email = email
-        self.password = password
+        self.sub = sub

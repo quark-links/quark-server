@@ -149,6 +149,5 @@ dmypy.json
 .env
 data.db
 uploads/
-
-# Ignore dynaconf secret files
 .secrets.*
+jwks.json
