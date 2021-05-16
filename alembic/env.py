@@ -8,17 +8,17 @@ from alembic import context
 
 import os
 import sys
-from dotenv import load_dotenv
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-load_dotenv(os.path.join(BASE_DIR, ".env"))
 sys.path.append(BASE_DIR)
+
+from config import settings  # noqa: E402
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
-config.set_main_option("sqlalchemy.url", os.environ["DATABASE_URL"])
+config.set_main_option("sqlalchemy.url", settings.database)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -71,7 +71,7 @@ def run_migrations_online():
     with connectable.connect() as connection:
         context.configure(
             connection=connection, target_metadata=target_metadata,
-            render_as_batch=os.environ["DATABASE_URL"].startswith('sqlite:')
+            render_as_batch=settings.database.startswith('sqlite:')
         )
 
         with context.begin_transaction():

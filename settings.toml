@@ -1,0 +1,12 @@
+database = "sqlite:///data.db"
+
+[instance]
+url = "http://localhost:8000"
+app_url = "http://localhost:3000"
+admin = "admin@localhost"
+
+[uploads]
+min_age = 30
+max_age = 90
+max_size = 256
+folder = "./uploads/"

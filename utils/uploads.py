@@ -1,17 +1,7 @@
 """Upload handling functions."""
 from tempfile import SpooledTemporaryFile
 import os
-
-
-def get_uploads_folder() -> str:
-    """Get the path to the folder for upload storage.
-
-    Returns:
-        str: The path to the upload folder.
-    """
-    default_upload_path = os.path.join(os.path.dirname(
-        os.path.realpath(__file__)), "../uploads")
-    return os.getenv("UPLOAD_FOLDER", default_upload_path)
+from config import settings
 
 
 def save_upload(file: SpooledTemporaryFile, filename: str) -> None:
@@ -21,7 +11,7 @@ def save_upload(file: SpooledTemporaryFile, filename: str) -> None:
         file (SpooledTemporaryFile): The uploaded file.
         filename (str): The name to store the file as.
     """
-    uploads_folder = get_uploads_folder()
+    uploads_folder = settings.uploads.folder
     if not os.path.exists(uploads_folder):
         os.makedirs(uploads_folder)
 
@@ -38,6 +28,6 @@ def get_path(filename: str) -> str:
     Returns:
         str: The path of the file.
     """
-    uploads_folder = get_uploads_folder()
+    uploads_folder = settings.uploads.folder
     path = os.path.join(uploads_folder, filename)
     return path

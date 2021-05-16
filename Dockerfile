@@ -17,16 +17,14 @@ RUN chmod +x /app/prestart.sh
 RUN pip install --upgrade pip pipenv
 RUN pipenv install --system
 
-ENV DATABASE_URL=sqlite:////data/data.db
-ENV JWT_KEY=f8afd7fcece3aa4d3ae21216c9a3b76be631fd2febc0dabd1dbb2402a77dbd7f
-ENV ID_ALPHABET=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
-ENV INSTANCE_APP_URL=https://app.vh7.uk
-ENV INSTANCE_URL=https://unknown.vh7.uk
-ENV INSTANCE_ADMIN=admin@unknown.vh7.uk
-ENV UPLOAD_MIN_AGE=30
-ENV UPLOAD_MAX_AGE=90
-ENV UPLOAD_MAX_SIZE=256
-ENV UPLOAD_FOLDER=/uploads
+ENV VH7_DATABASE=sqlite:////data/data.db
+ENV VH7_INSTANCE__APP_URL=https://app.vh7.uk
+ENV VH7_INSTANCE__URL=https://unknown.vh7.uk
+ENV VH7_INSTANCE__ADMIN=admin@unknown.vh7.uk
+ENV VH7_UPLOADs__MIN_AGE=30
+ENV VH7_UPLOADs__MAX_AGE=90
+ENV VH7_UPLOADs__MAX_SIZE=256
+ENV VH7_UPLOADs__FOLDER=/uploads
 
 EXPOSE 80
 VOLUME [ "/uploads", "/data" ]
