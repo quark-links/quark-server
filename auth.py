@@ -1,11 +1,35 @@
 """Methods for helping with authentication."""
+from fastapi.security.oauth2 import OAuth2
+from fastapi.openapi.models import OAuthFlows
 from jose import jwt
 from fastapi import HTTPException
 from typing import Dict, Optional
 import requests
 from logzero import logger
 import json
+from fastapi.security.utils import get_authorization_scheme_param
+from starlette.requests import Request
 from config import settings
+
+
+class CustomOAuth2(OAuth2):
+    def __init__(self, scheme_name: Optional[str] = None,
+                 scopes: Optional[Dict[str, str]] = None,
+                 auto_error: bool = False):
+        if not scopes:
+            scopes = {}
+        flows = OAuthFlows(implicit={
+                "authorizationUrl": settings.auth.authorization_endpoint
+            })
+        super().__init__(flows=flows, scheme_name=scheme_name,
+                         auto_error=auto_error)
+
+    async def __call__(self, request: Request) -> Optional[str]:
+        authorization: str = request.headers.get("Authorization")
+        scheme, param = get_authorization_scheme_param(authorization)
+        if not authorization or scheme.lower() != "bearer":
+            return None
+        return param
 
 
 class AuthError(HTTPException):

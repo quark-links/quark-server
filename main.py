@@ -5,7 +5,7 @@ from utils.uploads import get_path
 from fastapi import FastAPI, Depends, File, UploadFile
 from fastapi.exceptions import HTTPException
 from sqlalchemy.orm import Session
-from starlette.responses import FileResponse, RedirectResponse, Response
+from starlette.responses import FileResponse, JSONResponse, RedirectResponse, Response
 import uvicorn
 from fastapi_utils.tasks import repeat_every
 import crud
@@ -42,6 +42,8 @@ app = FastAPI(title="VH7",
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True,
                    allow_methods=["*"], allow_headers=["*"])
 
+oauth_scheme = auth.CustomOAuth2()
+
 
 def get_db() -> Session:
     """Fetch a database instance.
@@ -56,7 +58,7 @@ def get_db() -> Session:
         db.close()
 
 
-def get_current_user(authorization: Optional[str] = Header(None),
+def get_current_user(token: str = Depends(oauth_scheme),
                      db: Session = Depends(get_db)) -> Optional[models.User]:
     """Get the current user.
 
@@ -69,11 +71,6 @@ def get_current_user(authorization: Optional[str] = Header(None),
     Returns:
         Optional[models.User]: The current user.
     """
-    if authorization is None:
-        return None
-
-    token = auth.parse_header(authorization)
-
     if token is None:
         return None
 
@@ -176,15 +173,13 @@ def short_link_download(link: str, db: Session = Depends(get_db)) -> Response:
 
 @app.get("/users/me", response_model=schemas.User, tags=["users"])
 def get_user(current_user: schemas.User = Depends(get_required_user),
-             authorization: Optional[str] = Header(None)) -> Optional[Dict]:
+             token: str = Depends(oauth_scheme)) -> JSONResponse:
     """Get the logged in user details."""
-    token = auth.parse_header(authorization)
-
     if token is None:
         raise auth.AuthError
 
     profile = auth.get_profile(token)
-    return profile
+    return JSONResponse(profile)
 
 
 @app.get("/users/me/links", response_model=List[schemas.ShortLink],
