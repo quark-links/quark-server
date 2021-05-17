@@ -265,3 +265,140 @@ def get_stats(db: Session) -> Dict[str, int]:
         "pasted_code": pastes,
         "total": total
     }
+
+
+def bucket_create(db: Session, user: models.User) -> models.Bucket:
+    """Create a new bucket.
+
+    Args:
+        db (Session): A database instance.
+        user (models.User): The owner of the new bucket.
+
+    Returns:
+        models.Bucket: The created bucket.
+    """
+    name = None
+
+    while True:
+        name = generate_link()
+
+        conflict = db.query(models.Bucket).filter(
+            models.Bucket.name == name).first()
+
+        if conflict is None:
+            break
+
+    db_bucket = models.Bucket(name, user)
+
+    db.add(db_bucket)
+    db.commit()
+    db.refresh(db_bucket)
+    return db_bucket
+
+
+def bucket_get(db: Session, name: str, user: models.User,
+               check_owner: bool = True) -> models.Bucket:
+    """Get an existing bucket by name.
+
+    Args:
+        db (Session): The database instance.
+        name (str): The name of the bucket to get.
+        user (models.User): The user that is requesting the bucket.
+        check_owner (bool, optional): Whether to check the owner of the bucket.
+            Defaults to True.
+
+    Returns:
+        models.Bucket: The bucket.
+    """
+    db_bucket = db.query(models.Bucket).filter(
+        models.Bucket.name == name).first()
+
+    not_found_exception = HTTPException(status_code=404,
+                                        detail="Bucket not found")
+
+    if db_bucket is None:
+        raise not_found_exception
+
+    if check_owner:
+        if db_bucket.user != user:
+            raise not_found_exception
+    else:
+        if not db_bucket.public and db_bucket.user != user:
+            raise not_found_exception
+
+    return db_bucket
+
+
+def bucket_delete(db: Session, name: str, user: models.User) -> None:
+    """Delete a bucket by name.
+
+    Args:
+        db (Session): The database instance.
+        name (str): The name of the bucket to delete.
+        user (models.User): The user that is deleting the bucket.
+    """
+    db_bucket = bucket_get(db, name, user)
+    db.delete(db_bucket)
+    db.commit()
+
+
+def bucket_add(db: Session, short_link: str, bucket_name: str,
+               user: models.User) -> models.Bucket:
+    """Add a short link to a bucket.
+
+    Args:
+        db (Session): The database instance.
+        short_link (str): The short link to add.
+        bucket_name (str): The bucket to add to.
+        user (models.User): The user that is requesting.
+
+    Returns:
+        models.Bucket: The updated bucket.
+    """
+    db_short_link = db.query(models.ShortLink).filter(
+        models.ShortLink.link == short_link).first()
+    db_bucket = bucket_get(db, bucket_name, user)
+
+    if db_short_link is None:
+        raise HTTPException(status_code=400,
+                            detail="Invalid short link")
+
+    if db_short_link.user != user:
+        raise HTTPException(status_code=401,
+                            detail="You are not the owner of the short link")
+
+    db_short_link.bucket = db_bucket
+    db.commit()
+    db.refresh(db_bucket)
+    return db_bucket
+
+
+def bucket_remove(db: Session, short_link: str, bucket_name: str,
+                  user: models.User) -> models.Bucket:
+    """Remove a short link to a bucket.
+
+    Args:
+        db (Session): The database instance.
+        short_link (str): The short link to remove.
+        bucket_name (str): The bucket to remove from.
+        user (models.User): The user that is requesting.
+
+    Returns:
+        models.Bucket: The updated bucket.
+    """
+    db_short_link = db.query(models.ShortLink).filter(
+        models.ShortLink.link == short_link).first()
+    db_bucket = bucket_get(db, bucket_name, user)
+
+    if db_short_link is None:
+        raise HTTPException(status_code=400,
+                            detail="Invalid short link")
+
+    if db_short_link.user != user:
+        raise HTTPException(status_code=401,
+                            detail="You are not the owner of the short link")
+
+    db_short_link.bucket = None
+    db.commit()
+    db.refresh(db_bucket)
+    return db_bucket

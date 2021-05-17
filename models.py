@@ -1,6 +1,6 @@
 """SQLAlchemy models."""
 from typing import Optional
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Boolean
 from sqlalchemy import Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -31,6 +31,8 @@ class ShortLink(Base):
                           back_populates="short_link")
     user_id = Column(Integer, ForeignKey("user.id"))
     user = relationship("User", back_populates="short_links")
+    bucket_id = Column(Integer, ForeignKey("bucket.id"))
+    bucket = relationship("Bucket", back_populates="short_links")
 
     def __init__(self, link: str) -> None:
         """Create a new short link.
@@ -159,6 +161,7 @@ class User(Base):
     updated = Column(DateTime(timezone=True), server_default=func.now(),
                      onupdate=func.now(), nullable=False)
     short_links = relationship("ShortLink", back_populates="user")
+    buckets = relationship("Bucket", back_populates="user")
 
     def __init__(self, sub: str) -> None:
         """Create a new user object.
@@ -167,3 +170,29 @@ class User(Base):
             sub (str): The user's external user ID.
         """
         self.sub = sub
+
+
+class Bucket(Base):
+    """SQLAlchemy model for link buckets.
+
+    This is for storing a collection of short links.
+    """
+    __tablename__ = "bucket"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
+    description = Column(String(500))
+    public = Column(Boolean, default=False, nullable=False)
+    short_links = relationship("ShortLink", back_populates="bucket")
+    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    user = relationship("User", back_populates="buckets")
+
+    def __init__(self, name: str, user: User) -> None:
+        """Create a new link bucket.
+
+        Args:
+            name (str): The name of the link bucket.
+            user (User): The owner of the link bucket.
+        """
+        self.name = name
+        self.user = user

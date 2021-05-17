@@ -1,5 +1,5 @@
 """Pydantic schemas."""
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel, HttpUrl, validator
 import datetime
 import utils.languages
@@ -172,3 +172,19 @@ class InstanceInformation(BaseModel):
                 }
             }
         }
+
+
+class BucketBase(BaseModel):
+    """Schema for buckets."""
+    name: str
+
+
+class Bucket(BucketBase):
+    """Schema for buckets."""
+    description: Optional[str]
+    public: bool
+    short_links: List[ShortLink]
+
+    class Config:
+        """Pydantic config section."""
+        orm_mode = True

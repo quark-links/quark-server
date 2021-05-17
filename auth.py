@@ -13,9 +13,20 @@ from config import settings
 
 
 class CustomOAuth2(OAuth2):
+    """A custom FastAPI OAuth2 scheme."""
     def __init__(self, scheme_name: Optional[str] = None,
                  scopes: Optional[Dict[str, str]] = None,
                  auto_error: bool = False):
+        """Create a new custom OAuth2 scheme.
+
+        Args:
+            scheme_name (Optional[str], optional): The OAuth scheme name.
+                Defaults to None.
+            scopes (Optional[Dict[str, str]], optional): The OAuth scopes.
+                Defaults to None.
+            auto_error (bool, optional): Whether to automatically handle
+                errors. Defaults to False.
+        """
         if not scopes:
             scopes = {}
         flows = OAuthFlows(implicit={
@@ -25,6 +36,14 @@ class CustomOAuth2(OAuth2):
                          auto_error=auto_error)
 
     async def __call__(self, request: Request) -> Optional[str]:
+        """Handle requests from routes depending on the scheme.
+
+        Args:
+            request (Request): The request to process.
+
+        Returns:
+            Optional[str]: The authorization token.
+        """
         authorization: str = request.headers.get("Authorization")
         scheme, param = get_authorization_scheme_param(authorization)
         if not authorization or scheme.lower() != "bearer":

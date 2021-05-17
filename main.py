@@ -1,11 +1,11 @@
 """Main VH7 API server."""
-from fastapi import Header
 from cleanup import run_cleanup
 from utils.uploads import get_path
 from fastapi import FastAPI, Depends, File, UploadFile
 from fastapi.exceptions import HTTPException
 from sqlalchemy.orm import Session
-from starlette.responses import FileResponse, JSONResponse, RedirectResponse, Response
+from starlette.responses import FileResponse, JSONResponse, RedirectResponse
+from starlette.responses import Response
 import uvicorn
 from fastapi_utils.tasks import repeat_every
 import crud
@@ -15,12 +15,12 @@ from database import SessionLocal
 from datetime import datetime
 from typing import Any, Dict, Optional, List
 from fastapi.middleware.cors import CORSMiddleware
-from os import getenv
 from urllib.parse import urljoin
 from logzero import logger
 import utils.languages
 import models
 import auth
+from config import settings
 
 VERSION = "1.2.0"
 
@@ -101,7 +101,7 @@ def get_required_user(user: schemas.User = Depends(get_current_user)
 @app.get("/", tags=["routing"])
 def web_app() -> Response:
     """Redirect to the web app."""
-    return RedirectResponse(getenv("INSTANCE_APP_URL", "https://app.vh7.uk"),
+    return RedirectResponse(settings.instance.app_url,
                             status_code=308)
 
 
@@ -196,8 +196,8 @@ def get_instance_information(db: Session = Depends(get_db)) -> Dict[str, Any]:
     stats = crud.get_stats(db)
 
     return {
-        "url": getenv("INSTANCE_URL", "https://unknown.vh7.uk"),
-        "admin": getenv("INSTANCE_ADMIN", "admin@unknown.vh7.uk"),
+        "url": settings.instance.url,
+        "admin": settings.instance.admin,
         "version": VERSION,
         "stats": stats
     }
@@ -207,6 +207,46 @@ def get_instance_information(db: Session = Depends(get_db)) -> Dict[str, Any]:
 def get_languages() -> Response:
     """Get a list of the supported paste languages."""
     return utils.languages.languages
+
+
+@app.post("/bucket", tags=["buckets"], response_model=schemas.Bucket)
+def bucket_create(db: Session = Depends(get_db),
+                  user: schemas.User = Depends(get_required_user)
+                  ) -> Response:
+    """Create a new link bucket."""
+    return crud.bucket_create(db, user)
+
+
+@app.get("/bucket/{name}", tags=["buckets"], response_model=schemas.Bucket)
+def bucket_get(name: str, db: Session = Depends(get_db),
+               user: schemas.User = Depends(get_current_user)
+               ) -> Response:
+    """Get an existing link bucket."""
+    return crud.bucket_get(db, name, user, check_owner=False)
+
+
+@app.delete("/bucket/{name}", tags=["buckets"], response_model=schemas.Bucket)
+def bucket_delete(name: str, db: Session = Depends(get_db),
+                  user: schemas.User = Depends(get_required_user)
+                  ) -> Response:
+    """Delete a link bucket."""
+    return crud.bucket_delete(db, name, user)
+
+
+@app.post("/bucket/{name}/{link}", tags=["buckets"],
+          response_model=schemas.Bucket)
+def bucket_add(name: str, link: str, db: Session = Depends(get_db),
+               user: schemas.User = Depends(get_required_user)) -> Response:
+    """Add a short link to a link bucket."""
+    return crud.bucket_add(db, link, name, user)
+
+
+@app.delete("/bucket/{name}/{link}", tags=["buckets"],
+            response_model=schemas.Bucket)
+def bucket_remove(name: str, link: str, db: Session = Depends(get_db),
+                  user: schemas.User = Depends(get_required_user)) -> Response:
+    """Remove a short link from a link bucket."""
+    return crud.bucket_remove(db, link, name, user)
 
 
 @app.get("/{link}", tags=["routing"])
@@ -228,7 +268,7 @@ def short_link_redirect(link: str, db: Session = Depends(get_db)) -> Response:
                             detail="The given short link has expired")
 
     # Default to redirecting the request to the web app
-    url = urljoin(getenv("INSTANCE_APP_URL", "https://app.vh7.uk"), "/link/")
+    url = urljoin(settings.instance.app_url, "/link/")
     url = urljoin(url, link)
 
     # If the short link is a URL, redirect straight to that instead of the
@@ -236,6 +276,14 @@ def short_link_redirect(link: str, db: Session = Depends(get_db)) -> Response:
     if short_link.url is not None:
         url = short_link.url.url
 
+    return RedirectResponse(url, status_code=308)
+
+
+@app.get("/b/{name}", tags=["routing"])
+def bucket_redirect(name: str) -> Response:
+    """Route buckets to the web app."""
+    url = urljoin(settings.instance.app_url, "/bucket/")
+    url = urljoin(url, name)
     return RedirectResponse(url, status_code=308)
 
 
