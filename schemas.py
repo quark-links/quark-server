@@ -161,8 +161,8 @@ class InstanceInformation(BaseModel):
         """Pydantic config section."""
         schema_extra = {
             "example": {
-                "url": "https://example.vh7.uk",
-                "admin": "Example Admin <hi@example.vh7.uk>",
+                "url": "https://quark.example",
+                "admin": "Quark Admin <admin@quark.example>",
                 "version": "1.0.0",
                 "stats": {
                     "shortened_links": 3,

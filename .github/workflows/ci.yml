@@ -37,8 +37,8 @@ jobs:
       - name: Build & Push Docker Image
         uses: mr-smithers-excellent/docker-build-push@v5.2
         with:
-          image: jakewalker/vh7
+          image: docker.pkg.github.com/quark-links/quark-server/server
           tags: latest,v1
-          registry: docker.io
+          registry: docker.pkg.github.com
           username: jakewalker
           password: ${{ secrets.DOCKER_PASSWORD }}

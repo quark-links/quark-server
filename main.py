@@ -1,4 +1,4 @@
-"""Main VH7 API server."""
+"""Main Quark API."""
 from fastapi import Header
 from cleanup import run_cleanup
 from utils.uploads import get_path
@@ -24,7 +24,7 @@ import auth
 
 VERSION = "1.2.0"
 
-app = FastAPI(title="VH7",
+app = FastAPI(title="Quark",
               description=("A free and open source URL shortening, file "
                            "sharing and pastebin service."),
               version=VERSION, openapi_tags=[
@@ -247,7 +247,7 @@ def short_link_redirect(link: str, db: Session = Depends(get_db)) -> Response:
 @app.on_event("startup")
 def task_startup_message() -> None:
     """Show version information on startup."""
-    logger.info("Welcome to VH7 API Server (v{})".format(VERSION))
+    logger.info("Welcome to Quark Server (v{})".format(VERSION))
 
 
 @app.on_event("startup")

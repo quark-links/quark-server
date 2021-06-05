@@ -6,8 +6,8 @@ set -e
 echo "Running prestart..."
 
 echo "Downloading JWKS..."
-if [ -n "${VH7_JWKS}" ]; then
-    wget ${VH7_JWKS} -O jwks.json
+if [ -n "${QUARK_JWKS}" ]; then
+    wget ${QUARK_JWKS} -O jwks.json
     echo "JWKS downloaded!"
 else
     echo "Skipping JWKS, URL not set."

@@ -3,8 +3,8 @@ database = "sqlite:///data.db"
 [auth]
 url = "http://localhost:9001"
 algorithms = ["RS256"]
-audience = "vh7"
-issuer = "vh7.uk"
+audience = "quark"
+issuer = "quark.example"
 user_info_endpoint = "{this.auth.url}/oauth2/userinfo"
 
 [instance]

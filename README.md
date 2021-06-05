@@ -1,5 +1,5 @@
 <h1 align="center">
-	<img src="https://github.com/jake-walker/vh7-app/blob/main/static/img/vh7.png?raw=true" style="height: 4em;" alt="VH7 Logo">
+	<img src="https://github.com/quark-links/quark-app/blob/main/static/img/vh7.png?raw=true" style="height: 4em;" alt="VH7 Logo">
 </h1>
 
 <h3 align="center">
@@ -7,15 +7,10 @@
 </h3>
 
 <p align="center">
-	<strong>
-		<a href="https://vh7.uk/">Website</a>
-	</strong>
-</p>
-<p align="center">
-	<a href="https://github.com/jake-walker/vh7/actions?query=workflow%3Aci" target="_blank"><img alt="Build Status" title="Build Status" src="https://img.shields.io/github/workflow/status/jake-walker/vh7/ci/main"></a>
-    <a href="https://deepsource.io/gh/jake-walker/vh7/?ref=repository-badge" target="_blank"><img alt="DeepSource" title="DeepSource" src="https://deepsource.io/gh/jake-walker/vh7.svg/?label=active+issues&show_trend=true"/></a>
-    <img alt="License" title="Licence" src="https://img.shields.io/github/license/jake-walker/vh7">
-    <img alt="Pipenv Python version" src="https://img.shields.io/github/pipenv/locked/python-version/jake-walker/vh7/main">
+	<a href="https://github.com/quark-links/quark-server/actions?query=workflow%3Aci" target="_blank"><img alt="Build Status" title="Build Status" src="https://img.shields.io/github/workflow/status/quark-links/quark-server/main"></a>
+    <a href="https://deepsource.io/gh/quark-links/quark-server/?ref=repository-badge" target="_blank"><img alt="DeepSource" title="DeepSource" src="https://deepsource.io/gh/quark-links/quark-server.svg/?label=active+issues&show_trend=true"/></a>
+    <img alt="License" title="Licence" src="https://img.shields.io/github/license/quark-links/quark-server">
+    <img alt="Pipenv Python version" src="https://img.shields.io/github/pipenv/locked/python-version/quark-links/quark-server/main">
 </p>
 
 <!-- TOC -->
@@ -37,11 +32,11 @@
 
 ## Overview
 
-- **Free.** VH7 is not only free to use on the [official instance](https://vh7.uk) but is also free to download and run
+- **Free.** Quark is not only free to use on the [official instance](https://vh7.uk) but is also free to download and run
 for yourself.
-- **Open Source.** All of VH7's source code is available here for the community to take a look under the hood. _We also
+- **Open Source.** All of Quark's source code is available here for the community to take a look under the hood. _We also
 accept community contributions, just open a pull request!_
-- **Multi-purpose.** Unlike other mainstream URL shorteners, VH7 also provides file sharing and a pastebin also with short
+- **Multi-purpose.** Unlike other mainstream URL shorteners, Quark also provides file sharing and a pastebin also with short
 links.
 
 ## Getting Started
@@ -50,42 +45,42 @@ The recommended way of deploying is with [Docker](#docker), however, if you wish
 
 An OAuth2 server is also needed. If you are going the self-hosting route, you can go for something like [FusionAuth](https://fusionauth.io/), or if you want something hosted, you could use [Auth0](https://auth0.com/) or [Okta](https://www.okta.com/).
 
-Configuration can be done inside the `settings.toml` file (or in `.secrets.toml` which is ignored by Git) or via environment variables with the format `VH7_[SECTION]__[NAME]`.
+Configuration can be done inside the `settings.toml` file (or in `.secrets.toml` which is ignored by Git) or via environment variables with the format `QUARK_[SECTION]__[NAME]`.
 
 ### Deployment Notes
 
-- It is recommended to use a reverse proxy such as [Nginx](https://www.nginx.com/) or [Caddy](https://caddyserver.com/) between the internet and the instance of VH7.
+- It is recommended to use a reverse proxy such as [Nginx](https://www.nginx.com/) or [Caddy](https://caddyserver.com/) between the internet and the instance of Quark.
 - It is recommended to use a MySQL database instead of the default SQLite database.
 
 ### Docker
 
-The suggested way of running VH7 is through Docker. Docker images are automatically built for every version of VH7 at [`jakewalker/vh7`](https://hub.docker.com/r/jakewalker/vh7).
+The suggested way of running Quark is through Docker. Docker images are automatically built for every version of Quark.
 
 ```
-docker volume create vh7_uploads
+docker volume create quark_uploads
 docker run --detach \
-           --name vh7 \
+           --name quark \
            --restart always \
-           -e VH7_DATABASE=mysql+mysqldb://username:password@hostname/database
-           -e VH7_UPLOADS__MIN_AGE=30
-           -e VH7_UPLOADS__MAX_AGE=90
-           -e VH7_UPLOADS__MAX_SIZE=256
-           -v vh7_uploads:/uploads
+           -e QUARK_DATABASE=mysql+mysqldb://username:password@hostname/database
+           -e QUARK_UPLOADS__MIN_AGE=30
+           -e QUARK_UPLOADS__MAX_AGE=90
+           -e QUARK_UPLOADS__MAX_SIZE=256
+           -v quark_uploads:/uploads
            -p 80:8000
-           jakewalker/vh7:latest
+           docker.pkg.github.com/quark-links/quark-server/server:latest
 ```
 
 #### Manually Building Docker Image
 
 ```
-docker build -t jakewalker/vh7 .
+docker build -t docker.pkg.github.com/quark-links/quark-server/server .
 ```
 
-The built Docker image is saved as `vh7`. You can use then use the same command as above to run the newly built Docker image.
+The built Docker image is saved as `docker.pkg.github.com/quark-links/quark-server/server`. You can use then use the same command as above to run the newly built Docker image.
 
 ## Development
 
-These instructions go over the method to setup a development environment for VH7. These instructions **should not** be used for a production setup of VH7.
+These instructions go over the method to setup a development environment for Quark. These instructions **should not** be used for a production setup of Quark.
 
 ### Prerequisites
 
@@ -97,7 +92,7 @@ These instructions go over the method to setup a development environment for VH7
 Clone the repository
 
 ```
-git clone https://github.com/jake-walker/vh7
+git clone https://github.com/quark-links/quark-server
 ```
 
 Install the dependencies
