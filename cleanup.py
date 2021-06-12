@@ -2,7 +2,7 @@
 
 These should be run as a cronjob. For example, to run every 6 hours:
 
-    0 */6 * * * /path/to/venv/python /path/to/quark-server/cleanup.py >/dev/null 2>&1
+    0 */6 * * * /path/to/venv/python /quark-server/cleanup.py >/dev/null 2>&1
 """
 
 from logzero import logger
